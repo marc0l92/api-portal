@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title>API to CSV</title>
+</head>
+
+<body>
+    <div class="container">
+        <section>
+            <h1>API to CSV</h1>
+            <p>Convert OpenAPI/Swagger file to flat CSV.</p>
+        </section>
+        <section>
+            <h3>1. Load API</h3>
+            <form>
+                <div class="row">
+                    <div class="col">
+                        <input type="file" id="openApiFile" />
+                    </div>
+                </div>
+            </form>
+        </section>
+        <section>
+            <h3>2. Select services</h3>
+            <form>
+                <div class="row">
+                    <div class="col">
+                        <select class="form-select" size="8" id="services">
+                        </select>
+                    </div>
+                </div>
+                <!-- <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-primary btn-sm" id="selectAllServices">Select all</button>
+                    </div>
+                </div> -->
+            </form>
+        </section>
+        <section>
+            <h3>3. Export</h3>
+            <form>
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-primary btn-sm" id="download">Download</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+    <script src="../js/apiToCsv.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "api-tools",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack serve"
+  },
+  "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^9.0.9",
+    "js-yaml": "^4.1.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/xlsx": "^0.0.36",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "util": "^0.12.5",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0",
+    "webpack-dev-server": "^4.11.1"
+  }
+}
