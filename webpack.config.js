@@ -10,11 +10,11 @@ module.exports = {
     },
     output: {
         filename: 'apiToCsv.js',
-        path: path.resolve(__dirname, 'public/js'),
+        path: path.resolve(__dirname, 'docs/js'),
     },
     devServer: {
         static: {
-            directory: path.join(__dirname, 'public'),
+            directory: path.join(__dirname, 'docs'),
         },
         compress: true,
         port: 9000,
