@@ -30,6 +30,7 @@ document.getElementById('download').addEventListener('click', () => {
     document.querySelectorAll('#services>option:checked').forEach(selectOption => {
         const service = services[selectOption.value]
         const workbook = generateServiceWorkbook(service, version)
+        console.log({ service, workbook })
         convertToTable(workbook)
         generateSpreadsheet(workbook, fileName)
     })

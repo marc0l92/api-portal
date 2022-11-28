@@ -82,6 +82,7 @@ function getAuthorizedValues(model) {
 
 function generateModelFlatMap(model, required = false, path = '#', level = 0) {
     let flatMap = []
+    console.log('generateModelFlatMap:', { model })
 
     const flatItem = {
         Location: LOCATION_BODY,
@@ -154,7 +155,7 @@ const SwaggerParsing = {
                 const service = api.paths[path][method]
                 service['x-name'] = `${method.toUpperCase()} ${path}`
                 service['parameters'] = service['parameters'] || []
-                service['parameters'].concat(globalParam)
+                service['parameters'] = service['parameters'].concat(globalParam)
                 services.push(service)
             }
         }
@@ -164,14 +165,14 @@ const SwaggerParsing = {
     generateServiceWorkbook(service, version) {
         const workbook = { Request: [] }
         const parameters = getParameters(service)
-        console.log({ parameters })
+        console.log('Parameters:', { parameters })
         for (const parameter of parameters) {
             workbook.Request.push(generateParameterFlatMap(parameter))
         }
         const request = getRequest(service, version)
-        console.log({ request })
+        console.log('Request:', { request })
         if (request && request.schema) {
-            workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
+            workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
         }
         console.log({ workbook })
         const responses = getResponses(service, version)
