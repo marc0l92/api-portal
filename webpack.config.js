@@ -6,10 +6,10 @@ module.exports = {
     mode: 'development',
     // watch: true,
     entry: {
-        apiToCsv: './src/apiToCsv.js',
+        apiToSpreadsheet: './src/apiToSpreadsheet.js',
     },
     output: {
-        filename: 'apiToCsv.js',
+        filename: 'apiToSpreadsheet.js',
         path: path.resolve(__dirname, 'docs/js'),
     },
     devServer: {

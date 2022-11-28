@@ -38,6 +38,16 @@ function getResponses(service, version) {
     return responses
 }
 
+function getParameters(service) {
+    if (service.parameters) {
+        return service.parameters.filter((parameter) => {
+            return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
+        })
+    } else {
+        return []
+    }
+}
+
 function getAuthorizedValues(model) {
     const rules = []
     if (model.minLength) {
@@ -111,6 +121,20 @@ function generateModelFlatMap(model, required = false, path = '#', level = 0) {
     return flatMap
 }
 
+function generateParameterFlatMap(parameter) {
+    parameter.in[0] = parameter.in[0].toUpperCase()
+    return {
+        Location: parameter.in,
+        Level: 0,
+        Path: parameter.name,
+        Type: parameter.schema.type || 'string',
+        Cardinality: parameter.required ? 'Required' : 'Optional',
+        Authorized: getAuthorizedValues(parameter.schema),
+        Description: parameter.description || '',
+        Example: parameter.example ? JSON.stringify(module.example) : '',
+    }
+}
+
 const SwaggerParsing = {
     getApiDocumentationVersion: (api) => {
         if (api.swagger === '2.0') {
@@ -135,11 +159,18 @@ const SwaggerParsing = {
     },
 
     generateServiceWorkbook(service, version) {
-        const workbook = {}
-        const request = getRequest(service, version)
-        if (request && request.schema) {
-            workbook.Request = generateModelFlatMap(request.schema, !!request.required)
+        const workbook = { Request: [] }
+        const parameters = getParameters(service)
+        console.log({ parameters })
+        for (const parameter of parameters) {
+            workbook.Request.push(generateParameterFlatMap(parameter))
         }
+        const request = getRequest(service, version)
+        console.log({ request })
+        if (request && request.schema) {
+            workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
+        }
+        console.log({ workbook })
         const responses = getResponses(service, version)
         for (const statusCode in responses) {
             const response = responses[statusCode]
