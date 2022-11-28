@@ -149,9 +149,12 @@ const SwaggerParsing = {
     extractServices: (api) => {
         const services = []
         for (const path in api.paths) {
+            const globalParam = api.paths[path]['parameters'] || []
             for (const method in api.paths[path]) {
                 const service = api.paths[path][method]
                 service['x-name'] = `${method.toUpperCase()} ${path}`
+                service['parameters'] = service['parameters'] || []
+                service['parameters'].concat(globalParam)
                 services.push(service)
             }
         }
