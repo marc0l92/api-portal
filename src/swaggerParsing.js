@@ -83,7 +83,7 @@ function getAuthorizedValues(model) {
     return rules.join('; ')
 }
 
-function generateModelFlatMap(model, required = false, path = '#', level = 0) {
+function generateModelFlatMap(model, required = false, path = '', level = 0) {
     let flatMap = []
     console.log('generateModelFlatMap:', { model })
 
