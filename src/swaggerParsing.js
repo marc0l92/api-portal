@@ -128,7 +128,7 @@ function generateParameterFlatMap(parameter) {
         Location: parameter.in,
         Level: 0,
         Path: parameter.name,
-        Type: parameter.schema.type || 'string',
+        Type: parameter.type || parameter.schema.type || 'string',
         Cardinality: parameter.required ? 'Required' : 'Optional',
         Authorized: getAuthorizedValues(parameter.schema),
         Description: parameter.description || '',
