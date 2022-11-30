@@ -49,6 +49,9 @@ function getParameters(service) {
 }
 
 function getAuthorizedValues(model) {
+    if (!model) {
+        return ''
+    }
     const rules = []
     if (model.minLength) {
         rules.push(`minLength=${model.minLength}`)
