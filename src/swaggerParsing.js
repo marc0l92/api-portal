@@ -140,6 +140,9 @@ function generateParameterFlatMap(parameter) {
 }
 
 function mergeAllOfDefinitions(model) {
+    if (!model) {
+        return
+    }
     for (const key in model) {
         if (key === 'allOf') {
             if (model[key].length === 1) {
@@ -229,7 +232,7 @@ const SwaggerParsing = {
             workbook.Request.push(generateParameterFlatMap(parameter))
         }
         const request = getRequest(service, version)
-        mergeAllOfDefinitions(request)
+        mergeAllOfDefinitions(request.schema)
         console.log('Request:', { request })
         if (request && request.schema) {
             workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
@@ -241,7 +244,7 @@ const SwaggerParsing = {
         const responses = getResponses(service, version)
         for (const statusCode in responses) {
             const response = responses[statusCode]
-            mergeAllOfDefinitions(response)
+            mergeAllOfDefinitions(response.schema)
             if (response && response.schema) {
                 workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, !!response.required)
             }
