@@ -109,13 +109,13 @@ function generateModelFlatMap(model, required = false, path = '', level = 0) {
             )
         )
     } else if ('properties' in model) {
-        const requiredProperties = model.required || []
+        const requiredProperties = new Set(model.required)
         for (const propertyName in model.properties) {
             const property = model.properties[propertyName]
             flatMap = flatMap.concat(
                 generateModelFlatMap(
                     property,
-                    requiredProperties.indexOf(propertyName) >= 0,
+                    requiredProperties.has(propertyName),
                     path + '/' + propertyName,
                     level + 1
                 )
@@ -140,8 +140,9 @@ function generateParameterFlatMap(parameter) {
 }
 
 function mergeAllOfDefinitions(model) {
+    console.log('mergeAllOfDefinitions->input', model)
     if (!model) {
-        return
+        return model
     }
     for (const key in model) {
         if (key === 'allOf') {
@@ -182,6 +183,7 @@ function mergeAllOfDefinitions(model) {
                 }
                 model = mergedModel
             }
+            console.log('mergeAllOfDefinitions->merged', model)
             break
         }
     }
@@ -189,13 +191,14 @@ function mergeAllOfDefinitions(model) {
     // continue in deep
     if ('properties' in model) {
         for (const propertyName in model.properties) {
-            mergeAllOfDefinitions(model.properties[propertyName])
+            model.properties[propertyName] = mergeAllOfDefinitions(model.properties[propertyName])
         }
     } else if ('items' in model) {
-        mergeAllOfDefinitions(model.items)
+        model.items = mergeAllOfDefinitions(model.items)
     } else if ('additionalProperties' in model) {
-        mergeAllOfDefinitions(model.additionalProperties)
+        model.additionalProperties = mergeAllOfDefinitions(model.additionalProperties)
     }
+    return model
 }
 
 const SwaggerParsing = {
@@ -232,7 +235,7 @@ const SwaggerParsing = {
             workbook.Request.push(generateParameterFlatMap(parameter))
         }
         const request = getRequest(service, version)
-        mergeAllOfDefinitions(request.schema)
+        request.schema = mergeAllOfDefinitions(request.schema)
         console.log('Request:', { request })
         if (request && request.schema) {
             workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
@@ -244,7 +247,7 @@ const SwaggerParsing = {
         const responses = getResponses(service, version)
         for (const statusCode in responses) {
             const response = responses[statusCode]
-            mergeAllOfDefinitions(response.schema)
+            response.schema = mergeAllOfDefinitions(response.schema)
             if (response && response.schema) {
                 workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, !!response.required)
             }
