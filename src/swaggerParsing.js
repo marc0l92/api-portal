@@ -149,14 +149,14 @@ function mergeAllOfDefinitions(model) {
                 // No objects to merge, allOf used only to override the description
                 model = model[key][0]
             } else {
-                const mergedModel = { type: 'object', required: {}, properties: {} }
+                const mergedModel = { type: 'object', required: [], properties: {} }
                 for (const i in model[key]) {
                     const childModel = model[key][i]
                     if ('properties' in childModel) {
                         Object.assign(mergedModel.properties, childModel.properties)
                     }
                     if ('required' in childModel) {
-                        Object.assign(mergedModel.required, childModel.required)
+                        mergedModel.required = mergedModel.required.concat(childModel.required)
                     }
                     if ('additionalProperties' in childModel) {
                         Object.assign(mergedModel.additionalProperties, childModel.additionalProperties)
