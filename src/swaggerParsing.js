@@ -139,6 +139,62 @@ function generateParameterFlatMap(parameter) {
     }
 }
 
+function mergeAllOfDefinitions(model) {
+    for (const key in model) {
+        if (key === 'allOf') {
+            if (model[key].length === 1) {
+                // No objects to merge, allOf used only to override the description
+                model = model[key][0]
+            } else {
+                const mergedModel = { type: 'object', required: {}, properties: {} }
+                for (const i in model[key]) {
+                    const childModel = model[key][i]
+                    if ('properties' in childModel) {
+                        Object.assign(mergedModel.properties, childModel.properties)
+                    }
+                    if ('required' in childModel) {
+                        Object.assign(mergedModel.required, childModel.required)
+                    }
+                    if ('additionalProperties' in childModel) {
+                        Object.assign(mergedModel.additionalProperties, childModel.additionalProperties)
+                    }
+                    if ('minProperties' in childModel) {
+                        if ('minProperties' in mergedModel) {
+                            mergedModel.minProperties += childModel.minProperties
+                        } else {
+                            mergedModel.minProperties = childModel.minProperties
+                        }
+                    }
+                    if ('maxProperties' in childModel) {
+                        console.warn('WARNING: maxProperties not supported while merging allOf definitions')
+                    }
+                }
+                if (mergedModel.required.length === 0) {
+                    delete mergedModel.required
+                } else {
+                    mergedModel.required = new Set([...mergedModel.required])
+                }
+                if (mergedModel.properties.length === 0) {
+                    delete mergedModel.properties
+                }
+                model = mergedModel
+            }
+            break
+        }
+    }
+
+    // continue in deep
+    if ('properties' in model) {
+        for (const propertyName in model.properties) {
+            mergeAllOfDefinitions(model.properties[propertyName])
+        }
+    } else if ('items' in model) {
+        mergeAllOfDefinitions(model.items)
+    } else if ('additionalProperties' in model) {
+        mergeAllOfDefinitions(model.additionalProperties)
+    }
+}
+
 const SwaggerParsing = {
     getApiDocumentationVersion: (api) => {
         if (api.swagger === '2.0') {
@@ -173,14 +229,19 @@ const SwaggerParsing = {
             workbook.Request.push(generateParameterFlatMap(parameter))
         }
         const request = getRequest(service, version)
+        mergeAllOfDefinitions(request)
         console.log('Request:', { request })
         if (request && request.schema) {
             workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
+        }
+        if (workbook.Request.length === 0) {
+            delete workbook.Request
         }
         console.log({ workbook })
         const responses = getResponses(service, version)
         for (const statusCode in responses) {
             const response = responses[statusCode]
+            mergeAllOfDefinitions(response)
             if (response && response.schema) {
                 workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, !!response.required)
             }
