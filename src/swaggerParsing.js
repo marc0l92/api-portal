@@ -139,8 +139,8 @@ function generateParameterFlatMap(parameter) {
     }
 }
 
-function mergeAllOfDefinitions(model) {
-    console.log('mergeAllOfDefinitions->input', model)
+function mergeAllOfDefinitions(model, path = '') {
+    // console.log(path, 'mergeAllOfDefinitions->input', model)
     if (!model) {
         return model
     }
@@ -148,12 +148,14 @@ function mergeAllOfDefinitions(model) {
         if (key === 'allOf') {
             if (model[key].length === 1) {
                 // No objects to merge, allOf used only to override the description
-                model = Object.assign({}, model[key][0], model)
+                model = Object.assign({}, mergeAllOfDefinitions(model[key][0]), model)
                 delete model.allOf
             } else {
-                const mergedModel = { type: 'object', required: [], properties: {} }
+                const mergedModel = Object.assign({}, model, { type: 'object', required: [], properties: {} })
+                delete mergedModel.allOf
+
                 for (const i in model[key]) {
-                    const childModel = model[key][i]
+                    const childModel = mergeAllOfDefinitions(model[key][i], path + '/[' + i + ']')
                     if ('properties' in childModel) {
                         Object.assign(mergedModel.properties, childModel.properties)
                     }
@@ -184,7 +186,7 @@ function mergeAllOfDefinitions(model) {
                 }
                 model = mergedModel
             }
-            console.log('mergeAllOfDefinitions->merged', model)
+            // console.log(path, 'mergeAllOfDefinitions->merged', model)
             break
         }
     }
@@ -192,10 +194,10 @@ function mergeAllOfDefinitions(model) {
     // continue in deep
     if ('properties' in model) {
         for (const propertyName in model.properties) {
-            model.properties[propertyName] = mergeAllOfDefinitions(model.properties[propertyName])
+            model.properties[propertyName] = mergeAllOfDefinitions(model.properties[propertyName], path + '/' + propertyName)
         }
     } else if ('items' in model) {
-        model.items = mergeAllOfDefinitions(model.items)
+        model.items = mergeAllOfDefinitions(model.items, path + '[]')
     } else if ('additionalProperties' in model) {
         model.additionalProperties = mergeAllOfDefinitions(model.additionalProperties)
     }
