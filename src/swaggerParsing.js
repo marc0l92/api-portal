@@ -85,7 +85,7 @@ function getAuthorizedValues(model) {
 
 function generateModelFlatMap(model, required = false, path = '', level = 0) {
     let flatMap = []
-    console.log('generateModelFlatMap:', { model })
+    // console.log('generateModelFlatMap:', { model })
 
     const flatItem = {
         Location: LOCATION_BODY,
@@ -148,7 +148,8 @@ function mergeAllOfDefinitions(model) {
         if (key === 'allOf') {
             if (model[key].length === 1) {
                 // No objects to merge, allOf used only to override the description
-                model = model[key][0]
+                model = Object.assign({}, model[key][0], model)
+                delete model.allOf
             } else {
                 const mergedModel = { type: 'object', required: [], properties: {} }
                 for (const i in model[key]) {
@@ -230,24 +231,27 @@ const SwaggerParsing = {
     generateServiceWorkbook(service, version) {
         const workbook = { Request: [] }
         const parameters = getParameters(service)
-        console.log('Parameters:', { parameters })
+        // console.log('Parameters:', { parameters })
         for (const parameter of parameters) {
             workbook.Request.push(generateParameterFlatMap(parameter))
         }
+
         const request = getRequest(service, version)
         request.schema = mergeAllOfDefinitions(request.schema)
-        console.log('Request:', { request })
+        // console.log('Request:', { request })
         if (request && request.schema) {
             workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
         }
         if (workbook.Request.length === 0) {
             delete workbook.Request
         }
-        console.log({ workbook })
+
+        // console.log({ workbook })
         const responses = getResponses(service, version)
         for (const statusCode in responses) {
             const response = responses[statusCode]
             response.schema = mergeAllOfDefinitions(response.schema)
+            console.log({ statusCode, response })
             if (response && response.schema) {
                 workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, !!response.required)
             }

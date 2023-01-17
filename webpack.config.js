@@ -10,11 +10,11 @@ module.exports = {
     },
     output: {
         filename: 'apiToSpreadsheet.js',
-        path: path.resolve(__dirname, 'docs/js'),
+        path: path.resolve(__dirname, 'public/js'),
     },
     devServer: {
         static: {
-            directory: path.join(__dirname, 'docs'),
+            directory: path.join(__dirname, 'public'),
         },
         compress: true,
         port: 9000,
