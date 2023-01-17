@@ -110,7 +110,7 @@ function generateModelFlatMap(model, required = false, path = '', level = 0) {
         )
     } else if ('properties' in model) {
         const requiredProperties = new Set(model.required)
-        for (const propertyName in model.properties) {
+        for (const propertyName of Object.keys(model.properties).sort()) {
             const property = model.properties[propertyName]
             flatMap = flatMap.concat(
                 generateModelFlatMap(
