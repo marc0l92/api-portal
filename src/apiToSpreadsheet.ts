@@ -1,22 +1,22 @@
 import $RefParser from '@apidevtools/json-schema-ref-parser'
 import yaml from 'js-yaml'
-import { convertToTable, generateSpreadsheet, readInputFile } from './filesUtils.js'
-import { extractServices, generateServiceWorkbook, getApiDocumentationVersion } from './swaggerParsing'
+import { convertToTable, generateSpreadsheet, readInputFile } from './utils/filesUtils'
+import { OpenApi, OpenApiService, OpenApiVersion } from './utils/interfaces'
+import { extractServices, generateServiceWorkbook } from './utils/swaggerParsing'
 
 let fileName = ''
-let api = {}
-let services = []
-let version = -1
+let api: OpenApi = null
+let services: OpenApiService[] = []
+let version = OpenApiVersion.Invalid
 
 
-document.getElementById('openApiFile').addEventListener('change', async (e) => {
+document.getElementById('openApiFile').addEventListener('change', async (e: Event) => {
     try {
-        const file = e.target.files[0]
+        const file = (e.target as HTMLInputElement).files[0]
         fileName = file.name
         const fileContent = await readInputFile(file)
-        api = await $RefParser.dereference(yaml.load(fileContent))
-        version = getApiDocumentationVersion(api)
-        parseApi(api, version)
+        api = await $RefParser.dereference(yaml.load(fileContent)) as OpenApi
+        parseApi(api)
     } catch (e) {
         logError(e)
     }
@@ -27,22 +27,22 @@ document.getElementById('openApiFile').addEventListener('change', async (e) => {
 // })
 
 document.getElementById('download').addEventListener('click', () => {
-    document.querySelectorAll('#services>option:checked').forEach(selectOption => {
-        const service = services[selectOption.value]
-        const workbook = generateServiceWorkbook(service, version)
-        console.log({ service, workbook })
-        convertToTable(workbook)
+    document.querySelectorAll('#services>option:checked').forEach((selectOption: HTMLOptionElement) => {
+        const service = services[parseInt(selectOption.value)]
+        const itemMap = generateServiceWorkbook(service, version)
+        console.log({ service, dataSheetItemMap: itemMap })
+        const workbook = convertToTable(itemMap)
         generateSpreadsheet(workbook, fileName)
     })
 })
 
 
-function logError(message) {
+function logError(message: any) {
     // TODO: show errors
     console.warn(message)
 }
 
-function parseApi(api) {
+function parseApi(api: OpenApi) {
     try {
         services = extractServices(api)
         fillServicesSelect(services)
@@ -51,7 +51,7 @@ function parseApi(api) {
     }
 }
 
-function fillServicesSelect(services) {
+function fillServicesSelect(services: OpenApiService[]) {
     const servicesElm = document.getElementById('services')
     servicesElm.replaceChildren()
     for (const i in services) {
