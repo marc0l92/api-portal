@@ -30,6 +30,10 @@ export const convertToTable = (itemsMap: DataSheetItemMap): DataSheetWorkbook =>
     return workbook
 }
 
+const sanitizeFilename = (fileName: string): string => {
+    return fileName.replace(/\//g, '-')
+}
+
 export const generateSpreadsheet = (workbookData: DataSheetWorkbook, fileName: string): void => {
     const workbook = XLSX.utils.book_new()
     for (const sheetName in workbookData) {
@@ -37,5 +41,5 @@ export const generateSpreadsheet = (workbookData: DataSheetWorkbook, fileName: s
         XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
     }
     // var data = XLSX.write(workbook, { bookType: 'ods' });
-    XLSX.writeFile(workbook, fileName + ".ods");
+    XLSX.writeFile(workbook, sanitizeFilename(fileName) + ".ods");
 }

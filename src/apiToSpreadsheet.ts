@@ -2,9 +2,8 @@ import yaml from 'js-yaml'
 import { convertToTable, generateSpreadsheet, readInputFile } from './utils/filesUtils'
 import { OpenApi, OpenApiService, OpenApiVersion } from './utils/interfaces'
 import { resolveReferences } from './utils/refParser'
-import { extractServices, generateServiceWorkbook } from './utils/swaggerParsing'
+import { extractServices, generateServiceWorkbook, getApiDocumentationVersion } from './utils/swaggerParsing'
 
-let fileName = ''
 let api: OpenApi = null
 let services: OpenApiService[] = []
 let version = OpenApiVersion.Invalid
@@ -13,10 +12,11 @@ let version = OpenApiVersion.Invalid
 document.getElementById('openApiFile').addEventListener('change', async (e: Event) => {
     try {
         const file = (e.target as HTMLInputElement).files[0]
-        fileName = file.name
         const fileContent = await readInputFile(file)
         api = await resolveReferences(yaml.load(fileContent))
-        parseApi(api)
+        version = getApiDocumentationVersion(api)
+        services = extractServices(api)
+        fillServicesSelect(services)
     } catch (e) {
         logError(e)
     }
@@ -31,7 +31,8 @@ document.getElementById('download').addEventListener('click', () => {
         const service = services[parseInt(selectOption.value)]
         const itemMap = generateServiceWorkbook(service, version)
         const workbook = convertToTable(itemMap)
-        generateSpreadsheet(workbook, fileName)
+        console.log({ service, itemMap, workbook })
+        generateSpreadsheet(workbook, service['x-name'])
     })
 })
 
@@ -39,15 +40,6 @@ document.getElementById('download').addEventListener('click', () => {
 function logError(message: any) {
     // TODO: show errors
     console.warn(message)
-}
-
-function parseApi(api: OpenApi) {
-    try {
-        services = extractServices(api)
-        fillServicesSelect(services)
-    } catch (e) {
-        logError(e)
-    }
 }
 
 function fillServicesSelect(services: OpenApiService[]) {

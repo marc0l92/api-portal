@@ -232,15 +232,16 @@ export const extractServices = (api: OpenApi): OpenApiService[] => {
 }
 
 export const generateServiceWorkbook = (service: OpenApiService, version: OpenApiVersion): DataSheetItemMap => {
+    console.log('Service:', { service, version })
     const workbook: DataSheetItemMap = { Request: [] }
     const parameters = getParameters(service)
-    // console.log('Parameters:', { parameters })
+    console.log('Parameters:', { parameters })
     for (const parameter of parameters) {
         workbook.Request.push(generateParameterFlatMap(parameter))
     }
 
     const request = getRequest(service, version)
-    // console.log('Request:', { request })
+    console.log('Request:', { request })
     if (request && request.schema) {
         request.schema = mergeAllOfDefinitions(request.schema)
         workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
@@ -251,10 +252,11 @@ export const generateServiceWorkbook = (service: OpenApiService, version: OpenAp
 
     // console.log({ workbook })
     const responses = getResponses(service, version)
+    console.log('Responses:', { responses })
     for (const statusCode in responses) {
         const response = responses[statusCode]
         response.schema = mergeAllOfDefinitions(response.schema)
-        console.log({ statusCode, response })
+        // console.log({ statusCode, response })
         if (response && response.schema) {
             workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, !!response.required)
         }
