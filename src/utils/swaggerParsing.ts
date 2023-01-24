@@ -1,16 +1,16 @@
+import { OpenApi, OpenApiModel, OpenApiParameterMap, OpenApiParameter, OpenApiService, OpenApiVersion, DataSheetItem, DataSheetItemCardinality, DataSheetItemMap, OpenApi3Parameter } from "./interfaces"
+
 const LOCATION_BODY = 'Body'
 
-function getRequest(service, version) {
-    if (version === 2) {
-        // Swagger 2.0
+function getRequest(service: OpenApiService, version: OpenApiVersion): OpenApiParameter {
+    if (version === OpenApiVersion.Swagger2) {
         if (service.parameters) {
             const requestParam = service.parameters.find(p => p.in === 'body')
             if (requestParam) {
                 return requestParam
             }
         }
-    } else if (version === 3) {
-        // OpenApi
+    } else if (version === OpenApiVersion.OpenAPI3) {
         if (service.requestBody
             && service.requestBody.content
             && service.requestBody.content['application/json']) {
@@ -20,25 +20,24 @@ function getRequest(service, version) {
     return null
 }
 
-function getResponses(service, version) {
-    const responses = {}
+function getResponses(service: OpenApiService, version: OpenApiVersion): OpenApiParameterMap {
+    const responses: OpenApiParameterMap = {}
     if (service.responses) {
         for (const statusCode in service.responses) {
-            const response = service.responses[statusCode]
-            // Swagger 2.0
-            if (version === 2) {
-                responses[statusCode] = response
+            const response2 = service.responses[statusCode] as OpenApiParameter
+            const response3 = service.responses[statusCode] as OpenApi3Parameter
+            if (version === OpenApiVersion.Swagger2) {
+                responses[statusCode] = response2
             }
-            // OpenApi
-            else if (version === 3 && response.content && response.content['application/json']) {
-                responses[statusCode] = response.content['application/json']
+            else if (version === OpenApiVersion.OpenAPI3 && response3.content && response3.content['application/json']) {
+                responses[statusCode] = response3.content['application/json']
             }
         }
     }
     return responses
 }
 
-function getParameters(service) {
+function getParameters(service: OpenApiService): OpenApiParameter[] {
     if (service.parameters) {
         return service.parameters.filter((parameter) => {
             return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
@@ -48,7 +47,7 @@ function getParameters(service) {
     }
 }
 
-function getAuthorizedValues(model) {
+function getAuthorizedValues(model: OpenApiModel): string {
     if (!model) {
         return ''
     }
@@ -83,19 +82,19 @@ function getAuthorizedValues(model) {
     return rules.join('; ')
 }
 
-function generateModelFlatMap(model, required = false, path = '', level = 0) {
-    let flatMap = []
+function generateModelFlatMap(model: OpenApiModel, required: boolean = false, path: string = '', level: number = 0): DataSheetItem[] {
+    let flatMap: DataSheetItem[] = []
     // console.log('generateModelFlatMap:', { model })
 
-    const flatItem = {
+    const flatItem: DataSheetItem = {
         Location: LOCATION_BODY,
         Level: level,
         Path: path,
         Type: model.type || 'object',
-        Cardinality: required ? 'Required' : 'Optional',
+        Cardinality: required ? DataSheetItemCardinality.Required : DataSheetItemCardinality.Optional,
         Authorized: getAuthorizedValues(model),
         Description: model.description || '',
-        Example: model.example ? JSON.stringify(module.example) : '',
+        Example: model.example ? JSON.stringify(model.example) : '',
     }
     flatMap.push(flatItem)
 
@@ -125,21 +124,21 @@ function generateModelFlatMap(model, required = false, path = '', level = 0) {
     return flatMap
 }
 
-function generateParameterFlatMap(parameter) {
-    parameter.in[0] = parameter.in[0].toUpperCase()
+function generateParameterFlatMap(parameter: OpenApiParameter): DataSheetItem {
+    parameter.in = parameter.in[0].toUpperCase() + parameter.in.substring(1)
     return {
         Location: parameter.in,
         Level: 0,
         Path: parameter.name,
         Type: parameter.type || parameter.schema.type || 'string',
-        Cardinality: parameter.required ? 'Required' : 'Optional',
+        Cardinality: parameter.required ? DataSheetItemCardinality.Required : DataSheetItemCardinality.Optional,
         Authorized: getAuthorizedValues(parameter.schema),
         Description: parameter.description || '',
-        Example: parameter.example ? JSON.stringify(module.example) : '',
+        Example: parameter.example ? JSON.stringify(parameter.example) : '',
     }
 }
 
-function mergeAllOfDefinitions(model, path = '') {
+function mergeAllOfDefinitions(model: OpenApiModel, path: string = ''): OpenApiModel {
     // console.log(path, 'mergeAllOfDefinitions->input', model)
     if (!model) {
         return model
@@ -151,7 +150,7 @@ function mergeAllOfDefinitions(model, path = '') {
                 model = Object.assign({}, mergeAllOfDefinitions(model[key][0]), model)
                 delete model.allOf
             } else {
-                const mergedModel = Object.assign({}, model, { type: 'object', required: [], properties: {} })
+                const mergedModel: OpenApiModel = Object.assign({}, model, { type: 'object', required: [], properties: {} })
                 delete mergedModel.allOf
 
                 for (const i in model[key]) {
@@ -179,9 +178,9 @@ function mergeAllOfDefinitions(model, path = '') {
                 if (mergedModel.required.length === 0) {
                     delete mergedModel.required
                 } else {
-                    mergedModel.required = new Set([...mergedModel.required])
+                    mergedModel.required = [...new Set([...mergedModel.required])]
                 }
-                if (mergedModel.properties.length === 0) {
+                if (Object.keys(mergedModel.properties).length === 0) {
                     delete mergedModel.properties
                 }
                 model = mergedModel
@@ -204,62 +203,61 @@ function mergeAllOfDefinitions(model, path = '') {
     return model
 }
 
-const SwaggerParsing = {
-    getApiDocumentationVersion: (api) => {
-        if (api.swagger === '2.0') {
-            return 2
-        }
-        else if (api.openapi && api.openapi.startsWith('3')) {
-            return 3
-        }
-        return -1
-    },
 
-    extractServices: (api) => {
-        const services = []
-        for (const path in api.paths) {
-            const globalParam = api.paths[path]['parameters'] || []
-            for (const method in api.paths[path]) {
-                const service = api.paths[path][method]
+export const getApiDocumentationVersion = (api: OpenApi): OpenApiVersion => {
+    if (api.swagger === '2.0') {
+        return OpenApiVersion.Swagger2
+    }
+    else if (api.openapi && api.openapi.startsWith('3')) {
+        return OpenApiVersion.OpenAPI3
+    }
+    return OpenApiVersion.Invalid
+}
+
+export const extractServices = (api: OpenApi): OpenApiService[] => {
+    const services: OpenApiService[] = []
+    for (const path in api.paths) {
+        const globalParam = api.paths[path].parameters || []
+        for (const method in api.paths[path]) {
+            if (method !== 'parameters') {
+                const service = api.paths[path][method] as OpenApiService
                 service['x-name'] = `${method.toUpperCase()} ${path}`
-                service['parameters'] = service['parameters'] || []
-                service['parameters'] = service['parameters'].concat(globalParam)
+                service.parameters = service.parameters || []
+                service.parameters = service.parameters.concat(globalParam)
                 services.push(service)
             }
         }
-        return services
-    },
-
-    generateServiceWorkbook(service, version) {
-        const workbook = { Request: [] }
-        const parameters = getParameters(service)
-        // console.log('Parameters:', { parameters })
-        for (const parameter of parameters) {
-            workbook.Request.push(generateParameterFlatMap(parameter))
-        }
-
-        const request = getRequest(service, version)
-        request.schema = mergeAllOfDefinitions(request.schema)
-        // console.log('Request:', { request })
-        if (request && request.schema) {
-            workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
-        }
-        if (workbook.Request.length === 0) {
-            delete workbook.Request
-        }
-
-        // console.log({ workbook })
-        const responses = getResponses(service, version)
-        for (const statusCode in responses) {
-            const response = responses[statusCode]
-            response.schema = mergeAllOfDefinitions(response.schema)
-            console.log({ statusCode, response })
-            if (response && response.schema) {
-                workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, !!response.required)
-            }
-        }
-        return workbook
-    },
+    }
+    return services
 }
 
-module.exports = SwaggerParsing
+export const generateServiceWorkbook = (service: OpenApiService, version: OpenApiVersion): DataSheetItemMap => {
+    const workbook: DataSheetItemMap = { Request: [] }
+    const parameters = getParameters(service)
+    // console.log('Parameters:', { parameters })
+    for (const parameter of parameters) {
+        workbook.Request.push(generateParameterFlatMap(parameter))
+    }
+
+    const request = getRequest(service, version)
+    request.schema = mergeAllOfDefinitions(request.schema)
+    // console.log('Request:', { request })
+    if (request && request.schema) {
+        workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
+    }
+    if (workbook.Request.length === 0) {
+        delete workbook.Request
+    }
+
+    // console.log({ workbook })
+    const responses = getResponses(service, version)
+    for (const statusCode in responses) {
+        const response = responses[statusCode]
+        response.schema = mergeAllOfDefinitions(response.schema)
+        console.log({ statusCode, response })
+        if (response && response.schema) {
+            workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, !!response.required)
+        }
+    }
+    return workbook
+}
