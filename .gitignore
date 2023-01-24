@@ -1,2 +1,5 @@
 node_modules
 coverage
+
+# Deliverable
+public\js\apiToSpreadsheet.js
