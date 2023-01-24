@@ -11,12 +11,13 @@
   ],
   "scripts": {
     "dev": "node esbuild.config.mjs",
+    "test": "jest --silent=false",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
   },
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^9.1.1",
     "js-yaml": "^4.1.0",
     "pluralize": "^8.0.0",
+    "util": "^0.12.5",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

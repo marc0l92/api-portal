@@ -1,7 +1,7 @@
-import $RefParser from '@apidevtools/json-schema-ref-parser'
 import yaml from 'js-yaml'
 import { convertToTable, generateSpreadsheet, readInputFile } from './utils/filesUtils'
 import { OpenApi, OpenApiService, OpenApiVersion } from './utils/interfaces'
+import { resolveReferences } from './utils/refParser'
 import { extractServices, generateServiceWorkbook } from './utils/swaggerParsing'
 
 let fileName = ''
@@ -15,7 +15,7 @@ document.getElementById('openApiFile').addEventListener('change', async (e: Even
         const file = (e.target as HTMLInputElement).files[0]
         fileName = file.name
         const fileContent = await readInputFile(file)
-        api = await $RefParser.dereference(yaml.load(fileContent)) as OpenApi
+        api = await resolveReferences(yaml.load(fileContent))
         parseApi(api)
     } catch (e) {
         logError(e)
