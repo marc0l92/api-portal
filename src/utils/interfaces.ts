@@ -75,8 +75,8 @@ export interface DataSheetItem {
     Location: string
     Level: number
     Path: string
-    Type: string
     Cardinality: DataSheetItemCardinality
+    Type: string
     Authorized: string
     Description: string
     Example: string
