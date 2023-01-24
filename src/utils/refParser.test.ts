@@ -20,6 +20,12 @@ describe('RefParser', () => {
             expect(resolveReferences(kInput)).toEqual(kExpected)
         })
 
+        test('Object with deep reference', () => {
+            const kInput = { a: { c: { d: 1 } }, b: { '$ref': '#/a/c' } }
+            const kExpected = { a: { c: { d: 1 } }, b: { d: 1 } }
+            expect(resolveReferences(kInput)).toEqual(kExpected)
+        })
+
         test('Object with simple reference and override description', () => {
             const kInput = { a: { c: 1, desc: 'global' }, b: { '$ref': '#/a', desc: 'local' } }
             const kExpected = { a: { c: 1, desc: 'global' }, b: { c: 1, desc: 'local' } }

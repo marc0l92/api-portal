@@ -15,7 +15,7 @@ const getObjectByRef = (obj: any, ref: string): any => {
     if (!ref.startsWith('#/')) {
         throw new Error('Only local references are supported')
     }
-    const steps = ref.substring(2)
+    const steps = ref.substring(2).split('/')
     let referencedObj = obj
     for (const step of steps) {
         if (step in referencedObj) {
@@ -30,9 +30,7 @@ const getObjectByRef = (obj: any, ref: string): any => {
 export const resolveReferences = (obj: any): any => {
     if (typeof obj === 'object') {
         obj = mapAllRef(obj, (item, ref) => {
-            console.log({ item, ref })
             const referencedObj = getObjectByRef(obj, ref)
-            console.log({ referencedObj })
             delete item['$ref']
             return Object.assign({}, referencedObj, item)
         })

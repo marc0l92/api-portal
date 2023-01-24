@@ -21,10 +21,10 @@ export const convertToTable = (itemsMap: DataSheetItemMap): DataSheetWorkbook =>
         const sheetData = itemsMap[sheetName]
         if (sheetData.length > 0) {
             const header = Object.keys(sheetData[0])
+            workbook[sheetName] = [header]
             for (const i in sheetData) {
                 workbook[sheetName].push(Object.values(sheetData[i]))
             }
-            workbook[sheetName].unshift(header)
         }
     }
     return workbook
@@ -39,15 +39,3 @@ export const generateSpreadsheet = (workbookData: DataSheetWorkbook, fileName: s
     // var data = XLSX.write(workbook, { bookType: 'ods' });
     XLSX.writeFile(workbook, fileName + ".ods");
 }
-
-// downloadFile: (fileName, content) => {
-//     const blob = new Blob([content], { type: 'text/csv' })
-//     const url = URL.createObjectURL(blob)
-//     const anchor = document.createElement('a')
-//     anchor.href = url
-//     anchor.download = `${fileName}.csv`
-//     document.body.appendChild(anchor)
-//     anchor.click()
-//     document.body.removeChild(anchor)
-//     URL.revokeObjectURL(url)
-// }

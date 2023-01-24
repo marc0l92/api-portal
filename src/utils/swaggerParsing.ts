@@ -240,9 +240,9 @@ export const generateServiceWorkbook = (service: OpenApiService, version: OpenAp
     }
 
     const request = getRequest(service, version)
-    request.schema = mergeAllOfDefinitions(request.schema)
     // console.log('Request:', { request })
     if (request && request.schema) {
+        request.schema = mergeAllOfDefinitions(request.schema)
         workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
     }
     if (workbook.Request.length === 0) {
