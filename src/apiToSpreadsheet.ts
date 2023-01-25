@@ -14,6 +14,7 @@ document.getElementById('openApiFile').addEventListener('change', async (e: Even
         const file = (e.target as HTMLInputElement).files[0]
         const fileContent = await readInputFile(file)
         api = await resolveReferences(yaml.load(fileContent))
+        console.log({ resolvedApi: api })
         version = getApiDocumentationVersion(api)
         services = extractServices(api)
         fillServicesSelect(services)
