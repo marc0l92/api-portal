@@ -1,4 +1,5 @@
-import { OpenApi, OpenApiModel, OpenApiParameterMap, OpenApiParameter, OpenApiService, OpenApiVersion, DataSheetItem, DataSheetItemCardinality, DataSheetItemMap, OpenApi3Parameter } from "./interfaces"
+import { OpenApiVersion, DataSheetItemCardinality } from "./interfaces"
+import type { OpenApiService, OpenApiParameter, OpenApiParameterMap, OpenApi3Parameter, OpenApiModel, DataSheetItem, OpenApi, DataSheetItemMap } from "./interfaces"
 
 const LOCATION_BODY = 'Body'
 

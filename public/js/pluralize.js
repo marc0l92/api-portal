@@ -29,7 +29,7 @@
    * @param  {(RegExp|string)} rule
    * @return {RegExp}
    */
-  function sanitizeRule (rule) {
+  function sanitizeRule(rule) {
     if (typeof rule === 'string') {
       return new RegExp('^' + rule + '$', 'i');
     }
@@ -45,7 +45,7 @@
    * @param  {string}   token
    * @return {Function}
    */
-  function restoreCase (word, token) {
+  function restoreCase(word, token) {
     // Tokens are an exact match.
     if (word === token) return token;
 
@@ -71,7 +71,7 @@
    * @param  {Array}  args
    * @return {string}
    */
-  function interpolate (str, args) {
+  function interpolate(str, args) {
     return str.replace(/\$(\d{1,2})/g, function (match, index) {
       return args[index] || '';
     });
@@ -84,7 +84,7 @@
    * @param  {Array}  rule
    * @return {string}
    */
-  function replace (word, rule) {
+  function replace(word, rule) {
     return word.replace(rule[0], function (match, index) {
       var result = interpolate(rule[1], arguments);
 
@@ -104,7 +104,7 @@
    * @param  {Array}    rules
    * @return {string}
    */
-  function sanitizeWord (token, word, rules) {
+  function sanitizeWord(token, word, rules) {
     // Empty string or doesn't need fixing.
     if (!token.length || uncountables.hasOwnProperty(token)) {
       return word;
@@ -130,7 +130,7 @@
    * @param  {Array}    rules
    * @return {Function}
    */
-  function replaceWord (replaceMap, keepMap, rules) {
+  function replaceWord(replaceMap, keepMap, rules) {
     return function (word) {
       // Get the correct token and case restoration functions.
       var token = word.toLowerCase();
@@ -153,7 +153,7 @@
   /**
    * Check if a word is part of the map.
    */
-  function checkWord (replaceMap, keepMap, rules, bool) {
+  function checkWord(replaceMap, keepMap, rules, bool) {
     return function (word) {
       var token = word.toLowerCase();
 
@@ -172,7 +172,7 @@
    * @param  {boolean} inclusive Whether to prefix with the number (e.g. 3 ducks)
    * @return {string}
    */
-  function pluralize (word, count, inclusive) {
+  function pluralize(word, count, inclusive) {
     var pluralized = count === 1
       ? pluralize.singular(word) : pluralize.plural(word);
 

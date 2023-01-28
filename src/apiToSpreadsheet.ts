@@ -1,6 +1,7 @@
 import yaml from 'js-yaml'
 import { convertToTable, generateSpreadsheet, readInputFile } from './utils/filesUtils'
-import { OpenApi, OpenApiService, OpenApiVersion } from './utils/interfaces'
+import { OpenApiVersion } from './utils/interfaces'
+import type { OpenApi, OpenApiService } from './utils/interfaces'
 import { resolveReferences } from './utils/refParser'
 import { extractServices, generateServiceWorkbook, getApiDocumentationVersion } from './utils/swaggerParsing'
 

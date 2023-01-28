@@ -1,4 +1,5 @@
-import { DataSheetItemMap, DataSheetWorkbook } from "./interfaces"
+import type { DataSheetItemMap, DataSheetWorkbook } from "./interfaces"
+
 
 const XLSX = require("xlsx")
 

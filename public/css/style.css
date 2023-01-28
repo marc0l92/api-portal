@@ -1,9 +1,10 @@
 :root {
-    --color-primary: #7286D3;
-    --color-disabled: #8EA7E9;
-    --color-accent: #7286D3;
+    --color-primary: #7286d3;
+    --color-disabled: #8ea7e9;
+    --color-accent: #7286d3;
     --color-background-accent: #fff;
     --color-background: #f9f9f9;
+    --color-border: #ddd;
 }
 
 html {
@@ -15,29 +16,12 @@ body {
     height: 100%;
 }
 
-.box {
-    background-color: var(--color-background-accent);
-}
-
-.navbar {
-    border-bottom: 1px solid #ddd;
-}
-
-.api-style .navbar .navbar-item.is-active{
-    color: var(--color-primary);
-}
-
 .title {
     color: var(--color-primary);
 }
 
 strong {
     color: var(--color-accent);
-}
-
-.api-style .hero.is-small .hero-body {
-    padding-left: 0;
-    padding-right: 0;
 }
 
 .button.is-primary {

@@ -1,10 +1,10 @@
 {
+    "extends": "@tsconfig/svelte/tsconfig.json",
     "compilerOptions": {
         "allowJs": true,
-        "baseUrl": ".",
+        "baseUrl": "./src",
         "esModuleInterop": true,
         "importHelpers": true,
-        "inlineSourceMap": true,
         "inlineSources": true,
         "isolatedModules": true,
         "lib": [
@@ -16,9 +16,13 @@
         "module": "ESNext",
         "moduleResolution": "node",
         "noImplicitAny": true,
-        "target": "ES6"
+        "target": "ES6",
+        "types": ["svelte", "node", "jest"],
+        "strict": false,
+        "forceConsistentCasingInFileNames":true
     },
     "include": [
-        "**/*.ts"
-    ]
+        "src/**/*.ts"
+    ],
+    "exclude": ["node_modules/**", "public/**"]
 }

@@ -6,90 +6,45 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../favicon.ico">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <title>REST Api to Text</title>
 </head>
 
-<body class="api-style">
-    <nav class="navbar">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="https://marc0l92.github.io/api-tools/"><strong>API Tools</strong></a>
-
-            <a role="button" class="navbar-burger" data-target="my-navbar">
-                <span></span>
-                <span></span>
-                <span></span>
-            </a>
-        </div>
-
-        <div id="my-navbar" class="navbar-menu">
-            <div class="navbar-start">
-                <a class="navbar-item is-active">REST Api to Text</a>
-                <a class="navbar-item">API to Spreadsheet</a>
-            </div>
-
-            <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="button is-primary"
-                            href="https://github.com/marc0l92/api-tools/issues/new/choose"><strong>Feedbacks</strong></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body>
     <div class="container">
-        <section class="hero is-small">
-            <div class="hero-body">
-                <h1 class="title">REST Api to Text</h1>
-                <p class="subtitle">Input your api <i>method</i> and <i>URI</i> and check what is the meaning of it
-                    according to
-                    the REST API guidelines</p>
+        <h1>REST Api to Text</h1>
+        <p>Input your api method and URL and check what the customer thinks your API will do</p>
+        <form>
+            <div class="row">
+                <div class="col-2">
+                    <label class="form-label">Method</label>
+                    <select class="form-select" id="method">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="PATCH">PATCH</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label class="form-label">URI</label>
+                    <input type="text" class="form-control" id="uri"
+                        placeholder="/v1/reservation/chains/AAA/links/1234567890"
+                        value="/v1/reservation/chains/AAA/links/1234567890" />
+                    <div class="form-text">Example: /v1/reservation/chains/AAA/links/1234567890</div>
+                </div>
             </div>
-        </section>
-        <div class="box">
-            <form>
-                <div class="columns">
-                    <div class="column">
-                        <div class="field has-addons">
-                            <div class="control">
-                                <div class="select">
-                                    <select id="method">
-                                        <option value="GET">GET</option>
-                                        <option value="POST">POST</option>
-                                        <option value="PUT">PUT</option>
-                                        <option value="PATCH">PATCH</option>
-                                        <option value="DELETE">DELETE</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control is-expanded">
-                                <input type="text" class="input" id="uri"
-                                    placeholder="/v1/reservation/chains/AAA/links/1234567890"
-                                    value="/v1/reservation/chains/AAA/links/1234567890" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="box">
-            <p class="subtitle"><strong>Parsing output:</strong></p>
-            <div id="response">
-                <div class="field has-addons">
-                    <p class="control">
-                        <input class="checkbox" type="checkbox" checked>
-                    </p>
-                    <p class="control"><a class="button is-static" id="version"></a></p>
-                </div>
-                <!-- <span class="badge bg-success" id="version"></span> -->
-                <span class="badge bg-primary" id="capability"></span>
-                <p id="text">Javascript loading...</p>
-                <div id="textAlternativeSection" style="display: none;">
-                    <p>-- or --</p>
-                    <p id="textAlternative">Javascript loading...</p>
-                </div>
+        </form>
+        <hr />
+        <h4>What the customer expect this service will do</h4>
+        <div id="response">
+            <span class="badge bg-success" id="version"></span>
+            <span class="badge bg-primary" id="capability"></span>
+            <p id="text">Javascript loading...</p>
+            <div id="textAlternativeSection" style="display: none;">
+                <p>-- or --</p>
+                <p id="textAlternative">Javascript loading...</p>
             </div>
         </div>
         <div class="alert alert-danger" id="errors" style="display: none;"></div>
@@ -211,10 +166,6 @@
 
             updateText()
         }
-    </script>
-    <script>
-        // Hot reload
-        new EventSource('/esbuild').addEventListener('change', () => location.reload())
     </script>
 </body>
 
