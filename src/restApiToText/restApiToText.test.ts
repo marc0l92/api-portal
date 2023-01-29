@@ -1,6 +1,6 @@
 jest.mock('./dictionaryApi', () => { return { queryDictionary: jest.fn() } })
 
-import { ApiMethods, apiToTokens, ApiTokenType, type RestApiToTextOptions, type RestApiToTextResults, type ApiUriToken, refreshApiTokens } from './restApiToText'
+import { ApiMethods, apiToTokens, ApiTokenType, type RestApiToTextOptions, type RestApiToTextResults, type ApiUriToken, refreshApiTokens, apiTokensToString } from './restApiToText'
 import * as DictionaryApi from './dictionaryApi'
 
 const queryDictionaryMock = DictionaryApi.queryDictionary as jest.Mock
@@ -11,6 +11,9 @@ const kQueryDictionaryPass = {
 
 function tokenByType(type: ApiTokenType, alternativeTypes: ApiTokenType[] = []): ApiUriToken {
     return { text: '', type, alternativeTypes, warnings: [] }
+}
+function tokenByTypeName(type: ApiTokenType, text: string): ApiUriToken {
+    return { text, type, alternativeTypes: [], warnings: [] }
 }
 
 describe('RestApiToText.test', () => {
@@ -106,7 +109,29 @@ describe('RestApiToText.test', () => {
     })
 
     describe('apiTokensToString', () => {
-        test.todo('Create tests')
+        test('Create new items in a collection', async () => {
+            const kMethod = ApiMethods.POST
+            const kTokens: ApiUriToken[] = [
+                tokenByTypeName(ApiTokenType.COLLECTION, 'authors'),
+                tokenByTypeName(ApiTokenType.RESOURCE, 'Dante'),
+                tokenByTypeName(ApiTokenType.COLLECTION, 'books'),
+            ]
+            const kUriString = 'Create a new book of the author with id "Dante"'
+
+            expect(await apiTokensToString(kMethod, kTokens)).toEqual(kUriString)
+        })
+        test('Retrieve resource', async () => {
+            const kMethod = ApiMethods.GET
+            const kTokens: ApiUriToken[] = [
+                tokenByTypeName(ApiTokenType.COLLECTION, 'authors'),
+                tokenByTypeName(ApiTokenType.RESOURCE, 'Dante'),
+                tokenByTypeName(ApiTokenType.COLLECTION, 'books'),
+                tokenByTypeName(ApiTokenType.RESOURCE, 'Divina-Commedia'),
+            ]
+            const kUriString = 'Retrieve the book with id "Divina-Commedia" of the author with id "Dante"'
+
+            expect(await apiTokensToString(kMethod, kTokens)).toEqual(kUriString)
+        })
     })
 })
 

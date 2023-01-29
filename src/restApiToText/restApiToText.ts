@@ -42,30 +42,21 @@ interface MethodsVerbs {
     collection: {
         [k in ApiMethods]: (collectionName: string) => string
     }
-    controller: (controllerName: string, resourceId: string, collectionName: string) => string
-    resourceAndCollection: (resourceId: string, collectionName: string) => string
+    subResource: {
+        [k in ApiMethods]: (subResourceName: string, resourceId: string, collectionName: string) => string
+    }
+    controller: {
+        controllerOnCollection: (controllerName: string, collectionName: string) => string
+        controllerOnResource: (controllerName: string, resourceId: string, collectionName: string) => string
+        controllerOnSubResource: (controllerName: string, subResourceName: string, resourceId: string, collectionName: string) => string
+    }
+    middle: {
+        resourceAndCollection: (resourceId: string, collectionName: string) => string
+        subResourceAndResourceAndCollection: (subResourceName: string, resourceId: string, collectionName: string) => string
+    }
 }
 
 const UriNotCompleted = 'Uri not completed, continue typing...'
-
-const methodsVerb: MethodsVerbs = {
-    resource: {
-        GET: (resourceId: string, collectionName: string): string => `Retrieve the ${pluralize.singular(collectionName)} with id ${resourceId}`,
-        POST: (controllerName: string, collectionName: string): string => `Perform the action of ${controllerName} on the ${collectionName}`,
-        PUT: (resourceId: string, collectionName: string): string => `Replace with the one in request, the ${pluralize.singular(collectionName)} with id ${resourceId}`,
-        PATCH: (resourceId: string, collectionName: string): string => `Apply the changes listed in request to the ${pluralize.singular(collectionName)} with id ${resourceId}`,
-        DELETE: (resourceId: string, collectionName: string): string => `Delete the ${pluralize.singular(collectionName)} with id ${resourceId}`,
-    },
-    collection: {
-        GET: (collectionName: string): string => `Search in the ${collectionName}`,
-        POST: (collectionName: string): string => `Create a new ${pluralize.singular(collectionName)}`,
-        PUT: (collectionName: string): string => `Replace with the list in request all the ${collectionName}`,
-        PATCH: (collectionName: string): string => `Replace with the list in request all the ${collectionName}`,
-        DELETE: (collectionName: string): string => `Delete all the ${collectionName}`,
-    },
-    controller: (controllerName: string, resourceId: string, collectionName: string): string => `Perform the action of ${controllerName} on the ${pluralize.singular(collectionName)} with id ${resourceId}`,
-    resourceAndCollection: (resourceId: string, collectionName: string) => ` of the ${pluralize.singular(collectionName)} with id ${resourceId}`,
-}
 
 async function checkIsNoun(word: string, warnings: string[]) {
     const dictionaryResult = await queryDictionary(word)
@@ -193,10 +184,10 @@ export const apiToTokens = async (method: ApiMethods, uri: string, options: Rest
             if (oddNotEven) {
                 const token = await parseCollection(uriTokens[tokensIndex++])
                 if (!isFirstToken) {
-                    if (isLastToken) {
-                        token.alternativeTypes.push(ApiTokenType.CONTROLLER)
-                    } else {
+                    if (method !== ApiMethods.POST) {
                         token.alternativeTypes.push(ApiTokenType.SUB_RESOURCE)
+                    } else if (isLastToken) {
+                        token.alternativeTypes.push(ApiTokenType.CONTROLLER)
                     }
                 }
                 results.tokens.push(token)
@@ -219,6 +210,7 @@ export const apiToTokens = async (method: ApiMethods, uri: string, options: Rest
 export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[], updatedIndex: number) => {
     let tokensIndex = 0
 
+    // Skip version and capability
     while (tokensIndex < tokens.length && (tokens[tokensIndex].type == ApiTokenType.VERSION || tokens[tokensIndex].type == ApiTokenType.CAPABILITY)) {
         tokensIndex++
     }
@@ -227,7 +219,7 @@ export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[]
     let isFirstToken = true
     while (tokensIndex < tokens.length) {
         const token = tokens[tokensIndex]
-        console.log({ token, tokensIndex, nextTypes })
+        // console.log({ token, tokensIndex, nextTypes })
         if (nextTypes.indexOf(token.type) >= 0) {
             if (tokensIndex === updatedIndex) {
                 tokens[tokensIndex] = await parseByType(token.type, token.text)
@@ -241,7 +233,12 @@ export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[]
                     }
                     break
                 case ApiTokenType.RESOURCE:
-                    nextTypes = [ApiTokenType.COLLECTION, ApiTokenType.SUB_RESOURCE]
+                    nextTypes = [ApiTokenType.COLLECTION]
+                    if (method !== ApiMethods.POST) {
+                        nextTypes.push(ApiTokenType.SUB_RESOURCE)
+                    } else if (tokensIndex === tokens.length - 2) {
+                        nextTypes.push(ApiTokenType.CONTROLLER)
+                    }
                     break
                 case ApiTokenType.SUB_RESOURCE:
                     nextTypes = [ApiTokenType.COLLECTION]
@@ -269,12 +266,107 @@ export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[]
     return tokens
 }
 
+export const rotateTokenType = (tokens: ApiUriToken[], toUpdateIndex: number): ApiUriToken[] => {
+    const itemToChange = tokens[toUpdateIndex];
+    itemToChange.alternativeTypes.push(itemToChange.type);
+    itemToChange.type = itemToChange.alternativeTypes.shift();
+    return tokens
+}
+
 export const apiTokensToString = (method: ApiMethods, tokens: ApiUriToken[]): string => {
     let text = ''
-    for (const token of tokens) {
-        switch (token.type) {
+    let tokensIndex = tokens.length - 1
+    let isFirstToken = true
 
+    while (tokensIndex >= 0) {
+        switch (tokens[tokensIndex].type) {
+            case ApiTokenType.COLLECTION:
+                if (isFirstToken) {
+                    text += methodsVerb.collection[method](tokens[tokensIndex].text)
+                }
+                break
+            case ApiTokenType.RESOURCE:
+                if (tokensIndex >= 1 && tokens[tokensIndex - 1].type === ApiTokenType.COLLECTION) {
+                    if (isFirstToken) {
+                        if (method !== ApiMethods.POST) {
+                            text += methodsVerb.resource[method](tokens[tokensIndex].text, tokens[tokensIndex - 1].text)
+                        } else {
+                            return 'Error: method POST not supported on resources'
+                        }
+                    } else {
+                        text += methodsVerb.middle.resourceAndCollection(tokens[tokensIndex].text, tokens[tokensIndex - 1].text)
+                    }
+                    tokensIndex--
+                } else {
+                    return 'Error: the URI should start with a collection/resource'
+                }
+                break
+            case ApiTokenType.SUB_RESOURCE:
+                if (tokensIndex >= 2 && tokens[tokensIndex - 1].type === ApiTokenType.RESOURCE && tokens[tokensIndex - 2].type === ApiTokenType.COLLECTION) {
+                    if (isFirstToken) {
+                        if (method !== ApiMethods.POST) {
+                            text += methodsVerb.subResource[method](tokens[tokensIndex].text, tokens[tokensIndex - 1].text, tokens[tokensIndex - 2].text)
+                        } else {
+                            return 'Error: method POST not supported on sub-resources'
+                        }
+                    } else {
+                        text += methodsVerb.middle.subResourceAndResourceAndCollection(tokens[tokensIndex].text, tokens[tokensIndex - 1].text, tokens[tokensIndex - 2].text)
+                    }
+                    tokensIndex -= 2
+                } else {
+                    return 'Error: the URI should start with a collection/resource/sub-resource'
+                }
+                break
+            case ApiTokenType.CONTROLLER:
+                if (method === ApiMethods.POST && isFirstToken) {
+                    if (tokensIndex >= 1 && tokens[tokensIndex - 1].type === ApiTokenType.COLLECTION) {
+                        text += methodsVerb.controller.controllerOnCollection(tokens[tokensIndex].text, tokens[tokensIndex - 1].text)
+                    } else if (tokensIndex >= 2 && tokens[tokensIndex - 1].type === ApiTokenType.RESOURCE && tokens[tokensIndex - 2].type === ApiTokenType.COLLECTION) {
+                        text += methodsVerb.controller.controllerOnResource(tokens[tokensIndex].text, tokens[tokensIndex - 1].text, tokens[tokensIndex - 2].text)
+                    } else if (tokensIndex >= 3 && tokens[tokensIndex - 1].type === ApiTokenType.SUB_RESOURCE && tokens[tokensIndex - 2].type === ApiTokenType.RESOURCE && tokens[tokensIndex - 3].type === ApiTokenType.COLLECTION) {
+                        text += methodsVerb.controller.controllerOnSubResource(tokens[tokensIndex].text, tokens[tokensIndex - 1].text, tokens[tokensIndex - 2].text, tokens[tokensIndex - 3].text)
+                    }
+                } else {
+                    return 'Error: it is possible to use controller only at the end of the URI with the method POST'
+                }
+                break
         }
+        tokensIndex--
+        isFirstToken = false
     }
     return text
+}
+
+
+const methodsVerb: MethodsVerbs = {
+    resource: {
+        GET: (resourceId: string, collectionName: string): string => `Retrieve the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        POST: (resourceId: string, collectionName: string): string => '',
+        PUT: (resourceId: string, collectionName: string): string => `Replace with the one in request, the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        PATCH: (resourceId: string, collectionName: string): string => `Apply the changes listed in request to the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        DELETE: (resourceId: string, collectionName: string): string => `Delete the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+    },
+    collection: {
+        GET: (collectionName: string): string => `Search in the ${collectionName}`,
+        POST: (collectionName: string): string => `Create a new ${pluralize.singular(collectionName)}`,
+        PUT: (collectionName: string): string => `Replace with the list in request all the ${collectionName}`,
+        PATCH: (collectionName: string): string => `Replace with the list in request all the ${collectionName}`,
+        DELETE: (collectionName: string): string => `Delete all the ${collectionName}`,
+    },
+    subResource: {
+        GET: (subResourceName: string, resourceId: string, collectionName: string): string => `Retrieve the ${subResourceName} of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        POST: (subResourceName: string, resourceId: string, collectionName: string): string => '',
+        PUT: (subResourceName: string, resourceId: string, collectionName: string): string => `Replace with the one in request, the ${subResourceName} of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        PATCH: (subResourceName: string, resourceId: string, collectionName: string): string => `Apply the changes listed in request to the ${subResourceName} of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        DELETE: (subResourceName: string, resourceId: string, collectionName: string): string => `Delete the ${subResourceName} of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+    },
+    controller: {
+        controllerOnCollection: (controllerName: string, collectionName: string): string => `Perform the action of "${controllerName}" on the ${collectionName}`,
+        controllerOnResource: (controllerName: string, resourceId: string, collectionName: string): string => `Perform the action of "${controllerName}" on the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        controllerOnSubResource: (controllerName, subResourceName, resourceId, collectionName) => `Perform the action of "${controllerName}" on the ${subResourceName} of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+    },
+    middle: {
+        resourceAndCollection: (resourceId: string, collectionName: string) => `, of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        subResourceAndResourceAndCollection: (subResourceName: string, resourceId: string, collectionName: string) => `, of the ${subResourceName} of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+    },
 }

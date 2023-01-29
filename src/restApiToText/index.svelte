@@ -2,12 +2,14 @@
   import Navbar from '../components/navbar.svelte';
   import InputUri from './inputUri.svelte';
   import Result from './result.svelte';
-  import { ApiMethods, apiTokensToString, apiToTokens, refreshApiTokens, type RestApiToTextResults } from './restApiToText';
+  import { ApiMethods, apiTokensToString, apiToTokens, refreshApiTokens, rotateTokenType, type RestApiToTextResults } from './restApiToText';
   import Error from './error.svelte';
 
   let apiTokens: RestApiToTextResults = { errors: [], tokens: [] };
   let apiText: string = '';
   let method: ApiMethods;
+
+  // $: console.log(JSON.stringify(apiTokens.tokens));
 
   async function onUriChange(event: CustomEvent<{ method: ApiMethods; uri: string; version: boolean; capability: boolean }>) {
     method = event.detail.method;
@@ -15,19 +17,15 @@
       version: event.detail.version,
       capability: event.detail.capability,
     });
-    if (apiTokens.tokens.length > 0) {
-      apiText = apiTokensToString(method, apiTokens.tokens);
-    }
+    apiText = apiTokensToString(method, apiTokens.tokens);
   }
 
   async function onChangeTokenType(event: CustomEvent<{ index: number }>) {
     const updatedIndex = event.detail.index;
     if (updatedIndex < apiTokens.tokens.length) {
-      const itemToChange = apiTokens.tokens[updatedIndex];
-      itemToChange.alternativeTypes.push(itemToChange.type);
-      itemToChange.type = itemToChange.alternativeTypes.shift();
+      apiTokens.tokens = rotateTokenType(apiTokens.tokens, updatedIndex);
       apiTokens.tokens = await refreshApiTokens(method, apiTokens.tokens, updatedIndex);
-      // apiTokens=apiTokens
+      apiText = apiTokensToString(method, apiTokens.tokens);
     }
   }
 </script>
