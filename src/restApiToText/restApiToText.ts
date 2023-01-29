@@ -146,7 +146,7 @@ async function parseController(controllerName: string): Promise<ApiUriToken> {
     if (!pluralize.isSingular(controllerName)) {
         part.warnings.push(`The controller "${controllerName}" should be a singular word`)
     }
-    await checkIsNoun(controllerName, part.warnings)
+    // await checkIsNoun(controllerName, part.warnings)
     return part
 }
 
@@ -182,24 +182,26 @@ export const apiToTokens = async (method: ApiMethods, uri: string, options: Rest
         while (tokensIndex < uriTokens.length) {
             const isLastToken = tokensIndex === uriTokens.length - 1
             if (oddNotEven) {
-                const token = await parseCollection(uriTokens[tokensIndex++])
+                const token = await parseCollection(uriTokens[tokensIndex])
                 if (!isFirstToken) {
-                    if (method !== ApiMethods.POST) {
+                    if (!isLastToken || method !== ApiMethods.POST) {
                         token.alternativeTypes.push(ApiTokenType.SUB_RESOURCE)
-                    } else if (isLastToken) {
+                    }
+                    if (isLastToken && method === ApiMethods.POST) {
                         token.alternativeTypes.push(ApiTokenType.CONTROLLER)
                     }
                 }
                 results.tokens.push(token)
             } else {
                 if (isLastToken && method === ApiMethods.POST) {
-                    results.tokens.push(await parseController(uriTokens[tokensIndex++]))
+                    results.tokens.push(await parseController(uriTokens[tokensIndex]))
                 } else {
-                    results.tokens.push(await parseResource(uriTokens[tokensIndex++]))
+                    results.tokens.push(await parseResource(uriTokens[tokensIndex]))
                 }
             }
             oddNotEven = !oddNotEven
             isFirstToken = false
+            tokensIndex++
         }
     } else {
         results.errors.push(UriNotCompleted)
@@ -219,7 +221,8 @@ export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[]
     let isFirstToken = true
     while (tokensIndex < tokens.length) {
         const token = tokens[tokensIndex]
-        // console.log({ token, tokensIndex, nextTypes })
+        const isNextLastToken = tokensIndex === tokens.length - 2
+        console.log({ token, tokensIndex, nextTypes })
         if (nextTypes.indexOf(token.type) >= 0) {
             if (tokensIndex === updatedIndex) {
                 tokens[tokensIndex] = await parseByType(token.type, token.text)
@@ -228,21 +231,22 @@ export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[]
             switch (token.type) {
                 case ApiTokenType.COLLECTION:
                     nextTypes = [ApiTokenType.RESOURCE]
-                    if (tokensIndex === tokens.length - 2 && !isFirstToken && method === ApiMethods.POST) {
+                    if (isNextLastToken && !isFirstToken && method === ApiMethods.POST) {
                         nextTypes.push(ApiTokenType.CONTROLLER)
                     }
                     break
                 case ApiTokenType.RESOURCE:
                     nextTypes = [ApiTokenType.COLLECTION]
-                    if (method !== ApiMethods.POST) {
+                    if (!isNextLastToken || method !== ApiMethods.POST) {
                         nextTypes.push(ApiTokenType.SUB_RESOURCE)
-                    } else if (tokensIndex === tokens.length - 2) {
+                    }
+                    if (isNextLastToken && method === ApiMethods.POST) {
                         nextTypes.push(ApiTokenType.CONTROLLER)
                     }
                     break
                 case ApiTokenType.SUB_RESOURCE:
                     nextTypes = [ApiTokenType.COLLECTION]
-                    if (tokensIndex === tokens.length - 2) {
+                    if (isNextLastToken && method === ApiMethods.POST) {
                         nextTypes.push(ApiTokenType.CONTROLLER)
                     }
                     break
@@ -321,10 +325,13 @@ export const apiTokensToString = (method: ApiMethods, tokens: ApiUriToken[]): st
                 if (method === ApiMethods.POST && isFirstToken) {
                     if (tokensIndex >= 1 && tokens[tokensIndex - 1].type === ApiTokenType.COLLECTION) {
                         text += methodsVerb.controller.controllerOnCollection(tokens[tokensIndex].text, tokens[tokensIndex - 1].text)
+                        tokensIndex--
                     } else if (tokensIndex >= 2 && tokens[tokensIndex - 1].type === ApiTokenType.RESOURCE && tokens[tokensIndex - 2].type === ApiTokenType.COLLECTION) {
                         text += methodsVerb.controller.controllerOnResource(tokens[tokensIndex].text, tokens[tokensIndex - 1].text, tokens[tokensIndex - 2].text)
+                        tokensIndex -= 2
                     } else if (tokensIndex >= 3 && tokens[tokensIndex - 1].type === ApiTokenType.SUB_RESOURCE && tokens[tokensIndex - 2].type === ApiTokenType.RESOURCE && tokens[tokensIndex - 3].type === ApiTokenType.COLLECTION) {
                         text += methodsVerb.controller.controllerOnSubResource(tokens[tokensIndex].text, tokens[tokensIndex - 1].text, tokens[tokensIndex - 2].text, tokens[tokensIndex - 3].text)
+                        tokensIndex -= 3
                     }
                 } else {
                     return 'Error: it is possible to use controller only at the end of the URI with the method POST'
