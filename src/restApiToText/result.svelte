@@ -1,19 +1,34 @@
 <script lang="ts">
-    import type { RestApiToTextUriTokens } from './restApiToText';
-    import { RestApiPartType } from './restApiToText';
-    const restApiPartTypeStrings = Object.values(RestApiPartType);
+    import { createEventDispatcher } from 'svelte';
+    import type { ApiUriToken } from './restApiToText';
+    import { ApiTokenType } from './restApiToText';
+    const restApiPartTypeStrings = Object.values(ApiTokenType);
 
-    export let parts: RestApiToTextUriTokens[] = [];
+    export let tokens: ApiUriToken[] = [];
     export let text = '';
-    $: hasError = parts.filter((p) => p.warnings.length > 0).length > 0;
+    $: hasError = tokens.filter((p) => p.warnings.length > 0).length > 0;
+
+    const dispatch = createEventDispatcher();
+    function changeTokenType(index: number) {
+        dispatch('changeTokenType', { index });
+    }
 </script>
 
 <div class="box">
     <p class="subtitle"><strong>Result:</strong></p>
     <div class="tags has-addons">
-        {#each parts as part}
+        {#each tokens as part, index}
             <span class="tag is-separator">/</span>
-            <span class="tag is-{part.type} {part.warnings.length > 0 ? 'has-warning' : ''}">{part.text}</span>
+            {#if part.alternativeTypes.length > 0}
+                <button class="tag is-{part.type} {part.warnings.length > 0 ? 'has-warning' : ''}" on:click={() => changeTokenType(index)}>
+                    {part.text}
+                    <span class="margin-left"><span class="icon"><i class="fa-solid fa-arrows-rotate" /></span></span>
+                </button>
+            {:else}
+                <span class="tag is-{part.type} {part.warnings.length > 0 ? 'has-warning' : ''}">
+                    {part.text}
+                </span>
+            {/if}
         {/each}
     </div>
     <div class="block">
@@ -22,7 +37,7 @@
     {#if hasError}
         <div class="warnings">
             <p><strong>Warnings:</strong></p>
-            {#each parts as part}
+            {#each tokens as part}
                 {#each part.warnings as warning}
                     <p>
                         <span class="icon is-warning"><i class="fa-solid fa-triangle-exclamation" /></span>
@@ -53,6 +68,14 @@
 
     .icon.is-warning {
         color: #ffe86e;
+    }
+    span.margin-left {
+        margin-left: 0.5em;
+    }
+
+    button.tag {
+        border: none;
+        cursor: pointer;
     }
 
     .tags.no-margin {

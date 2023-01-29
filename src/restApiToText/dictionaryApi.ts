@@ -37,7 +37,7 @@ function computeType(queryResponse: QueryResponse): void {
 }
 
 function convertStatsToPercentage(queryResponse: QueryResponse): void {
-    const total = queryResponse.stats.noun + queryResponse.stats.verb + queryResponse.stats.adjective
+    const total = Math.max(1, queryResponse.stats.noun + queryResponse.stats.verb + queryResponse.stats.adjective)
     queryResponse.stats.noun = Math.round(queryResponse.stats.noun / total * 100)
     queryResponse.stats.verb = Math.round(queryResponse.stats.verb / total * 100)
     queryResponse.stats.adjective = Math.round(queryResponse.stats.adjective / total * 100)

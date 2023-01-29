@@ -2,18 +2,33 @@
   import Navbar from '../components/navbar.svelte';
   import InputUri from './inputUri.svelte';
   import Result from './result.svelte';
-  import { apiToTokens, type RestApiToTextResults } from './restApiToText';
-  import type { ApiMethods } from './restApiToText';
+  import { ApiMethods, apiTokensToString, apiToTokens, refreshApiTokens, type RestApiToTextResults } from './restApiToText';
   import Error from './error.svelte';
 
-  let results: RestApiToTextResults = { errors: [], results: [] };
+  let apiTokens: RestApiToTextResults = { errors: [], tokens: [] };
+  let apiText: string = '';
+  let method: ApiMethods;
 
   async function onUriChange(event: CustomEvent<{ method: ApiMethods; uri: string; version: boolean; capability: boolean }>) {
-    console.log(event.detail);
-    results = await apiToTokens(event.detail.method, event.detail.uri, {
+    method = event.detail.method;
+    apiTokens = await apiToTokens(method, event.detail.uri, {
       version: event.detail.version,
       capability: event.detail.capability,
     });
+    if (apiTokens.tokens.length > 0) {
+      apiText = apiTokensToString(method, apiTokens.tokens);
+    }
+  }
+
+  async function onChangeTokenType(event: CustomEvent<{ index: number }>) {
+    const updatedIndex = event.detail.index;
+    if (updatedIndex < apiTokens.tokens.length) {
+      const itemToChange = apiTokens.tokens[updatedIndex];
+      itemToChange.alternativeTypes.push(itemToChange.type);
+      itemToChange.type = itemToChange.alternativeTypes.shift();
+      apiTokens.tokens = await refreshApiTokens(method, apiTokens.tokens, updatedIndex);
+      // apiTokens=apiTokens
+    }
   }
 </script>
 
@@ -28,12 +43,12 @@
     </div>
   </section>
   <InputUri on:uriChange={onUriChange} />
-  {#each results.errors as error}
-    <Error message={error} />
-  {/each}
-  {#each results.results as result}
-    <Result {...result} />
-  {/each}
+  {#if apiTokens.errors.length > 0}
+    <Error messages={apiTokens.errors} />
+  {/if}
+  {#if apiTokens.tokens.length > 0}
+    <Result tokens={apiTokens.tokens} text={apiText} on:changeTokenType={onChangeTokenType} />
+  {/if}
 </div>
 
 <style>

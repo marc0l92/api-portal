@@ -1,10 +1,14 @@
 <script lang="ts">
-    export let message = '';
+    export let messages: string[] = [];
 </script>
 
 <div class="box">
-    <p class="subtitle"><strong>Error:</strong></p>
-    <div>Message: {message}</div>
+    <p class="subtitle"><strong>Errors:</strong></p>
+    <ul>
+        {#each messages as message}
+            <li>{message}</li>
+        {/each}
+    </ul>
 </div>
 
 <style>

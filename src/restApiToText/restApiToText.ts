@@ -1,7 +1,7 @@
 const pluralize = require('pluralize')
 import { queryDictionary } from './dictionaryApi'
 
-export enum RestApiPartType {
+export enum ApiTokenType {
     VERSION = 'version',
     CAPABILITY = 'capability',
     COLLECTION = 'collection',
@@ -12,13 +12,14 @@ export enum RestApiPartType {
 
 export interface RestApiToTextResults {
     errors: string[]
-    tokens: RestApiToTextUriTokens[]
+    tokens: ApiUriToken[]
 }
 
-export interface RestApiToTextUriTokens {
+export interface ApiUriToken {
     text: string
-    type: RestApiPartType
+    type: ApiTokenType
     warnings: string[]
+    alternativeTypes: ApiTokenType[]
 }
 
 export interface RestApiToTextOptions {
@@ -71,14 +72,15 @@ async function checkIsNoun(word: string, warnings: string[]) {
     if (!dictionaryResult.found) {
         warnings.push(`The word "${word}" is not present in the english dictionary`)
     } else if (!dictionaryResult.type.isNoun) {
-        warnings.push(`The word "${word}" is not usually used as noun (noun:${dictionaryResult.stats.noun}%, verb:${dictionaryResult.stats.verb}%, adjective:${dictionaryResult.stats.adjective}%)`)
+        warnings.push(`The word "${word}" is not usually used as noun (noun: ${dictionaryResult.stats.noun}%, verb: ${dictionaryResult.stats.verb}%, adjective: ${dictionaryResult.stats.adjective}%)`)
     }
 }
 
-function parseVersion(version: string): RestApiToTextUriTokens {
-    const part: RestApiToTextUriTokens = {
-        type: RestApiPartType.VERSION,
+function parseVersion(version: string): ApiUriToken {
+    const part: ApiUriToken = {
+        type: ApiTokenType.VERSION,
         text: version,
+        alternativeTypes: [],
         warnings: [],
     }
     if (!version.match(/^[vV]?\d+(\.\d+)?$/)) {
@@ -90,10 +92,11 @@ function parseVersion(version: string): RestApiToTextUriTokens {
     return part
 }
 
-async function parseCapability(capability: string): Promise<RestApiToTextUriTokens> {
-    const part: RestApiToTextUriTokens = {
-        type: RestApiPartType.CAPABILITY,
+async function parseCapability(capability: string): Promise<ApiUriToken> {
+    const part: ApiUriToken = {
+        type: ApiTokenType.CAPABILITY,
         text: capability,
+        alternativeTypes: [],
         warnings: [],
     }
     if (!pluralize.isSingular(capability)) {
@@ -103,10 +106,11 @@ async function parseCapability(capability: string): Promise<RestApiToTextUriToke
     return part
 }
 
-async function parseCollection(collectionName: string): Promise<RestApiToTextUriTokens> {
-    const part: RestApiToTextUriTokens = {
-        type: RestApiPartType.COLLECTION,
+async function parseCollection(collectionName: string): Promise<ApiUriToken> {
+    const part: ApiUriToken = {
+        type: ApiTokenType.COLLECTION,
         text: collectionName,
+        alternativeTypes: [],
         warnings: [],
     }
     if (!pluralize.isPlural(collectionName)) {
@@ -116,83 +120,156 @@ async function parseCollection(collectionName: string): Promise<RestApiToTextUri
     return part
 }
 
-async function parseResource(resourceId: string): Promise<RestApiToTextUriTokens> {
-    const part: RestApiToTextUriTokens = {
-        type: RestApiPartType.RESOURCE,
+async function parseResource(resourceId: string): Promise<ApiUriToken> {
+    const part: ApiUriToken = {
+        type: ApiTokenType.RESOURCE,
         text: resourceId,
+        alternativeTypes: [],
         warnings: [],
     }
     return part
 }
 
-async function parseController(controllerName: string): Promise<RestApiToTextUriTokens> {
-    const part: RestApiToTextUriTokens = {
-        type: RestApiPartType.CONTROLLER,
-        text: controllerName,
+async function parseSubResource(subResourceName: string): Promise<ApiUriToken> {
+    const part: ApiUriToken = {
+        type: ApiTokenType.SUB_RESOURCE,
+        text: subResourceName,
+        alternativeTypes: [],
         warnings: [],
+    }
+    if (!pluralize.isSingular(subResourceName)) {
+        part.warnings.push(`The sub-resource "${subResourceName}" should be a singular word`)
+    }
+    await checkIsNoun(subResourceName, part.warnings)
+    return part
+
+}
+
+async function parseController(controllerName: string): Promise<ApiUriToken> {
+    const part: ApiUriToken = {
+        type: ApiTokenType.CONTROLLER,
+        text: controllerName,
+        alternativeTypes: [],
+        warnings: [],
+    }
+    if (!pluralize.isSingular(controllerName)) {
+        part.warnings.push(`The controller "${controllerName}" should be a singular word`)
     }
     await checkIsNoun(controllerName, part.warnings)
     return part
 }
 
+async function parseByType(type: ApiTokenType, text: string): Promise<ApiUriToken> {
+    switch (type) {
+        case ApiTokenType.COLLECTION:
+            return await parseCollection(text)
+        case ApiTokenType.RESOURCE:
+            return await parseResource(text)
+        case ApiTokenType.SUB_RESOURCE:
+            return await parseSubResource(text)
+        case ApiTokenType.CONTROLLER:
+            return await parseController(text)
+    }
+    return null
+}
+
 export const apiToTokens = async (method: ApiMethods, uri: string, options: RestApiToTextOptions): Promise<RestApiToTextResults> => {
     const results: RestApiToTextResults = { errors: [], tokens: [] }
-    let uriParts1: string[] = uri.split('/').filter((part) => part !== '')
-    let uriParts2: string[] = []
+    let uriTokens: string[] = uri.split('/').filter((part) => part !== '')
     const minParts = (options.version ? 1 : 0) + (options.capability ? 1 : 0) + 1
 
-    if (uriParts1.length >= minParts) {
-        const uriPrefix: RestApiToTextUriTokens[] = []
+    if (uriTokens.length >= minParts) {
+        let tokensIndex = 0
         if (options.version) {
-            uriPrefix.push(parseVersion(uriParts1.splice(0, 1)[0]))
+            results.tokens.push(parseVersion(uriTokens[tokensIndex++]))
         }
         if (options.capability) {
-            uriPrefix.push(await parseCapability(uriParts1.splice(0, 1)[0]))
+            results.tokens.push(await parseCapability(uriTokens[tokensIndex++]))
         }
-        uriParts1 = uriParts1.reverse()
-
-        if (uriParts1.length % 2 === 0) {
-            // Target resource or controller
-            // results.text += methodsVerb.resource[method](uriParts1[0], uriParts1[1])
-            results.tokens.push((method === ApiMethods.POST) ? await parseController(uriParts1[0]) : await parseResource(uriParts1[0]))
-            results.tokens.push(await parseCollection(uriParts1[1]))
-            uriParts1.splice(0, 2)
-        } else {
-            // Target collection
-            // results.text += methodsVerb.collection[method](uriParts1[0])
-            results.tokens.push(await parseCollection(uriParts1[0]))
-            if (method === ApiMethods.POST) {
-                uriParts2 = uriParts1.slice() // Copy elements
-                result2.text += methodsVerb.controller(uriParts2[0], uriParts2[1], uriParts2[2])
-                result2.tokens.push(await parseController(uriParts2[0]))
-                result2.tokens.push(await parseResource(uriParts2[1]))
-                result2.tokens.push(await parseCollection(uriParts2[2]))
-                uriParts2.splice(0, 3)
+        let oddNotEven = true
+        let isFirstToken = true
+        while (tokensIndex < uriTokens.length) {
+            const isLastToken = tokensIndex === uriTokens.length - 1
+            if (oddNotEven) {
+                const token = await parseCollection(uriTokens[tokensIndex++])
+                if (!isFirstToken) {
+                    if (isLastToken) {
+                        token.alternativeTypes.push(ApiTokenType.CONTROLLER)
+                    } else {
+                        token.alternativeTypes.push(ApiTokenType.SUB_RESOURCE)
+                    }
+                }
+                results.tokens.push(token)
+            } else {
+                if (isLastToken && method === ApiMethods.POST) {
+                    results.tokens.push(await parseController(uriTokens[tokensIndex++]))
+                } else {
+                    results.tokens.push(await parseResource(uriTokens[tokensIndex++]))
+                }
             }
-            uriParts1.splice(0, 1)
+            oddNotEven = !oddNotEven
+            isFirstToken = false
         }
-
-        while (uriParts1.length > 0) {
-            // results.text += methodsVerb.resourceAndCollection(uriParts1[0], uriParts1[1])
-            results.tokens.push(await parseResource(uriParts1[0]))
-            results.tokens.push(await parseCollection(uriParts1[1]))
-            uriParts1.splice(0, 2)
-        }
-        while (uriParts2.length > 0) {
-            result2.text += methodsVerb.resourceAndCollection(uriParts2[0], uriParts2[1])
-            result2.tokens.push(await parseResource(uriParts2[0]))
-            result2.tokens.push(await parseCollection(uriParts2[1]))
-            uriParts2.splice(0, 2)
-        }
-
-        results.tokens = uriPrefix.concat(results.tokens.reverse())
     } else {
         results.errors.push(UriNotCompleted)
     }
     return results
 }
 
-export const apiTokensToString = (tokens: RestApiToTextUriTokens[]): string => {
+export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[], updatedIndex: number) => {
+    let tokensIndex = 0
+
+    while (tokensIndex < tokens.length && (tokens[tokensIndex].type == ApiTokenType.VERSION || tokens[tokensIndex].type == ApiTokenType.CAPABILITY)) {
+        tokensIndex++
+    }
+
+    let nextTypes = [ApiTokenType.COLLECTION]
+    let isFirstToken = true
+    while (tokensIndex < tokens.length) {
+        const token = tokens[tokensIndex]
+        console.log({ token, tokensIndex, nextTypes })
+        if (nextTypes.indexOf(token.type) >= 0) {
+            if (tokensIndex === updatedIndex) {
+                tokens[tokensIndex] = await parseByType(token.type, token.text)
+                tokens[tokensIndex].alternativeTypes = token.alternativeTypes
+            }
+            switch (token.type) {
+                case ApiTokenType.COLLECTION:
+                    nextTypes = [ApiTokenType.RESOURCE]
+                    if (tokensIndex === tokens.length - 2 && !isFirstToken && method === ApiMethods.POST) {
+                        nextTypes.push(ApiTokenType.CONTROLLER)
+                    }
+                    break
+                case ApiTokenType.RESOURCE:
+                    nextTypes = [ApiTokenType.COLLECTION, ApiTokenType.SUB_RESOURCE]
+                    break
+                case ApiTokenType.SUB_RESOURCE:
+                    nextTypes = [ApiTokenType.COLLECTION]
+                    if (tokensIndex === tokens.length - 2) {
+                        nextTypes.push(ApiTokenType.CONTROLLER)
+                    }
+                    break
+                case ApiTokenType.CONTROLLER:
+                    nextTypes = []
+                    if (tokensIndex !== tokens.length - 1) {
+                        return null
+                    }
+                    break
+                default:
+                    console.error('Invalid token type')
+                    return null
+            }
+            isFirstToken = false
+            tokensIndex++
+        } else {
+            tokens[tokensIndex] = await parseByType(nextTypes[0], token.text)
+            tokens[tokensIndex].alternativeTypes = nextTypes.slice(1)
+        }
+    }
+    return tokens
+}
+
+export const apiTokensToString = (method: ApiMethods, tokens: ApiUriToken[]): string => {
     let text = ''
     for (const token of tokens) {
         switch (token.type) {
