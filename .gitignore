@@ -3,3 +3,5 @@ coverage
 
 # Deliverable
 public/js/apiToSpreadsheet.js
+public/js/restApiToText.js
+public/js/chunk-*.js
