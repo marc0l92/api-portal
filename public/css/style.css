@@ -23,7 +23,3 @@ body {
 strong {
     color: var(--color-accent);
 }
-
-.button.is-primary {
-    background-color: var(--color-primary);
-}

@@ -15,7 +15,7 @@
 </script>
 
 <div class="box">
-    <p class="subtitle"><strong>Result:</strong></p>
+    <p class="subtitle"><strong>Result</strong></p>
     <div class="tags has-addons">
         {#each tokens as part, index}
             <span class="tag is-separator">/</span>

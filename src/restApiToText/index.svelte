@@ -2,12 +2,14 @@
   import Navbar from '../components/navbar.svelte';
   import InputUri from './inputUri.svelte';
   import Result from './result.svelte';
+  import Errors from './errors.svelte';
+  import Help from './help.svelte';
   import { ApiMethods, apiTokensToString, apiToTokens, refreshApiTokens, rotateTokenType, type RestApiToTextResults } from './restApiToText';
-  import Error from './error.svelte';
 
   let apiTokens: RestApiToTextResults = { errors: [], tokens: [] };
   let apiText: string = '';
   let method: ApiMethods;
+  let showHelp = false;
 
   // $: console.log(JSON.stringify(apiTokens.tokens));
 
@@ -30,7 +32,7 @@
   }
 </script>
 
-<Navbar />
+<Navbar activePage="restApiToText" />
 <div class="container">
   <section class="hero is-small">
     <div class="hero-body">
@@ -42,10 +44,19 @@
   </section>
   <InputUri on:uriChange={onUriChange} />
   {#if apiTokens.errors.length > 0}
-    <Error messages={apiTokens.errors} />
+    <Errors messages={apiTokens.errors} />
   {/if}
   {#if apiTokens.tokens.length > 0}
     <Result tokens={apiTokens.tokens} text={apiText} on:changeTokenType={onChangeTokenType} />
+  {/if}
+  <button class="button box {showHelp ? 'is-active' : ''}" on:click={() => (showHelp = !showHelp)}>
+    <span class="icon is-small">
+      <i class="far fa-circle-question" />
+    </span>
+    <span>Help</span>
+  </button>
+  {#if showHelp}
+    <Help />
   {/if}
 </div>
 
@@ -53,5 +64,9 @@
   .hero.is-small .hero-body {
     padding-left: 0;
     padding-right: 0;
+  }
+  button.box.button.is-active {
+    background-color: var(--color-accent);
+    color: #fff;
   }
 </style>

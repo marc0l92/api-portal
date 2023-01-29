@@ -58,6 +58,12 @@ interface MethodsVerbs {
 
 const UriNotCompleted = 'Uri not completed, continue typing...'
 
+function checkAllowedCharacters(word: string, warnings: string[]) {
+    if (!word.match(/^[a-z0-9\-]*$/)) {
+        warnings.push(`The word "${word}" contains some characters not allowed. Allowed characters are: lowercase letters, numbers, hyphen`)
+    }
+}
+
 async function checkIsNoun(word: string, warnings: string[]) {
     const dictionaryResult = await queryDictionary(word)
     if (!dictionaryResult.found) {
@@ -107,6 +113,7 @@ async function parseCollection(collectionName: string): Promise<ApiUriToken> {
     if (!pluralize.isPlural(collectionName)) {
         part.warnings.push(`The collection "${collectionName}" should be a plural word`)
     }
+    checkAllowedCharacters(collectionName, part.warnings)
     await checkIsNoun(collectionName, part.warnings)
     return part
 }
@@ -131,6 +138,7 @@ async function parseSubResource(subResourceName: string): Promise<ApiUriToken> {
     if (!pluralize.isSingular(subResourceName)) {
         part.warnings.push(`The sub-resource "${subResourceName}" should be a singular word`)
     }
+    checkAllowedCharacters(subResourceName, part.warnings)
     await checkIsNoun(subResourceName, part.warnings)
     return part
 
@@ -146,6 +154,7 @@ async function parseController(controllerName: string): Promise<ApiUriToken> {
     if (!pluralize.isSingular(controllerName)) {
         part.warnings.push(`The controller "${controllerName}" should be a singular word`)
     }
+    checkAllowedCharacters(controllerName, part.warnings)
     // await checkIsNoun(controllerName, part.warnings)
     return part
 }

@@ -1,46 +1,46 @@
-export enum OpenApiVersion {
+export enum ApiVersion {
     Invalid = -1,
     Swagger2 = 2,
     OpenAPI3 = 3,
 }
 
-export interface OpenApi {
+export interface Api {
     swagger?: string
     openapi?: string
     paths: {
         [path: string]: {
-            parameters: OpenApiParameter[]
-            [method: string]: OpenApiService | OpenApiParameter[]
+            parameters: ApiParameter[]
+            [method: string]: ApiService | ApiParameter[]
         }
     }
 }
 
-export interface OpenApiService {
+export interface ApiService {
     'x-name'?: string
-    parameters?: OpenApiParameter[]
-    requestBody?: OpenApi3Parameter
+    parameters?: ApiParameter[]
+    requestBody?: Api3Parameter
     responses?: {
-        [statusCode: string]: OpenApiParameter | OpenApi3Parameter
+        [statusCode: string]: ApiParameter | Api3Parameter
     }
 }
 
-export interface OpenApi3Parameter {
+export interface Api3Parameter {
     content: {
-        [type: string]: OpenApiParameter
+        [type: string]: ApiParameter
     }
 }
 
-export interface OpenApiParameter {
+export interface ApiParameter {
     in: string
     name: string
     type: string
     required?: string
-    schema?: OpenApiModel
+    schema?: ApiModel
     description?: string
     example: any
 }
 
-export interface OpenApiModel {
+export interface ApiModel {
     type?: string
     example?: any
     minLength?: number
@@ -53,17 +53,17 @@ export interface OpenApiModel {
     format?: string
     enum?: string[]
     description?: string
-    items?: OpenApiModel
+    items?: ApiModel
     required?: string[]
     properties?: {
-        [name: string]: OpenApiModel
+        [name: string]: ApiModel
     }
-    allOf?: OpenApiModel[]
-    additionalProperties?: OpenApiModel
+    allOf?: ApiModel[]
+    additionalProperties?: ApiModel
 }
 
-export interface OpenApiParameterMap {
-    [key: string]: OpenApiParameter
+export interface ApiParameterMap {
+    [key: string]: ApiParameter
 }
 
 export enum DataSheetItemCardinality {

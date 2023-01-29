@@ -1,17 +1,17 @@
-import { OpenApiVersion, DataSheetItemCardinality } from "./interfaces"
-import type { OpenApiService, OpenApiParameter, OpenApiParameterMap, OpenApi3Parameter, OpenApiModel, DataSheetItem, OpenApi, DataSheetItemMap } from "./interfaces"
+import { ApiVersion, DataSheetItemCardinality } from "./interfaces"
+import type { ApiService, ApiParameter, ApiParameterMap, Api3Parameter, ApiModel, DataSheetItem, Api, DataSheetItemMap } from "./interfaces"
 
 const LOCATION_BODY = 'Body'
 
-function getRequest(service: OpenApiService, version: OpenApiVersion): OpenApiParameter {
-    if (version === OpenApiVersion.Swagger2) {
+function getRequest(service: ApiService, version: ApiVersion): ApiParameter {
+    if (version === ApiVersion.Swagger2) {
         if (service.parameters) {
             const requestParam = service.parameters.find(p => p.in === 'body')
             if (requestParam) {
                 return requestParam
             }
         }
-    } else if (version === OpenApiVersion.OpenAPI3) {
+    } else if (version === ApiVersion.OpenAPI3) {
         if (service.requestBody
             && service.requestBody.content
             && service.requestBody.content['application/json']) {
@@ -21,16 +21,16 @@ function getRequest(service: OpenApiService, version: OpenApiVersion): OpenApiPa
     return null
 }
 
-function getResponses(service: OpenApiService, version: OpenApiVersion): OpenApiParameterMap {
-    const responses: OpenApiParameterMap = {}
+function getResponses(service: ApiService, version: ApiVersion): ApiParameterMap {
+    const responses: ApiParameterMap = {}
     if (service.responses) {
         for (const statusCode in service.responses) {
-            const response2 = service.responses[statusCode] as OpenApiParameter
-            const response3 = service.responses[statusCode] as OpenApi3Parameter
-            if (version === OpenApiVersion.Swagger2) {
+            const response2 = service.responses[statusCode] as ApiParameter
+            const response3 = service.responses[statusCode] as Api3Parameter
+            if (version === ApiVersion.Swagger2) {
                 responses[statusCode] = response2
             }
-            else if (version === OpenApiVersion.OpenAPI3 && response3.content && response3.content['application/json']) {
+            else if (version === ApiVersion.OpenAPI3 && response3.content && response3.content['application/json']) {
                 responses[statusCode] = response3.content['application/json']
             }
         }
@@ -38,7 +38,7 @@ function getResponses(service: OpenApiService, version: OpenApiVersion): OpenApi
     return responses
 }
 
-function getParameters(service: OpenApiService): OpenApiParameter[] {
+function getParameters(service: ApiService): ApiParameter[] {
     if (service.parameters) {
         return service.parameters.filter((parameter) => {
             return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
@@ -48,7 +48,7 @@ function getParameters(service: OpenApiService): OpenApiParameter[] {
     }
 }
 
-function getAuthorizedValues(model: OpenApiModel): string {
+function getAuthorizedValues(model: ApiModel): string {
     if (!model) {
         return ''
     }
@@ -83,7 +83,7 @@ function getAuthorizedValues(model: OpenApiModel): string {
     return rules.join('; ')
 }
 
-function generateModelFlatMap(model: OpenApiModel, required: boolean = false, path: string = '', level: number = 0): DataSheetItem[] {
+function generateModelFlatMap(model: ApiModel, required: boolean = false, path: string = '', level: number = 0): DataSheetItem[] {
     let flatMap: DataSheetItem[] = []
     // console.log('generateModelFlatMap:', { model })
 
@@ -125,7 +125,7 @@ function generateModelFlatMap(model: OpenApiModel, required: boolean = false, pa
     return flatMap
 }
 
-function generateParameterFlatMap(parameter: OpenApiParameter): DataSheetItem {
+function generateParameterFlatMap(parameter: ApiParameter): DataSheetItem {
     parameter.in = parameter.in[0].toUpperCase() + parameter.in.substring(1)
     return {
         Location: parameter.in,
@@ -139,7 +139,7 @@ function generateParameterFlatMap(parameter: OpenApiParameter): DataSheetItem {
     }
 }
 
-function mergeAllOfDefinitions(model: OpenApiModel, path: string = ''): OpenApiModel {
+function mergeAllOfDefinitions(model: ApiModel, path: string = ''): ApiModel {
     // console.log(path, 'mergeAllOfDefinitions->input', model)
     if (!model) {
         return model
@@ -151,7 +151,7 @@ function mergeAllOfDefinitions(model: OpenApiModel, path: string = ''): OpenApiM
                 model = Object.assign({}, mergeAllOfDefinitions(model[key][0]), model)
                 delete model.allOf
             } else {
-                const mergedModel: OpenApiModel = Object.assign({}, model, { type: 'object', required: [], properties: {} })
+                const mergedModel: ApiModel = Object.assign({}, model, { type: 'object', required: [], properties: {} })
                 delete mergedModel.allOf
 
                 for (const i in model[key]) {
@@ -205,23 +205,23 @@ function mergeAllOfDefinitions(model: OpenApiModel, path: string = ''): OpenApiM
 }
 
 
-export const getApiDocumentationVersion = (api: OpenApi): OpenApiVersion => {
+export const getApiDocumentationVersion = (api: Api): ApiVersion => {
     if (api.swagger === '2.0') {
-        return OpenApiVersion.Swagger2
+        return ApiVersion.Swagger2
     }
     else if (api.openapi && api.openapi.startsWith('3')) {
-        return OpenApiVersion.OpenAPI3
+        return ApiVersion.OpenAPI3
     }
-    return OpenApiVersion.Invalid
+    return ApiVersion.Invalid
 }
 
-export const extractServices = (api: OpenApi): OpenApiService[] => {
-    const services: OpenApiService[] = []
+export const extractServices = (api: Api): ApiService[] => {
+    const services: ApiService[] = []
     for (const path in api.paths) {
         const globalParam = api.paths[path].parameters || []
         for (const method in api.paths[path]) {
             if (method !== 'parameters') {
-                const service = api.paths[path][method] as OpenApiService
+                const service = api.paths[path][method] as ApiService
                 service['x-name'] = `${method.toUpperCase()} ${path}`
                 service.parameters = service.parameters || []
                 service.parameters = service.parameters.concat(globalParam)
@@ -232,7 +232,7 @@ export const extractServices = (api: OpenApi): OpenApiService[] => {
     return services
 }
 
-export const generateServiceWorkbook = (service: OpenApiService, version: OpenApiVersion): DataSheetItemMap => {
+export const generateServiceWorkbook = (service: ApiService, version: ApiVersion): DataSheetItemMap => {
     console.log('Service:', { service, version })
     const workbook: DataSheetItemMap = { Request: [] }
     const parameters = getParameters(service)
