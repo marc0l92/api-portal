@@ -116,7 +116,7 @@ describe('RestApiToText.test', () => {
                 tokenByTypeName(ApiTokenType.RESOURCE, 'Dante'),
                 tokenByTypeName(ApiTokenType.COLLECTION, 'books'),
             ]
-            const kUriString = 'Create a new book of the author with id "Dante"'
+            const kUriString = 'Create a new book, of the author with id "Dante"'
 
             expect(await apiTokensToString(kMethod, kTokens)).toEqual(kUriString)
         })
@@ -128,7 +128,7 @@ describe('RestApiToText.test', () => {
                 tokenByTypeName(ApiTokenType.COLLECTION, 'books'),
                 tokenByTypeName(ApiTokenType.RESOURCE, 'Divina-Commedia'),
             ]
-            const kUriString = 'Retrieve the book with id "Divina-Commedia" of the author with id "Dante"'
+            const kUriString = 'Retrieve the book with id "Divina-Commedia", of the author with id "Dante"'
 
             expect(await apiTokensToString(kMethod, kTokens)).toEqual(kUriString)
         })

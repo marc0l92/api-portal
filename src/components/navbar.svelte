@@ -14,8 +14,8 @@
 
   <div id="my-navbar" class="navbar-menu">
     <div class="navbar-start">
-      <a class="navbar-item is-active" href="/tools/restApiToText">REST Api to Text</a>
-      <a class="navbar-item" href="/tools/apiToSpreadsheet">API to Spreadsheet</a>
+      <a class="navbar-item is-active" href="/tools/restApiToText.html">REST Api to Text</a>
+      <a class="navbar-item" href="/tools/apiToSpreadsheet.html">API to Spreadsheet</a>
     </div>
 
     <div class="navbar-end">
