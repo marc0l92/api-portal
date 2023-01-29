@@ -20,12 +20,12 @@
         {#each tokens as part, index}
             <span class="tag is-separator">/</span>
             {#if part.alternativeTypes.length > 0}
-                <button class="tag is-{part.type} {part.warnings.length > 0 ? 'has-warning' : ''}" on:click={() => changeTokenType(index)}>
+                <button title={part.type} class="tag is-{part.type} {part.warnings.length > 0 ? 'has-warning' : ''}" on:click={() => changeTokenType(index)}>
                     {part.text}
                     <span class="margin-left"><span class="icon"><i class="fa-solid fa-arrows-rotate" /></span></span>
                 </button>
             {:else}
-                <span class="tag is-{part.type} {part.warnings.length > 0 ? 'has-warning' : ''}">
+                <span title={part.type} class="tag is-{part.type} {part.warnings.length > 0 ? 'has-warning' : ''}">
                     {part.text}
                 </span>
             {/if}
