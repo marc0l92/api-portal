@@ -15,8 +15,8 @@
 
   <div id="my-navbar" class="navbar-menu">
     <div class="navbar-start">
-      <a class="navbar-item {activePage === 'restApiToText' ? 'is-active' : ''}" href="/tools/restApiToText.html">REST Api to Text</a>
-      <a class="navbar-item {activePage === 'apiToSpreadsheet' ? 'is-active' : ''}" href="/tools/apiToSpreadsheet.html">API to Spreadsheet</a>
+      <a class="navbar-item {activePage === 'restApiToText' ? 'is-active' : ''}" href="/api-tools/tools/restApiToText.html">REST Api to Text</a>
+      <a class="navbar-item {activePage === 'apiToSpreadsheet' ? 'is-active' : ''}" href="/api-tools/tools/apiToSpreadsheet.html">API to Spreadsheet</a>
     </div>
 
     <div class="navbar-end">
