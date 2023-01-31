@@ -3,10 +3,9 @@
 </script>
 
 <div class="box">
-    <p class="subtitle"><strong>Errors:</strong></p>
     <ul>
         {#each messages as message}
-            <li>{message}</li>
+            <li class="notification is-danger is-small">{message}</li>
         {/each}
     </ul>
 </div>
@@ -14,5 +13,8 @@
 <style>
     .box {
         background-color: var(--color-background-accent);
+    }
+    .notification.is-small {
+        padding: 0.5em;
     }
 </style>

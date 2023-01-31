@@ -2,7 +2,7 @@
   import Navbar from '../components/navbar.svelte';
   import InputUri from './inputUri.svelte';
   import Result from './result.svelte';
-  import Errors from './errors.svelte';
+  import Errors from '../components/errors.svelte';
   import Help from './help.svelte';
   import { ApiMethods, apiTokensToString, apiToTokens, refreshApiTokens, rotateTokenType, type RestApiToTextResults } from './restApiToText';
 

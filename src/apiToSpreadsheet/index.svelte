@@ -6,30 +6,38 @@
   import { resolveReferences } from './utils/refParser';
   import { ApiVersion, type Api, type ApiService } from './utils/interfaces';
   import { extractServices, getApiDocumentationVersion } from './utils/swaggerParsing';
+  import Errors from 'components/errors.svelte';
 
   let api: Api = null;
   let version = ApiVersion.Invalid;
   let services: ApiService[] = [];
   let selectedService: ApiService = null;
+  let errors: string[] = [];
 
   async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
-    const apiObject = event.detail.apiObject;
-    if (apiObject) {
-      api = await resolveReferences(apiObject);
-      version = getApiDocumentationVersion(api);
-      services = extractServices(api);
-    } else {
+    try {
+      errors = [];
       api = null;
       version = ApiVersion.Invalid;
       services = [];
+      selectedService = null;
+      const apiObject = event.detail.apiObject;
+      if (apiObject) {
+        api = await resolveReferences(apiObject);
+        version = getApiDocumentationVersion(api);
+        services = extractServices(api);
+        if (services.length === 0) {
+          errors = [...errors, 'Warning: No services found'];
+        }
+      }
+    } catch (e) {
+      errors = [...errors, 'Error: ' + e.message];
     }
-    selectedService = null;
   }
 
   function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
     selectedService = services[event.detail.selectedServiceIndex];
   }
-  function onGenerateSpreadsheet(event: CustomEvent<{}>) {}
 </script>
 
 <Navbar activePage="apiToSpreadsheet" />
@@ -44,8 +52,11 @@
   {#if services.length > 0}
     <SelectServices {services} on:serviceSelect={onServiceSelect} />
   {/if}
+  {#if errors.length > 0}
+    <Errors messages={errors} />
+  {/if}
   {#if selectedService}
-    <GenerateSpreadsheet service={selectedService} {version} on:generateSpreadsheet={onGenerateSpreadsheet} />
+    <GenerateSpreadsheet service={selectedService} {version} />
   {/if}
 </div>
 

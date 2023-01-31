@@ -12,6 +12,7 @@ const options = {
     js: '// Project: https://github.com/marc0l92/api-tools',
   },
   entryPoints: [
+    './src/home.ts',
     './src/apiToSpreadsheet.ts',
     './src/restApiToText.ts'
   ],

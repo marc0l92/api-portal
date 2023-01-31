@@ -212,7 +212,7 @@ export const getApiDocumentationVersion = (api: Api): ApiVersion => {
     else if (api.openapi && api.openapi.startsWith('3')) {
         return ApiVersion.OpenAPI3
     }
-    return ApiVersion.Invalid
+    throw new Error('Api version not recognized')
 }
 
 export const extractServices = (api: Api): ApiService[] => {

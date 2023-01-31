@@ -90,7 +90,9 @@
         </div>
     </div>
     {#if inputError}
-        <div class="notification is-danger is-small">{inputError}</div>
+        <div class="margin-top">
+            <div class="notification is-danger is-small">{inputError}</div>
+        </div>
     {/if}
 </div>
 
@@ -111,5 +113,8 @@
     }
     div.notification.is-small {
         padding: 0.5em;
+    }
+    div.margin-top {
+        margin-top: 0.75rem;
     }
 </style>
