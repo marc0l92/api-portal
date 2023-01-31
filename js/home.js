@@ -1,0 +1,3 @@
+// Project: https://github.com/marc0l92/api-tools
+import{D as d,E as v,F as _,G as $,H as b,I as x,J as T,K as y,f as c,h as m,l as s,m as a,o as p,q as u,t as f}from"./chunk-LCXEXJOC.js";function h(g){let e,r,o,n;return e=new y({props:{activePage:"restApiToText"}}),{c(){_(e.$$.fragment),r=u(),o=p("div"),o.innerHTML=`<section class="hero is-small"><div class="hero-body"><h1 class="title">Api Tools</h1> 
+      <p class="subtitle">A set of tools dedicated to api manipulation</p></div></section>`,f(o,"class","container")},m(t,i){$(e,t,i),s(t,r,i),s(t,o,i),n=!0},p:c,i(t){n||(d(e.$$.fragment,t),n=!0)},o(t){v(e.$$.fragment,t),n=!1},d(t){b(e,t),t&&a(r),t&&a(o)}}}var l=class extends T{constructor(e){super(),x(this,e,null,h,m,{})}},A=l;new A({target:document.body});
