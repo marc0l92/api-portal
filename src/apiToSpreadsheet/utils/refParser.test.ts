@@ -67,6 +67,20 @@ describe('RefParser', () => {
             const kExpected = new Error('Reference not found: #/d')
             expect(() => resolveReferences(kInput)).toThrow(kExpected)
         })
+
+        test('Object with cyclic reference', () => {
+            const kInput = {
+                a: { aa: 1, ab: { '$ref': '#/b' } },
+                b: { ba: 2, bb: { '$ref': '#/c' } },
+                c: { ca: 3, cb: { '$ref': '#/a' } }
+            }
+            const kExpected = {
+                a: { aa: 1, ab: { ba: 2, bb: { ca: 3, cb: { aa: 1, ab: {} } } } },
+                b: { ba: 2, bb: { ca: 3, cb: { aa: 1, ab: {} } } },
+                c: { ca: 3, cb: { aa: 1, ab: {} } }
+            }
+            expect(resolveReferences(kInput)).toEqual(kExpected)
+        })
     })
 })
 
