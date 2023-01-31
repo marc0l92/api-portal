@@ -40,6 +40,7 @@ const resolveReferencesRecursive = (root: any, obj: any, exploredPaths: string[]
                 // console.log('mapAllRef getObjectByRef:', { referencedObj })
                 referencedObj = resolveReferencesRecursive(root, referencedObj, exploredPaths)
                 // console.log('mapAllRef resolveReferencesRecursive:', { referencedObj })
+                exploredPaths.pop()
                 if (typeof referencedObj !== 'object') {
                     throw new Error(`Reference to not object items forbidden: ${ref}`)
                 }
