@@ -28,17 +28,21 @@ const getObjectByRef = (root: any, ref: string): any => {
     return referencedObj
 }
 
-const resolveReferencesRecursive = (root: any, obj: any): any => {
-    // console.log('resolveReferencesRecursive begin:', { root, obj })
+const resolveReferencesRecursive = (root: any, obj: any, exploredPaths: string[]): any => {
+    // console.log('resolveReferencesRecursive begin:', { root, obj, exploredPaths })
     if (typeof obj === 'object') {
         obj = mapAllRef(root, obj, (item, ref) => {
             // console.log('mapAllRef begin:', { item, ref })
-            let referencedObj = getObjectByRef(root, ref)
-            // console.log('mapAllRef getObjectByRef:', { referencedObj })
-            referencedObj = resolveReferencesRecursive(root, referencedObj)
-            // console.log('mapAllRef resolveReferencesRecursive:', { referencedObj })
-            if (typeof referencedObj !== 'object') {
-                throw new Error(`Reference to not object items forbidden: ${ref}`)
+            let referencedObj = {}
+            if (exploredPaths.indexOf(ref) === -1) {
+                exploredPaths.push(ref)
+                referencedObj = getObjectByRef(root, ref)
+                // console.log('mapAllRef getObjectByRef:', { referencedObj })
+                referencedObj = resolveReferencesRecursive(root, referencedObj, exploredPaths)
+                // console.log('mapAllRef resolveReferencesRecursive:', { referencedObj })
+                if (typeof referencedObj !== 'object') {
+                    throw new Error(`Reference to not object items forbidden: ${ref}`)
+                }
             }
             const itemCopy = Object.assign({}, item)
             delete itemCopy['$ref']
@@ -46,10 +50,10 @@ const resolveReferencesRecursive = (root: any, obj: any): any => {
             return Object.assign({}, referencedObj, itemCopy)
         })
     }
-    // console.log('resolveReferencesRecursive begin:', { obj })
+    // console.log('resolveReferencesRecursive end:', { obj })
     return obj
 }
 
 export const resolveReferences = (obj: any): any => {
-    return resolveReferencesRecursive(obj, obj)
+    return resolveReferencesRecursive(obj, obj, [])
 }

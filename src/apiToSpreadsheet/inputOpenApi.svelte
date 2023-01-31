@@ -68,19 +68,25 @@
     </div>
 </div>
 <div class="box">
-    <div class="field {selectedTab === 'link' ? '' : 'is-hidden'}">
-        <div class="control is-expanded">
-            <input type="text" class="input" bind:value={link} on:input={onApiChange} placeholder="Example: https://petstore3.swagger.io/api/v3/openapi.json" />
+    <div>
+        <div class="field {selectedTab === 'link' ? '' : 'is-hidden'}">
+            <div class="control is-expanded">
+                <input type="text" class="input" bind:value={link} on:input={onApiChange} placeholder="Example: https://petstore3.swagger.io/api/v3/openapi.json" />
+            </div>
         </div>
     </div>
-    <div class="field {selectedTab === 'file' ? '' : 'is-hidden'}">
-        <div class="control">
-            <input type="file" bind:files on:change={onApiChange} />
+    <div>
+        <div class="field {selectedTab === 'file' ? '' : 'is-hidden'}">
+            <div class="control">
+                <input type="file" bind:files on:change={onApiChange} />
+            </div>
         </div>
     </div>
-    <div class="field {selectedTab === 'text' ? '' : 'is-hidden'}">
-        <div class="control">
-            <textarea class="textarea" bind:value={text} on:input={onApiChange} placeholder="Paste here your api definition..." />
+    <div>
+        <div class="field {selectedTab === 'text' ? '' : 'is-hidden'}">
+            <div class="control">
+                <textarea class="textarea" bind:value={text} on:input={onApiChange} placeholder="Paste here your api definition..." />
+            </div>
         </div>
     </div>
     {#if inputError}
