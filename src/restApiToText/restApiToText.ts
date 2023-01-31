@@ -231,7 +231,7 @@ export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[]
     while (tokensIndex < tokens.length) {
         const token = tokens[tokensIndex]
         const isNextLastToken = tokensIndex === tokens.length - 2
-        console.log({ token, tokensIndex, nextTypes })
+        // console.log({ token, tokensIndex, nextTypes })
         if (nextTypes.indexOf(token.type) >= 0) {
             if (tokensIndex === updatedIndex) {
                 tokens[tokensIndex] = await parseByType(token.type, token.text)

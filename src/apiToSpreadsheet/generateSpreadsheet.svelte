@@ -10,7 +10,7 @@
         const itemMap = generateServiceWorkbook(service, version);
         const workbook = convertToTable(itemMap);
         generateSpreadsheet(workbook, service['x-name']);
-        console.log('completed')
+        // console.log('completed')
     }
 </script>
 
