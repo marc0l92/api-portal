@@ -4,7 +4,7 @@
 
 <nav class="navbar">
   <div class="navbar-brand">
-    <a class="navbar-item" href="https://marc0l92.github.io/api-tools/"><strong>API Tools</strong></a>
+    <a class="navbar-item" href="/api-tools"><strong>API Tools</strong></a>
 
     <button class="navbar-burger" data-target="my-navbar">
       <span />

@@ -60,7 +60,7 @@ describe('RestApiToText.test', () => {
             }
         })
         test('Controller URI', async () => {
-            const kUri = '/books/search'
+            const kUri = '/books/searches'
             const kMethods = [ApiMethods.POST]
             const kOptions: RestApiToTextOptions = { version: false, capability: false }
             queryDictionaryMock.mockReturnValue(kQueryDictionaryPass)
@@ -70,7 +70,7 @@ describe('RestApiToText.test', () => {
                     errors: [],
                     tokens: [
                         { text: 'books', type: ApiTokenType.COLLECTION, warnings: [], alternativeTypes: [] },
-                        { text: 'search', type: ApiTokenType.CONTROLLER, warnings: [], alternativeTypes: [] },
+                        { text: 'searches', type: ApiTokenType.CONTROLLER, warnings: [], alternativeTypes: [] },
                     ],
                 } as RestApiToTextResults)
             }

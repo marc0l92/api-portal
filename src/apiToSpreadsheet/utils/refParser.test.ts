@@ -81,6 +81,16 @@ describe('RefParser', () => {
             }
             expect(resolveReferences(kInput)).toEqual(kExpected)
         })
+
+        test('Object with self reference', () => {
+            const kInput = {
+                a: { '$ref': '#/a' }
+            }
+            const kExpected = {
+                a: {}
+            }
+            expect(resolveReferences(kInput)).toEqual(kExpected)
+        })
     })
 })
 

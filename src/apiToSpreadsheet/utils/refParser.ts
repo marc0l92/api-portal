@@ -28,11 +28,17 @@ const getObjectByRef = (root: any, ref: string): any => {
     return referencedObj
 }
 
+const overrideWithLocalProperties = (local: any, global: any): any => {
+    const localCopy = Object.assign({}, local)
+    delete localCopy['$ref']
+    return Object.assign({}, global, localCopy)
+}
+
 const resolveReferencesRecursive = (root: any, obj: any, exploredPaths: string[]): any => {
-    // console.log('resolveReferencesRecursive begin:', { root, obj, exploredPaths })
+    // console.log('resolveReferencesRecursive begin:', { root, obj, exploredPaths: JSON.stringify(exploredPaths) })
     if (typeof obj === 'object') {
         obj = mapAllRef(root, obj, (item, ref) => {
-            // console.log('mapAllRef begin:', { item, ref })
+            // console.log('mapAllRef begin:', { item, ref, exploredPaths: JSON.stringify(exploredPaths) })
             let referencedObj = {}
             if (exploredPaths.indexOf(ref) === -1) {
                 exploredPaths.push(ref)
@@ -45,10 +51,9 @@ const resolveReferencesRecursive = (root: any, obj: any, exploredPaths: string[]
                     throw new Error(`Reference to not object items forbidden: ${ref}`)
                 }
             }
-            const itemCopy = Object.assign({}, item)
-            delete itemCopy['$ref']
-            // console.log('mapAllRef end:', { output: Object.assign({}, referencedObj, itemCopy) })
-            return Object.assign({}, referencedObj, itemCopy)
+            const resolvedObj = overrideWithLocalProperties(item, referencedObj)
+            // console.log('mapAllRef end:', resolvedObj)
+            return resolvedObj
         })
     }
     // console.log('resolveReferencesRecursive end:', { obj })
