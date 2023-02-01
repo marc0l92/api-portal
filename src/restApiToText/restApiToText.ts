@@ -151,8 +151,8 @@ async function parseController(controllerName: string): Promise<ApiUriToken> {
         alternativeTypes: [],
         warnings: [],
     }
-    if (!pluralize.isSingular(controllerName)) {
-        part.warnings.push(`The controller "${controllerName}" should be a singular word`)
+    if (!pluralize.isPlural(controllerName)) {
+        part.warnings.push(`The controller "${controllerName}" should be a plural word`)
     }
     checkAllowedCharacters(controllerName, part.warnings)
     // await checkIsNoun(controllerName, part.warnings)
