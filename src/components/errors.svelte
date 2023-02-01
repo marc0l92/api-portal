@@ -5,7 +5,9 @@
 <div class="box">
     <ul>
         {#each messages as message}
-            <li class="notification is-danger is-small">{message}</li>
+            <li class="notification is-danger is-small">
+                <pre>{message}</pre>
+            </li>
         {/each}
     </ul>
 </div>
@@ -16,5 +18,10 @@
     }
     .notification.is-small {
         padding: 0.5em;
+    }
+    .notification.is-small pre {
+        background: none;
+        color: #fff;
+        padding: 0;
     }
 </style>
