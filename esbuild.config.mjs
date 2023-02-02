@@ -20,7 +20,6 @@ const options = {
   external: [...builtins],
   mainFields: ["svelte", "browser", "module", "main"],
   format: 'esm',
-  target: 'es2020',
   logLevel: 'info',
   sourcemap: prod ? false : 'inline',
   treeShaking: true,
@@ -36,6 +35,9 @@ const options = {
     'node12',
     'safari11',
   ],
+  define: {
+    IS_TEST: JSON.stringify(!prod),
+  },
   plugins: [sveltePlugin({
     preprocess: sveltePreprocess(),
     compilerOptions: { css: true },

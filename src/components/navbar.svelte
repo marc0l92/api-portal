@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { isTest } from 'common/hotReload';
+
   export let activePage = 'restApiToText';
+  const basePath = isTest() ? '/' : '/api-tools/';
 </script>
 
 <nav class="navbar">
   <div class="navbar-brand">
-    <a class="navbar-item" href="/api-tools"><strong>API Tools</strong></a>
+    <a class="navbar-item" href={basePath}><strong>API Tools</strong></a>
 
     <button class="navbar-burger" data-target="my-navbar">
       <span />
@@ -15,8 +18,8 @@
 
   <div id="my-navbar" class="navbar-menu">
     <div class="navbar-start">
-      <a class="navbar-item {activePage === 'restApiToText' ? 'is-active' : ''}" href="/api-tools/tools/restApiToText.html">REST Api to Text</a>
-      <a class="navbar-item {activePage === 'apiToSpreadsheet' ? 'is-active' : ''}" href="/api-tools/tools/apiToSpreadsheet.html">API to Spreadsheet</a>
+      <a class="navbar-item {activePage === 'restApiToText' ? 'is-active' : ''}" href={basePath + 'tools/restApiToText.html'}>REST Api to Text</a>
+      <a class="navbar-item {activePage === 'apiToSpreadsheet' ? 'is-active' : ''}" href={basePath + 'tools/apiToSpreadsheet.html'}>API to Spreadsheet</a>
     </div>
 
     <div class="navbar-end">
