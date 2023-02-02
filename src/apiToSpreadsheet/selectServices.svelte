@@ -6,11 +6,14 @@
     let selectedServiceIndex = 0;
 
     const dispatch = createEventDispatcher();
+
+    $: dispatch('serviceSelect', { selectedServiceIndex });
+
     function onServiceSelect() {
         dispatch('serviceSelect', { selectedServiceIndex });
     }
     // On services update
-    $:if(services.length>0){
+    $: if (services.length > 0) {
         onServiceSelect();
     }
     onMount(() => {
@@ -23,7 +26,7 @@
     <div class="field">
         <div class="control">
             <div class="select is-expanded is-multiple">
-                <select size="8" on:change={onServiceSelect} bind:value={selectedServiceIndex}>
+                <select size="8" bind:value={selectedServiceIndex}>
                     {#each services as service, index}
                         <option value={index}>{service['x-name']}</option>
                     {/each}
