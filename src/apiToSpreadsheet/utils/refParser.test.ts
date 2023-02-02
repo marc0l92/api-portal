@@ -20,6 +20,12 @@ describe('RefParser', () => {
             expect(resolveReferences(kInput)).toEqual(kExpected)
         })
 
+        test('Object with simple reference with override', () => {
+            const kInput = { a: { c: 1 }, b: { '$ref': '#/a', d: 2 } }
+            const kExpected = { a: { c: 1 }, b: { c: 1, d: 2 } }
+            expect(resolveReferences(kInput)).toEqual(kExpected)
+        })
+
         test('Object with reference of reference', () => {
             const kInput = { a: { c: 1 }, b: { '$ref': '#/d' }, d: { '$ref': '#/a' } }
             const kExpected = { a: { c: 1 }, b: { c: 1 }, d: { c: 1 } }
@@ -81,6 +87,20 @@ describe('RefParser', () => {
             }
             expect(resolveReferences(kInput)).toEqual(kExpected)
         })
+
+        // test('Object with cyclic reference', () => {
+        //     const kInput = {
+        //         a: { aa: 1, ab: { '$ref': '#/b' } },
+        //         b: { ba: 2, bb: { '$ref': '#/c' } },
+        //         c: { ca: 3, cb: { '$ref': '#/a' } },
+        //     }
+        //     const kExpected = {
+        //         a: { aa: 1, ab: { ba: 2, bb: {} } },
+        //         b: { ba: 2, bb: {} },
+        //         c: { ca: 3, cb: { aa: 1, ab: { ba: 2, bb: {} } } },
+        //     }
+        //     expect(resolveReferences(kInput)).toEqual(kExpected)
+        // })
 
         test('Object with self reference', () => {
             const kInput = {

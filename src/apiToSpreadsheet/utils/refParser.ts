@@ -1,12 +1,11 @@
 type MapAllRefCallback = (item: any, ref: string) => void
 
-const mapAllRef = (root: any, obj: any, callback: MapAllRefCallback): any => {
+const mapAllRef = (obj: any, callback: MapAllRefCallback): any => {
     for (const key in obj) {
         if (key === '$ref' && typeof obj[key] === 'string') {
             return callback(obj, obj['$ref'])
-        }
-        if (typeof obj[key] === 'object') {
-            obj[key] = mapAllRef(root, obj[key], callback)
+        } else if (typeof obj[key] === 'object') {
+            obj[key] = mapAllRef(obj[key], callback)
         }
     }
     return obj
@@ -37,7 +36,7 @@ const overrideWithLocalProperties = (local: any, global: any): any => {
 const resolveReferencesRecursive = (root: any, obj: any, exploredPaths: string[]): any => {
     // console.log('resolveReferencesRecursive begin:', { root, obj, exploredPaths: JSON.stringify(exploredPaths) })
     if (typeof obj === 'object') {
-        obj = mapAllRef(root, obj, (item, ref) => {
+        obj = mapAllRef(obj, (item, ref) => {
             // console.log('mapAllRef begin:', { item, ref, exploredPaths: JSON.stringify(exploredPaths) })
             let referencedObj = {}
             if (exploredPaths.indexOf(ref) === -1) {
@@ -60,6 +59,43 @@ const resolveReferencesRecursive = (root: any, obj: any, exploredPaths: string[]
     return obj
 }
 
+
+// const resolveReferencesIterative = (root: any): any => {
+//     const stack: { data: any, path: string }[] = [{ data: root, path: '#' }]
+
+//     while (stack.length > 0) {
+//         // console.log('Stack: ', { stack: JSON.stringify(stack), root: JSON.stringify(root) })
+//         let obj = stack.pop()
+//         // console.log('Begin obj: ', { obj: JSON.stringify(obj) })
+//         if (typeof obj.data === 'object') {
+//             for (const key in obj.data) {
+//                 if (key === '$ref' && typeof obj.data[key] === 'string') {
+//                     if (obj.path.startsWith(obj.data[key])) {
+//                         //Circular reference
+//                         delete obj.data['$ref']
+//                     } else {
+//                         const referencedObj = getObjectByRef(root, obj.data['$ref'])
+//                         if (typeof referencedObj !== 'object') {
+//                             throw new Error(`Reference to not object items forbidden: ${obj.data['$ref']}`)
+//                         }
+//                         delete obj.data['$ref']
+//                         const objCopy = Object.assign({}, obj.data)
+//                         Object.assign(obj.data, referencedObj, objCopy)
+//                         stack.push(obj)
+//                         // console.log({ referencedObj, root: JSON.stringify(root) })
+//                     }
+//                 } else if (typeof obj.data[key] === 'object') {
+//                     stack.push({ data: obj.data[key], path: `${obj.path}/${key}` })
+//                 }
+//             }
+//         }
+//         // console.log('End obj: ', { obj: JSON.stringify(obj) })
+//     }
+//     return root
+// }
+
+
 export const resolveReferences = (obj: any): any => {
     return resolveReferencesRecursive(obj, obj, [])
+    // return resolveReferencesIterative(obj)
 }
