@@ -14,7 +14,8 @@ const options = {
   entryPoints: [
     './src/home.ts',
     './src/apiToSpreadsheet.ts',
-    './src/restApiToText.ts'
+    './src/restApiToText.ts',
+    './src/apiToPlantuml.ts'
   ],
   bundle: true,
   external: [...builtins],

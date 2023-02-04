@@ -3,13 +3,11 @@
   import InputOpenApi from './inputOpenApi.svelte';
   import SelectServices from './selectServices.svelte';
   import GenerateSpreadsheet from './generateSpreadsheet.svelte';
-  import { resolveReferences } from './utils/refParser';
-  import { ApiVersion, type Api, type ApiService } from './utils/interfaces';
-  import { extractServices, getApiDocumentationVersion } from './utils/swaggerParsing';
+  import { resolveReferences } from '../common/refParser';
   import Errors from 'components/errors.svelte';
+  import { apiFactory, type Api, type ApiService } from 'common/api';
 
   let api: Api = null;
-  let version = ApiVersion.Invalid;
   let services: ApiService[] = [];
   let selectedService: ApiService = null;
   let errors: string[] = [];
@@ -18,14 +16,13 @@
     try {
       errors = [];
       api = null;
-      version = ApiVersion.Invalid;
       services = [];
       selectedService = null;
       const apiObject = event.detail.apiObject;
       if (apiObject) {
-        api = await resolveReferences(apiObject);
-        version = getApiDocumentationVersion(api);
-        services = extractServices(api);
+        const apiDoc = await resolveReferences(apiObject);
+        api = apiFactory(apiDoc);
+        services = api.getServices();
         if (services.length === 0) {
           errors = [...errors, 'Warning: No services found'];
         }
@@ -56,7 +53,7 @@
     <Errors messages={errors} />
   {/if}
   {#if selectedService}
-    <GenerateSpreadsheet service={selectedService} {version} />
+    <GenerateSpreadsheet service={selectedService} />
   {/if}
 </div>
 

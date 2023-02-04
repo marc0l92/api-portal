@@ -20,6 +20,7 @@
     <div class="navbar-start">
       <a class="navbar-item {activePage === 'restApiToText' ? 'is-active' : ''}" href={basePath + 'tools/restApiToText.html'}>REST Api to Text</a>
       <a class="navbar-item {activePage === 'apiToSpreadsheet' ? 'is-active' : ''}" href={basePath + 'tools/apiToSpreadsheet.html'}>API to Spreadsheet</a>
+      <a class="navbar-item {activePage === 'apiToPlantuml' ? 'is-active' : ''}" href={basePath + 'tools/apiToPlantuml.html'}>API to PlantUML</a>
     </div>
 
     <div class="navbar-end">
