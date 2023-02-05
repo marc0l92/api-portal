@@ -33,7 +33,7 @@ const webOptions = {
     'chrome58',
     'edge18',
     'firefox57',
-    'node12',
+    'node16',
     'safari11',
   ],
   define: {
@@ -52,20 +52,19 @@ const moduleOptions = {
   },
   entryPoints: [{
     in: './src/module.ts',
-    out: './api-tools.js'
+    out: './api-tools'
   }],
   bundle: true,
   external: [...builtins],
   mainFields: ["module", "main"],
-  format: 'esm',
+  format: 'cjs',
   logLevel: 'info',
   sourcemap: prod ? false : 'inline',
   treeShaking: true,
   outdir: './dist',
   minify: prod,
-  splitting: false,
   target: [
-    'node12',
+    'node16',
   ],
   define: {
     IS_TEST: JSON.stringify(!prod),
@@ -74,7 +73,7 @@ const moduleOptions = {
 
 
 if (prod) {
-  // esbuild.build(webOptions).catch(() => process.exit(1))
+  esbuild.build(webOptions).catch(() => process.exit(1))
   esbuild.build(moduleOptions).catch(() => process.exit(1))
 } else {
   // Web

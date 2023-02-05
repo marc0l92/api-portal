@@ -1,3 +1,3 @@
-export function helloWord() {
-    console.log('Hello')
+export function helloWorld() {
+    return 1
 }
