@@ -1,7 +1,10 @@
 <script lang="ts">
+    import { getOptions, storeOptions } from 'common/localStorage';
     import yaml from 'js-yaml';
     import { createEventDispatcher, onMount } from 'svelte';
-    import { readInputFile } from '../apiToSpreadsheet/filesUtils';
+    import { readInputFile } from '../common/filesUtils';
+
+    const LOCAL_STORAGE_SELECTED_TAB_KEY = 'inputApi.selectedTab';
 
     let selectedTab = 'link';
     let link = 'https://petstore3.swagger.io/api/v3/openapi.json';
@@ -16,7 +19,7 @@
         let apiObject: any = null;
         try {
             if (selectedTab === 'link') {
-                isLinkLoading = true
+                isLinkLoading = true;
                 const linkResponse = await fetch(link);
                 if (linkResponse.ok) {
                     apiObject = yaml.load(await linkResponse.text());
@@ -32,16 +35,18 @@
             console.error(e);
             inputError = 'Error: ' + e.message;
         }
-        isLinkLoading = false
+        isLinkLoading = false;
         dispatch('apiChange', { apiObject });
     }
 
     function changeTab(newTab: string) {
         selectedTab = newTab;
+        storeOptions(LOCAL_STORAGE_SELECTED_TAB_KEY, newTab);
         onApiChange();
     }
 
     onMount(() => {
+        selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
         onApiChange();
     });
 </script>

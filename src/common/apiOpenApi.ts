@@ -2,6 +2,9 @@ import { Api, ApiService, type ApiParameterDoc } from "./api"
 
 export interface ApiOpenApiDoc {
     openapi: string
+    info?: {
+        title?: string
+    }
     paths: {
         [path: string]: {
             parameters?: ApiParameterDoc[]
@@ -29,6 +32,13 @@ export class ApiOpenApi extends Api {
     constructor(apiDoc: ApiOpenApiDoc) {
         super()
         this.apiDoc = apiDoc
+    }
+
+    getName(): string {
+        if (this.apiDoc.info && this.apiDoc.info.title) {
+            return this.apiDoc.info.title
+        }
+        return 'api'
     }
 
     getServices(): ApiService[] {

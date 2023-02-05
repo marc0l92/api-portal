@@ -2,7 +2,7 @@
   import Navbar from '../components/navbar.svelte';
   import InputApi from '../components/inputApi.svelte';
   import SelectServices from '../components/selectServices.svelte';
-  import GenerateSpreadsheet from './generateSpreadsheet.svelte';
+  import DownloadSpreadsheets from './downloadSpreadsheets.svelte';
   import { resolveReferences } from '../common/refParser';
   import Errors from 'components/errors.svelte';
   import { apiFactory } from 'common/apiFactory';
@@ -55,7 +55,7 @@
     <Errors messages={errors} />
   {/if}
   {#if selectedService}
-    <GenerateSpreadsheet service={selectedService} />
+    <DownloadSpreadsheets {selectedService} {services} apiName={api.getName()} />
   {/if}
 </div>
 <Footer />

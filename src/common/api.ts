@@ -20,6 +20,7 @@ export interface ApiParameterDocMap {
 }
 
 export abstract class Api {
+    abstract getName(): string
     abstract getServices(): ApiService[]
 }
 

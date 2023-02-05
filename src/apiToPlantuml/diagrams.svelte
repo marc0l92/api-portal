@@ -1,13 +1,7 @@
 <script lang="ts">
-    import type { ApiParameterDoc, ApiService } from 'common/api';
-    import DiagramBuilder from './diagramBuilder';
+    import type { ApiService } from 'common/api';
     import { diagramBuilderOptions, type DiagramBuilderOptions } from './diagramBuilderOptions';
-
-    interface DiagramData {
-        name: string;
-        uml: string;
-        image: string;
-    }
+    import { parseServiceDiagrams, type DiagramData } from './serivceDiagrams';
 
     export let service: ApiService = null;
     let diagrams: DiagramData[] = [];
@@ -15,32 +9,8 @@
 
     $: parseService(service, $diagramBuilderOptions);
 
-    function addDiagram(parameter: ApiParameterDoc, subName: string, options: DiagramBuilderOptions) {
-        if (parameter.schema) {
-            const title = `${service.getName()} - ${subName}`;
-            const diagramBuilder = new DiagramBuilder(options);
-            diagramBuilder.buildTitle(title);
-            diagramBuilder.buildModel(parameter.schema);
-            diagrams.push({
-                name: title,
-                uml: diagramBuilder.getDiagramText(),
-                image: diagramBuilder.getDiagramImageUri(),
-            });
-        }
-    }
-
     function parseService(serviceToProcess: ApiService, options: DiagramBuilderOptions) {
-        diagrams = [];
-        if (serviceToProcess) {
-            const request = serviceToProcess.getRequest();
-            if (request) {
-                addDiagram(request, 'Request', options);
-            }
-            const responses = serviceToProcess.getResponses();
-            for (const statusCode in responses) {
-                addDiagram(responses[statusCode], `Response [${statusCode}]`, options);
-            }
-        }
+        diagrams = parseServiceDiagrams(serviceToProcess, options);
         if (diagrams.length > 0) {
             selectedDiagram = diagrams[0];
         }

@@ -12,6 +12,7 @@
   import { onMount } from 'svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
   import { diagramBuilderOptions } from './diagramBuilderOptions';
+  import DownloadDiagrams from './downloadDiagrams.svelte';
 
   const LOCAL_STORAGE_KEY = 'apiToPlantuml.diagramsBuilderOptions';
 
@@ -44,7 +45,7 @@
     selectedService = services[event.detail.selectedServiceIndex];
   }
 
-  $: storeOptions(LOCAL_STORAGE_KEY, $diagramBuilderOptions)
+  $: storeOptions(LOCAL_STORAGE_KEY, $diagramBuilderOptions);
 
   onMount(() => {
     diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY));
@@ -69,6 +70,7 @@
   {#if selectedService}
     <Diagrams service={selectedService} />
     <DiagramsOption />
+    <DownloadDiagrams apiName={api.getName()} {selectedService} {services} />
   {/if}
 </div>
 <Footer />

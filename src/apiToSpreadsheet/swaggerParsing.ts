@@ -1,5 +1,5 @@
-import { DataSheetItemCardinality } from "./interfaces"
-import type { DataSheetItem, DataSheetItemMap } from "./interfaces"
+import { ModelPropertyCardinality } from "./interfaces"
+import type { ModelProperty, ModelPropertiesMap } from "./interfaces"
 import type { ApiParameterDoc, ApiService } from "common/api"
 import { mergeAllOfDefinitions, ModelType, type ApiModelDoc } from "common/apiModel"
 
@@ -40,15 +40,15 @@ function getAuthorizedValues(model: ApiModelDoc): string {
     return rules.join('; ')
 }
 
-function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, path: string = '', level: number = 0): DataSheetItem[] {
-    let flatMap: DataSheetItem[] = []
+function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, path: string = '', level: number = 0): ModelProperty[] {
+    let flatMap: ModelProperty[] = []
     // console.log('generateModelFlatMap:', { model })
 
-    const flatItem: DataSheetItem = {
+    const flatItem: ModelProperty = {
         Location: LOCATION_BODY,
         Level: level,
         Path: path,
-        Cardinality: required ? DataSheetItemCardinality.Required : DataSheetItemCardinality.Optional,
+        Cardinality: required ? ModelPropertyCardinality.Required : ModelPropertyCardinality.Optional,
         Type: model.type || ModelType.Object,
         Authorized: getAuthorizedValues(model),
         Description: model.description || '',
@@ -82,13 +82,13 @@ function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, pat
     return flatMap
 }
 
-function generateParameterFlatMap(parameter: ApiParameterDoc): DataSheetItem {
+function generateParameterFlatMap(parameter: ApiParameterDoc): ModelProperty {
     parameter.in = parameter.in[0].toUpperCase() + parameter.in.substring(1)
     return {
         Location: parameter.in,
         Level: 0,
         Path: parameter.name,
-        Cardinality: parameter.required ? DataSheetItemCardinality.Required : DataSheetItemCardinality.Optional,
+        Cardinality: parameter.required ? ModelPropertyCardinality.Required : ModelPropertyCardinality.Optional,
         Type: parameter.type || parameter.schema.type || 'string',
         Authorized: getAuthorizedValues(parameter.schema),
         Description: parameter.description || '',
@@ -96,9 +96,9 @@ function generateParameterFlatMap(parameter: ApiParameterDoc): DataSheetItem {
     }
 }
 
-export const generateServiceWorkbook = (service: ApiService): DataSheetItemMap => {
+export const generateServiceWorkbook = (service: ApiService): ModelPropertiesMap => {
     console.log('Service:', { service })
-    const workbook: DataSheetItemMap = { Request: [] }
+    const workbook: ModelPropertiesMap = { Request: [] }
     const parameters = service.getParameters()
     console.log('Parameters:', { parameters })
     for (const parameter of parameters) {

@@ -1,23 +1,23 @@
-export enum DataSheetItemCardinality {
+export enum ModelPropertyCardinality {
     Required = 'Required',
     Optional = 'Optional',
 }
 
-export interface DataSheetItem {
+export interface ModelProperty {
     Location: string
     Level: number
     Path: string
-    Cardinality: DataSheetItemCardinality
+    Cardinality: ModelPropertyCardinality
     Type: string
     Authorized: string
     Description: string
     Example: string
 }
 
-export interface DataSheetItemMap {
-    [sheetName: string]: DataSheetItem[]
+export interface ModelPropertiesMap {
+    [sheetName: string]: ModelProperty[]
 }
 
-export interface DataSheetWorkbook {
+export interface TablesMap {
     [sheetName: string]: string[][]
 }

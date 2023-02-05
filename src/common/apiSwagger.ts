@@ -2,6 +2,9 @@ import { Api, ApiService, type ApiParameterDoc } from "./api"
 
 export interface ApiSwaggerDoc {
     swagger: string
+    info?: {
+        title?: string
+    }
     paths: {
         [path: string]: {
             parameters?: ApiParameterDoc[]
@@ -24,6 +27,13 @@ export class ApiSwagger extends Api {
     constructor(apiDoc: ApiSwaggerDoc) {
         super()
         this.apiDoc = apiDoc
+    }
+
+    getName(): string {
+        if (this.apiDoc.info && this.apiDoc.info.title) {
+            return this.apiDoc.info.title
+        }
+        return 'api'
     }
 
     getServices(): ApiService[] {
