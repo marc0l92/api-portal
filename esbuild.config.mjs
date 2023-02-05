@@ -7,7 +7,7 @@ import sveltePreprocess from "svelte-preprocess"
 const prod = (process.argv[2] === 'production')
 
 /** @type {esbuild.BuildOptions} */
-const options = {
+const webOptions = {
   banner: {
     js: '// Project: https://github.com/marc0l92/api-tools',
   },
@@ -45,10 +45,43 @@ const options = {
   })],
 }
 
+/** @type {esbuild.BuildOptions} */
+const moduleOptions = {
+  banner: {
+    js: '// Project: https://github.com/marc0l92/api-tools',
+  },
+  entryPoints: [{
+    in: './src/module.ts',
+    out: './api-tools.js'
+  }],
+  bundle: true,
+  external: [...builtins],
+  mainFields: ["module", "main"],
+  format: 'esm',
+  logLevel: 'info',
+  sourcemap: prod ? false : 'inline',
+  treeShaking: true,
+  outdir: './dist',
+  minify: prod,
+  splitting: false,
+  target: [
+    'node12',
+  ],
+  define: {
+    IS_TEST: JSON.stringify(!prod),
+  },
+}
+
+
 if (prod) {
-  esbuild.build(options).catch(() => process.exit(1))
+  // esbuild.build(webOptions).catch(() => process.exit(1))
+  esbuild.build(moduleOptions).catch(() => process.exit(1))
 } else {
-  const ctx = await esbuild.context(options)
-  ctx.watch().catch(() => process.exit(1))
-  ctx.serve({ servedir: 'public', port: 9000 }).catch(() => process.exit(1))
+  // Web
+  const webCtx = await esbuild.context(webOptions)
+  webCtx.watch().catch(() => process.exit(1))
+  webCtx.serve({ servedir: 'public', port: 9000 }).catch(() => process.exit(1))
+  // Module
+  const moduleCtx = await esbuild.context(moduleOptions)
+  moduleCtx.watch().catch(() => process.exit(1))
 }
