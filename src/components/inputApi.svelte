@@ -8,6 +8,7 @@
     let inputError = '';
     let files: any = null;
     let text = '';
+    let isLinkLoading = false;
 
     const dispatch = createEventDispatcher();
     async function onApiChange() {
@@ -15,6 +16,7 @@
         let apiObject: any = null;
         try {
             if (selectedTab === 'link') {
+                isLinkLoading = true
                 const linkResponse = await fetch(link);
                 if (linkResponse.ok) {
                     apiObject = yaml.load(await linkResponse.text());
@@ -30,6 +32,7 @@
             console.error(e);
             inputError = 'Error: ' + e.message;
         }
+        isLinkLoading = false
         dispatch('apiChange', { apiObject });
     }
 
@@ -70,7 +73,7 @@
 <div class="box">
     <div>
         <div class="field {selectedTab === 'link' ? '' : 'is-hidden'}">
-            <div class="control is-expanded">
+            <div class="control is-expanded {isLinkLoading ? 'is-loading' : ''}">
                 <input type="text" class="input" bind:value={link} on:input={onApiChange} placeholder="Example: https://petstore3.swagger.io/api/v3/openapi.json" />
             </div>
         </div>

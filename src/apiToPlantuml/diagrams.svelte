@@ -48,24 +48,26 @@
 </script>
 
 <div class="box">
-    <div class="columns">
-        <div class="column is-one-third">
-            <aside class="menu">
-                <ul class="menu-list">
-                    {#each diagrams as diagram}
-                        <li>
-                            <a
-                                href={'#' + diagram.name}
-                                on:click={() => {
-                                    selectedDiagram = diagram;
-                                }}>{diagram.name}</a>
-                        </li>
-                    {/each}
-                </ul>
-            </aside>
-        </div>
-        <div class="column">
-            {#if diagrams.length > 0}
+    <p class="subtitle"><strong>Diagrams</strong></p>
+    {#if diagrams.length > 0}
+        <div class="columns">
+            <div class="column is-one-third">
+                <aside class="menu">
+                    <ul class="menu-list">
+                        {#each diagrams as diagram}
+                            <li>
+                                <a
+                                    class={selectedDiagram === diagram ? 'is-active' : ''}
+                                    href={'#' + diagram.name}
+                                    on:click={() => {
+                                        selectedDiagram = diagram;
+                                    }}>{diagram.name}</a>
+                            </li>
+                        {/each}
+                    </ul>
+                </aside>
+            </div>
+            <div class="column">
                 {#if selectedDiagram}
                     <div class="block">
                         <div class="field">
@@ -82,13 +84,13 @@
                         </a>
                     </div>
                 {:else}
-                    <p>No diagram selected</p>
+                    <p class="notification is-warning">No diagram selected</p>
                 {/if}
-            {:else}
-                <p>The selected service has no request and no responses models</p>
-            {/if}
+            </div>
         </div>
-    </div>
+    {:else}
+        <p class="notification is-warning">The selected service has no request and no responses models</p>
+    {/if}
 </div>
 
 <style>

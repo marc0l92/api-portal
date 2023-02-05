@@ -8,6 +8,7 @@
   import SelectServices from 'components/selectServices.svelte';
   import Footer from 'components/footer.svelte';
   import Diagrams from './diagrams.svelte';
+  import DiagramsOption from './diagramsOption.svelte';
 
   let api: Api = null;
   let services: ApiService[] = [];
@@ -55,6 +56,7 @@
     <Errors messages={errors} />
   {/if}
   {#if selectedService}
+    <DiagramsOption />
     <Diagrams service={selectedService} />
   {/if}
 </div>

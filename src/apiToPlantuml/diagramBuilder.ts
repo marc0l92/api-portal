@@ -12,7 +12,7 @@ interface ApiModelDocMap {
     [key: string]: ApiModelDoc
 }
 
-const DEFAULT_OPTIONS: DiagramBuilderOptions = {
+export const DEFAULT_DIAGRAM_BUILDER_OPTIONS: DiagramBuilderOptions = {
     serverUrl: 'https://www.plantuml.com/plantuml',
     format: 'svg',
     colors: true,
@@ -39,7 +39,7 @@ export default class DiagramBuilder {
 
     constructor(options: DiagramBuilderOptions) {
         this.diagramText = '@startuml\n'
-        this.options = Object.assign({}, DEFAULT_OPTIONS, options)
+        this.options = Object.assign({}, DEFAULT_DIAGRAM_BUILDER_OPTIONS, options)
         if (this.options.diagramHeader) {
             this.diagramText += this.options.diagramHeader + '\n'
         }
