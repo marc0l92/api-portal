@@ -13,6 +13,8 @@ const webOptions = {
   },
   entryPoints: [
     './src/home.ts',
+    './src/browser.ts',
+    './src/viewer.ts',
     './src/apiToSpreadsheet.ts',
     './src/restApiToText.ts',
     './src/apiToPlantuml.ts'

@@ -13,12 +13,4 @@
 </div>
 
 <style>
-    .notification.is-small {
-        padding: 0.5em;
-    }
-    .notification.is-small pre {
-        background: none;
-        color: #fff;
-        padding: 0;
-    }
 </style>

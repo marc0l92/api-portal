@@ -35,6 +35,11 @@
                     <label class="checkbox"><input type="checkbox" bind:checked={$diagramBuilderOptions.colors} /> Use colors</label>
                 </div>
             </div>
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox"><input type="checkbox" bind:checked={$diagramBuilderOptions.parameters} /> Render parameters</label>
+                </div>
+            </div>
         </div>
     </details>
 </div>

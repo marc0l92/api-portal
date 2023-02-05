@@ -1,9 +1,12 @@
 import { Api, ApiService, type ApiParameterDoc } from "./api"
 
+const PATH_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
+
 export interface ApiOpenApiDoc {
     openapi: string
     info?: {
         title?: string
+        version?: string
     }
     paths: {
         [path: string]: {
@@ -41,12 +44,19 @@ export class ApiOpenApi extends Api {
         return 'api'
     }
 
+    getVersion(): string {
+        if (this.apiDoc.info && this.apiDoc.info.version) {
+            return this.apiDoc.info.version
+        }
+        return '0'
+    }
+
     getServices(): ApiService[] {
         const services: ApiServiceOpenApi[] = []
         for (const path in this.apiDoc.paths) {
             const globalParam = this.apiDoc.paths[path].parameters || []
             for (const method in this.apiDoc.paths[path]) {
-                if (method !== 'parameters') {
+                if (PATH_METHODS.indexOf(method) >= 0) {
                     const apiService = new ApiServiceOpenApi(this.apiDoc.paths[path][method] as ApiOpenApiServiceDoc)
                     apiService.setPath(path)
                     apiService.setMethod(method)
@@ -72,7 +82,7 @@ export class ApiServiceOpenApi extends ApiService {
 
     private initParameters() {
         if (this.serviceDoc.parameters) {
-            this.parameters = this.serviceDoc.parameters
+            this.requestParameters = this.serviceDoc.parameters
         }
     }
 

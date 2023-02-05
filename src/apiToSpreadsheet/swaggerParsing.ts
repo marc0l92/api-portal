@@ -99,7 +99,7 @@ function generateParameterFlatMap(parameter: ApiParameterDoc): ModelProperty {
 export const generateServiceWorkbook = (service: ApiService): ModelPropertiesMap => {
     console.log('Service:', { service })
     const workbook: ModelPropertiesMap = { Request: [] }
-    const parameters = service.getParameters()
+    const parameters = service.getRequestParameters()
     console.log('Parameters:', { parameters })
     for (const parameter of parameters) {
         workbook.Request.push(generateParameterFlatMap(parameter))

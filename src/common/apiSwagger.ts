@@ -4,6 +4,7 @@ export interface ApiSwaggerDoc {
     swagger: string
     info?: {
         title?: string
+        version?: string
     }
     paths: {
         [path: string]: {
@@ -34,6 +35,13 @@ export class ApiSwagger extends Api {
             return this.apiDoc.info.title
         }
         return 'api'
+    }
+
+    getVersion(): string {
+        if (this.apiDoc.info && this.apiDoc.info.version) {
+            return this.apiDoc.info.version
+        }
+        return '0'
     }
 
     getServices(): ApiService[] {
@@ -67,7 +75,7 @@ export class ApiServiceSwagger extends ApiService {
 
     private initParameters() {
         if (this.serviceDoc.parameters) {
-            this.parameters = this.serviceDoc.parameters.filter((parameter) => {
+            this.requestParameters = this.serviceDoc.parameters.filter((parameter) => {
                 return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
             })
         }

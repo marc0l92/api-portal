@@ -19,6 +19,7 @@
     "jszip": "^3.10.1",
     "plantuml-encoder": "^1.4.0",
     "pluralize": "^8.0.0",
+    "swagger-ui": "^4.15.5",
     "util": "^0.12.5",
     "xlsx": "^0.18.5"
   },
@@ -28,6 +29,7 @@
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^18.11.18",
     "@types/plantuml-encoder": "^1.4.0",
+    "@types/swagger-ui": "^3.52.0",
     "builtin-modules": "^3.3.0",
     "esbuild": "^0.17.4",
     "esbuild-svelte": "^0.7.3",

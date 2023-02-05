@@ -1,3 +1,4 @@
+import type { ApiParameterDoc } from 'common/api'
 import { ModelType, type ApiModelDoc } from 'common/apiModel'
 import * as PlantumlEncoder from 'plantuml-encoder'
 import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, type DiagramBuilderOptions } from './diagramBuilderOptions'
@@ -49,6 +50,10 @@ export default class DiagramBuilder {
 
     buildTitle(title: string): void {
         this.diagramText += `title ${safeStr(title)}\n`
+    }
+
+    buildParameters(parameters: ApiParameterDoc[]): void {
+
     }
 
     buildModel(model: ApiModelDoc): void {

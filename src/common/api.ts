@@ -21,11 +21,12 @@ export interface ApiParameterDocMap {
 
 export abstract class Api {
     abstract getName(): string
+    abstract getVersion(): string
     abstract getServices(): ApiService[]
 }
 
 export abstract class ApiService {
-    protected parameters: ApiParameterDoc[] = []
+    protected requestParameters: ApiParameterDoc[] = []
     protected request: ApiParameterDoc = null
     protected responses: ApiParameterDocMap = {}
     protected path: string
@@ -39,14 +40,14 @@ export abstract class ApiService {
     }
 
     addGlobalParameters(globalParameters: ApiParameterDoc[]): void {
-        this.parameters.concat(globalParameters)
+        this.requestParameters.concat(globalParameters)
     }
 
     getName(): string {
         return `${this.method.toUpperCase()} ${this.path}`
     }
-    getParameters(): ApiParameterDoc[] {
-        return this.parameters
+    getRequestParameters(): ApiParameterDoc[] {
+        return this.requestParameters
     }
     getRequest(): ApiParameterDoc {
         return this.request

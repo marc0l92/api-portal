@@ -11,15 +11,15 @@
     let inputError = '';
     let files: any = null;
     let text = '';
-    let isLinkLoading = false;
+    let isLoading = false;
 
     const dispatch = createEventDispatcher();
     async function onApiChange() {
+        isLoading = true;
         inputError = '';
         let apiObject: any = null;
         try {
             if (selectedTab === 'link') {
-                isLinkLoading = true;
                 const linkResponse = await fetch(link);
                 if (linkResponse.ok) {
                     apiObject = yaml.load(await linkResponse.text());
@@ -35,7 +35,7 @@
             console.error(e);
             inputError = 'Error: ' + e.message;
         }
-        isLinkLoading = false;
+        isLoading = false;
         dispatch('apiChange', { apiObject });
     }
 
@@ -75,10 +75,10 @@
         </ul>
     </div>
 </div>
-<div class="box">
+<div class="box flat-top">
     <div>
         <div class="field {selectedTab === 'link' ? '' : 'is-hidden'}">
-            <div class="control is-expanded {isLinkLoading ? 'is-loading' : ''}">
+            <div class="control is-expanded {isLoading ? 'is-loading' : ''}">
                 <input type="text" class="input" bind:value={link} on:input={onApiChange} placeholder="Example: https://petstore3.swagger.io/api/v3/openapi.json" />
             </div>
         </div>
@@ -98,30 +98,11 @@
         </div>
     </div>
     {#if inputError}
-        <div class="margin-top">
+        <div class="mt-3">
             <div class="notification is-danger is-small">{inputError}</div>
         </div>
     {/if}
 </div>
 
 <style>
-    .tabs.is-boxed.is-floating li.is-active {
-        box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
-    }
-    .tabs.is-boxed.is-floating li.is-active > a {
-        border: 0;
-    }
-    .tabs.is-boxed.is-floating ul {
-        border-bottom-width: 0;
-    }
-    .box {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-    div.notification.is-small {
-        padding: 0.5em;
-    }
-    div.margin-top {
-        margin-top: 0.75rem;
-    }
 </style>
