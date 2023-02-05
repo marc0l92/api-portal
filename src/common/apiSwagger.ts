@@ -33,7 +33,8 @@ export class ApiSwagger extends Api {
             for (const method in this.apiDoc.paths[path]) {
                 if (method !== 'parameters') {
                     const apiService = new ApiServiceSwagger(this.apiDoc.paths[path][method] as ApiSwaggerServiceDoc)
-                    apiService.setName(`${method.toUpperCase()} ${path}`)
+                    apiService.setPath(path)
+                    apiService.setMethod(method)
                     apiService.addGlobalParameters(globalParam)
                     services.push(apiService)
                 }
@@ -55,9 +56,11 @@ export class ApiServiceSwagger extends ApiService {
     }
 
     private initParameters() {
-        this.parameters = this.serviceDoc.parameters.filter((parameter) => {
-            return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
-        })
+        if (this.serviceDoc.parameters) {
+            this.parameters = this.serviceDoc.parameters.filter((parameter) => {
+                return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
+            })
+        }
     }
 
     private initRequest() {

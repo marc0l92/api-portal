@@ -24,3 +24,7 @@ body {
 strong {
     color: var(--color-accent);
 }
+
+.box {
+    background-color: var(--color-background-accent);
+}

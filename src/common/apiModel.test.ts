@@ -1,13 +1,13 @@
-import { mergeAllOfDefinitions, type ApiModelDoc } from "./apiModel"
+import { mergeAllOfDefinitions, ModelType, type ApiModelDoc } from "./apiModel"
 
 describe('ApiModel', () => {
     describe('mergeAllOfDefinitions', () => {
         test('Object without allOf', () => {
             const kInput: ApiModelDoc = {
-                type: 'object',
+                type: ModelType.Object,
                 properties: {
-                    name: { type: 'string' },
-                    surname: { type: 'string' },
+                    name: { type: ModelType.String },
+                    surname: { type: ModelType.String },
                 }
             }
             const kExpected = kInput

@@ -38,7 +38,8 @@ export class ApiOpenApi extends Api {
             for (const method in this.apiDoc.paths[path]) {
                 if (method !== 'parameters') {
                     const apiService = new ApiServiceOpenApi(this.apiDoc.paths[path][method] as ApiOpenApiServiceDoc)
-                    apiService.setName(`${method.toUpperCase()} ${path}`)
+                    apiService.setPath(path)
+                    apiService.setMethod(method)
                     apiService.addGlobalParameters(globalParam)
                     services.push(apiService)
                 }
@@ -60,7 +61,9 @@ export class ApiServiceOpenApi extends ApiService {
     }
 
     private initParameters() {
-        this.parameters = this.serviceDoc.parameters
+        if (this.serviceDoc.parameters) {
+            this.parameters = this.serviceDoc.parameters
+        }
     }
 
     private initRequest() {

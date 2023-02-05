@@ -1,7 +1,7 @@
 import { DataSheetItemCardinality } from "./interfaces"
 import type { DataSheetItem, DataSheetItemMap } from "./interfaces"
 import type { ApiParameterDoc, ApiService } from "common/api"
-import { mergeAllOfDefinitions, type ApiModelDoc } from "common/apiModel"
+import { mergeAllOfDefinitions, ModelType, type ApiModelDoc } from "common/apiModel"
 
 const LOCATION_BODY = 'Body'
 
@@ -49,14 +49,14 @@ function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, pat
         Level: level,
         Path: path,
         Cardinality: required ? DataSheetItemCardinality.Required : DataSheetItemCardinality.Optional,
-        Type: model.type || 'object',
+        Type: model.type || ModelType.Object,
         Authorized: getAuthorizedValues(model),
         Description: model.description || '',
         Example: model.example ? JSON.stringify(model.example) : '',
     }
     flatMap.push(flatItem)
 
-    if (model.type === 'array' && 'items' in model) {
+    if (model.type === ModelType.Array && 'items' in model) {
         flatMap = flatMap.concat(
             generateModelFlatMap(
                 model.items,

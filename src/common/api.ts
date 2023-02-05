@@ -24,18 +24,25 @@ export abstract class Api {
 }
 
 export abstract class ApiService {
-    protected name: string = ''
     protected parameters: ApiParameterDoc[] = []
     protected request: ApiParameterDoc = null
     protected responses: ApiParameterDocMap = {}
-    setName(name: string): void {
-        this.name = name
+    protected path: string
+    protected method: string
+
+    setPath(path: string) {
+        this.path = path
     }
-    getName(): string {
-        return this.name
+    setMethod(method: string) {
+        this.method = method
     }
+
     addGlobalParameters(globalParameters: ApiParameterDoc[]): void {
         this.parameters.concat(globalParameters)
+    }
+
+    getName(): string {
+        return `${this.method.toUpperCase()} ${this.path}`
     }
     getParameters(): ApiParameterDoc[] {
         return this.parameters

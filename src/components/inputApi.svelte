@@ -1,7 +1,7 @@
 <script lang="ts">
     import yaml from 'js-yaml';
     import { createEventDispatcher, onMount } from 'svelte';
-    import { readInputFile } from './utils/filesUtils';
+    import { readInputFile } from '../apiToSpreadsheet/filesUtils';
 
     let selectedTab = 'link';
     let link = 'https://petstore3.swagger.io/api/v3/openapi.json';
@@ -107,7 +107,6 @@
         border-bottom-width: 0;
     }
     .box {
-        background-color: var(--color-background-accent);
         border-top-left-radius: 0;
         border-top-right-radius: 0;
     }

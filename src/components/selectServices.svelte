@@ -1,8 +1,9 @@
 <script lang="ts">
+    import type { ApiService } from 'common/api';
     import { createEventDispatcher, onMount } from 'svelte';
-    import type { ApiService } from './utils/interfaces';
 
     export let services: ApiService[] = [];
+    export let servicesSelectSize: number = 8;
     let selectedServiceIndex = 0;
 
     const dispatch = createEventDispatcher();
@@ -25,10 +26,10 @@
     <p class="subtitle"><strong>Services</strong></p>
     <div class="field">
         <div class="control">
-            <div class="select is-expanded is-multiple">
-                <select size="8" bind:value={selectedServiceIndex}>
+            <div class="select is-expanded {servicesSelectSize > 1 ? 'is-multiple' : ''}">
+                <select size={servicesSelectSize} bind:value={selectedServiceIndex}>
                     {#each services as service, index}
-                        <option value={index}>{service['x-name']}</option>
+                        <option value={index}>{service.getName()}</option>
                     {/each}
                 </select>
             </div>

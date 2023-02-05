@@ -1,5 +1,6 @@
 export interface ApiModelDoc {
-    type?: string
+    title?: string
+    type?: ModelType
     example?: any
     minLength?: number
     maxLength?: number
@@ -20,6 +21,14 @@ export interface ApiModelDoc {
     additionalProperties?: ApiModelDoc
 }
 
+export enum ModelType {
+    Array = 'array',
+    Boolean = 'boolean',
+    Integer = 'integer',
+    Object = 'object',
+    String = 'string',
+}
+
 export const mergeAllOfDefinitions = (model: ApiModelDoc, path: string = ''): ApiModelDoc => {
     // console.log(path, 'mergeAllOfDefinitions->input', model)
     if (!model) {
@@ -32,7 +41,7 @@ export const mergeAllOfDefinitions = (model: ApiModelDoc, path: string = ''): Ap
                 model = Object.assign({}, mergeAllOfDefinitions(model[key][0]), model)
                 delete model.allOf
             } else {
-                const mergedModel: ApiModelDoc = Object.assign({}, model, { type: 'object', required: [], properties: {} })
+                const mergedModel: ApiModelDoc = Object.assign({}, model, { type: ModelType.Object, required: [], properties: {} })
                 delete mergedModel.allOf
 
                 for (const i in model[key]) {

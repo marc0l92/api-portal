@@ -1,11 +1,13 @@
 <script lang="ts">
   import Navbar from '../components/navbar.svelte';
-  import InputOpenApi from './inputOpenApi.svelte';
-  import SelectServices from './selectServices.svelte';
+  import InputApi from '../components/inputApi.svelte';
+  import SelectServices from '../components/selectServices.svelte';
   import GenerateSpreadsheet from './generateSpreadsheet.svelte';
   import { resolveReferences } from '../common/refParser';
   import Errors from 'components/errors.svelte';
-  import { apiFactory, type Api, type ApiService } from 'common/api';
+  import { apiFactory } from 'common/apiFactory';
+  import type { Api, ApiService } from 'common/api';
+  import Footer from 'components/footer.svelte';
 
   let api: Api = null;
   let services: ApiService[] = [];
@@ -45,9 +47,9 @@
       <p class="subtitle">Convert OpenAPI/Swagger file to flat Spreadsheets</p>
     </div>
   </section>
-  <InputOpenApi on:apiChange={onApiChange} />
+  <InputApi on:apiChange={onApiChange} />
   {#if services.length > 0}
-    <SelectServices {services} on:serviceSelect={onServiceSelect} />
+    <SelectServices {services} servicesSelectSize={8} on:serviceSelect={onServiceSelect} />
   {/if}
   {#if errors.length > 0}
     <Errors messages={errors} />
@@ -56,6 +58,7 @@
     <GenerateSpreadsheet service={selectedService} />
   {/if}
 </div>
+<Footer />
 
 <style>
   .hero.is-small .hero-body {

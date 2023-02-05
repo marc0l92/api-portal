@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { ApiService } from 'common/api';
-    import { convertToTable, generateSpreadsheet } from './utils/filesUtils';
-    import { generateServiceWorkbook } from './utils/swaggerParsing';
+    import { convertToTable, generateSpreadsheet } from './filesUtils';
+    import { generateServiceWorkbook } from './swaggerParsing';
 
     export let service: ApiService = null;
 
