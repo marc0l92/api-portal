@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ApiParameterDoc, ApiService } from 'common/api';
-    import DiagramBuilder, { type DiagramBuilderOptions } from './diagramBuilder';
+    import DiagramBuilder from './diagramBuilder';
+    import { diagramBuilderOptions, type DiagramBuilderOptions } from './diagramBuilderOptions';
 
     interface DiagramData {
         name: string;
@@ -9,13 +10,12 @@
     }
 
     export let service: ApiService = null;
-    export let options: DiagramBuilderOptions = {};
     let diagrams: DiagramData[] = [];
     let selectedDiagram: DiagramData = null;
 
-    $: parseService(service);
+    $: parseService(service, $diagramBuilderOptions);
 
-    function addDiagram(parameter: ApiParameterDoc, subName: string) {
+    function addDiagram(parameter: ApiParameterDoc, subName: string, options: DiagramBuilderOptions) {
         if (parameter.schema) {
             const title = `${service.getName()} - ${subName}`;
             const diagramBuilder = new DiagramBuilder(options);
@@ -29,16 +29,16 @@
         }
     }
 
-    function parseService(serviceToProcess: ApiService) {
+    function parseService(serviceToProcess: ApiService, options: DiagramBuilderOptions) {
         diagrams = [];
         if (serviceToProcess) {
             const request = serviceToProcess.getRequest();
             if (request) {
-                addDiagram(request, 'Request');
+                addDiagram(request, 'Request', options);
             }
             const responses = serviceToProcess.getResponses();
             for (const statusCode in responses) {
-                addDiagram(responses[statusCode], `Response [${statusCode}]`);
+                addDiagram(responses[statusCode], `Response [${statusCode}]`, options);
             }
         }
         if (diagrams.length > 0) {

@@ -9,6 +9,11 @@
   import Footer from 'components/footer.svelte';
   import Diagrams from './diagrams.svelte';
   import DiagramsOption from './diagramsOption.svelte';
+  import { onMount } from 'svelte';
+  import { getOptions, storeOptions } from 'common/localStorage';
+  import { diagramBuilderOptions } from './diagramBuilderOptions';
+
+  const LOCAL_STORAGE_KEY = 'apiToPlantuml.diagramsBuilderOptions';
 
   let api: Api = null;
   let services: ApiService[] = [];
@@ -38,6 +43,12 @@
   function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
     selectedService = services[event.detail.selectedServiceIndex];
   }
+
+  $: storeOptions(LOCAL_STORAGE_KEY, $diagramBuilderOptions)
+
+  onMount(() => {
+    diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY));
+  });
 </script>
 
 <Navbar activePage="apiToPlantuml" />
@@ -56,8 +67,8 @@
     <Errors messages={errors} />
   {/if}
   {#if selectedService}
-    <DiagramsOption />
     <Diagrams service={selectedService} />
+    <DiagramsOption />
   {/if}
 </div>
 <Footer />

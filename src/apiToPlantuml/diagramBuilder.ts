@@ -1,21 +1,10 @@
 import { ModelType, type ApiModelDoc } from 'common/apiModel'
 import * as PlantumlEncoder from 'plantuml-encoder'
+import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, type DiagramBuilderOptions } from './diagramBuilderOptions'
 
-export interface DiagramBuilderOptions {
-    serverUrl?: string
-    format?: string
-    diagramHeader?: string
-    colors?: boolean
-}
 
 interface ApiModelDocMap {
     [key: string]: ApiModelDoc
-}
-
-export const DEFAULT_DIAGRAM_BUILDER_OPTIONS: DiagramBuilderOptions = {
-    serverUrl: 'https://www.plantuml.com/plantuml',
-    format: 'svg',
-    colors: true,
 }
 
 const COLORS = {
