@@ -41,6 +41,10 @@ jobs:
         id: install
         run: |
           pnpm install --frozen-lockfile
+      - name: Build
+        id: build
+        run: |
+          pnpm run build
       - name: Test
         id: test
         run: |
