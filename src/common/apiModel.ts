@@ -50,6 +50,9 @@ export const mergeAllOfDefinitions = (model: ApiModelDoc, path: string = ''): Ap
 
                 for (const i in model[key]) {
                     const childModel = mergeAllOfDefinitions(model[key][i], path + '/[' + i + ']')
+                    if (!mergedModel.title && childModel.title) {
+                        mergedModel.title = childModel.title
+                    }
                     if ('properties' in childModel) {
                         Object.assign(mergedModel.properties, childModel.properties)
                     }

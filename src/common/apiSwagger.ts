@@ -13,7 +13,7 @@ export interface ApiSwaggerDoc {
             [method: string]: ApiSwaggerServiceDoc | ApiParameterDoc[]
         }
     }
-    definitions: ApiModelDocMap
+    definitions?: ApiModelDocMap
 }
 
 interface ApiSwaggerServiceDoc {
@@ -25,34 +25,31 @@ interface ApiSwaggerServiceDoc {
 
 
 export class ApiSwagger extends Api {
-    private apiDoc: ApiSwaggerDoc = null
-
-    constructor(apiDoc: ApiSwaggerDoc) {
-        super()
-        this.apiDoc = apiDoc
+    private getApi(): ApiSwaggerDoc {
+        return this.apiDoc as ApiSwaggerDoc
     }
 
     getName(): string {
-        if (this.apiDoc.info && this.apiDoc.info.title) {
-            return this.apiDoc.info.title
+        if (this.getApi().info && this.getApi().info.title) {
+            return this.getApi().info.title
         }
         return 'api'
     }
 
     getVersion(): string {
-        if (this.apiDoc.info && this.apiDoc.info.version) {
-            return this.apiDoc.info.version
+        if (this.getApi().info && this.getApi().info.version) {
+            return this.getApi().info.version
         }
         return '0'
     }
 
     getServices(): ApiService[] {
         const services: ApiServiceSwagger[] = []
-        for (const path in this.apiDoc.paths) {
-            const globalParam = this.apiDoc.paths[path].parameters || []
-            for (const method in this.apiDoc.paths[path]) {
+        for (const path in this.getApi().paths) {
+            const globalParam = this.getApi().paths[path].parameters || []
+            for (const method in this.getApi().paths[path]) {
                 if (method !== 'parameters') {
-                    const apiService = new ApiServiceSwagger(this.apiDoc.paths[path][method] as ApiSwaggerServiceDoc)
+                    const apiService = new ApiServiceSwagger(this.getApi().paths[path][method] as ApiSwaggerServiceDoc)
                     apiService.setPath(path)
                     apiService.setMethod(method)
                     apiService.addGlobalParameters(globalParam)
@@ -64,7 +61,10 @@ export class ApiSwagger extends Api {
     }
 
     getModels(): ApiModelDocMap {
-        return this.apiDoc.definitions
+        if (this.getApi().definitions) {
+            return this.getApi().definitions
+        }
+        return {}
     }
 }
 

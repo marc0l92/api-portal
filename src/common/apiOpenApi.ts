@@ -15,8 +15,8 @@ export interface ApiOpenApiDoc {
             [method: string]: ApiOpenApiServiceDoc | ApiParameterDoc[]
         }
     }
-    components: {
-        schemas: ApiModelDocMap
+    components?: {
+        schemas?: ApiModelDocMap
     }
 }
 
@@ -35,33 +35,32 @@ export interface ApiOpenApiParameterDoc {
 }
 
 export class ApiOpenApi extends Api {
-    private apiDoc: ApiOpenApiDoc = null
-    constructor(apiDoc: ApiOpenApiDoc) {
-        super()
-        this.apiDoc = apiDoc
+    private getApi(): ApiOpenApiDoc {
+        return this.apiDoc as ApiOpenApiDoc
     }
 
+
     getName(): string {
-        if (this.apiDoc.info && this.apiDoc.info.title) {
-            return this.apiDoc.info.title
+        if (this.getApi().info && this.getApi().info.title) {
+            return this.getApi().info.title
         }
         return 'api'
     }
 
     getVersion(): string {
-        if (this.apiDoc.info && this.apiDoc.info.version) {
-            return this.apiDoc.info.version
+        if (this.getApi().info && this.getApi().info.version) {
+            return this.getApi().info.version
         }
         return '0'
     }
 
     getServices(): ApiService[] {
         const services: ApiServiceOpenApi[] = []
-        for (const path in this.apiDoc.paths) {
-            const globalParam = this.apiDoc.paths[path].parameters || []
-            for (const method in this.apiDoc.paths[path]) {
+        for (const path in this.getApi().paths) {
+            const globalParam = this.getApi().paths[path].parameters || []
+            for (const method in this.getApi().paths[path]) {
                 if (PATH_METHODS.indexOf(method) >= 0) {
-                    const apiService = new ApiServiceOpenApi(this.apiDoc.paths[path][method] as ApiOpenApiServiceDoc)
+                    const apiService = new ApiServiceOpenApi(this.getApi().paths[path][method] as ApiOpenApiServiceDoc)
                     apiService.setPath(path)
                     apiService.setMethod(method)
                     apiService.addGlobalParameters(globalParam)
@@ -73,7 +72,10 @@ export class ApiOpenApi extends Api {
     }
 
     getModels(): ApiModelDocMap {
-        return this.apiDoc.components.schemas
+        if (this.getApi().components && this.getApi().components.schemas) {
+            return this.getApi().components.schemas
+        }
+        return {}
     }
 }
 

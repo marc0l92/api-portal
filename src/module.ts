@@ -10,8 +10,10 @@ import * as RefParser from "common/refParser"
 export const resolveReferences = RefParser.resolveReferences
 
 async function parseApi(apiObject: any): Promise<Api> {
-    const apiDoc = await resolveReferences(apiObject)
-    return apiFactory(apiDoc)
+    const api = apiFactory(apiObject)
+    api.setModelsTitle()
+    await api.resolveReferences()
+    return api
 }
 
 export const apiToPlantumlDiagrams = async (apiObject: any, options: DiagramBuilderOptions) => {

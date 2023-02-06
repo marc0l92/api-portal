@@ -3,7 +3,6 @@
   import InputApi from '../components/inputApi.svelte';
   import SelectServices from '../components/selectServices.svelte';
   import DownloadSpreadsheets from './downloadSpreadsheets.svelte';
-  import { resolveReferences } from '../common/refParser';
   import Errors from 'components/errors.svelte';
   import { apiFactory } from 'common/apiFactory';
   import type { Api, ApiService } from 'common/api';
@@ -22,8 +21,8 @@
       selectedService = null;
       const apiObject = event.detail.apiObject;
       if (apiObject) {
-        const apiDoc = await resolveReferences(apiObject);
-        api = apiFactory(apiDoc);
+        api = apiFactory(apiObject);
+        await api.resolveReferences();
         services = api.getServices();
         if (services.length === 0) {
           errors = [...errors, 'Warning: No services found'];

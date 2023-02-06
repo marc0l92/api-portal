@@ -1,4 +1,5 @@
 import type { ApiModelDoc, ApiModelDocMap } from "./apiModel"
+import { resolveReferences } from "./refParser"
 
 export interface ApiGenericDoc {
     swagger?: string
@@ -20,6 +21,21 @@ export interface ApiParameterDocMap {
 }
 
 export abstract class Api {
+    protected apiDoc: ApiGenericDoc = null
+    constructor(apiDoc: ApiGenericDoc) {
+        this.apiDoc = apiDoc
+    }
+    setModelsTitle(): void {
+        const models = this.getModels()
+        for (const defName in models) {
+            if (!models[defName].hasOwnProperty('title')) {
+                models[defName].title = defName
+            }
+        }
+    }
+    async resolveReferences(): Promise<void> {
+        this.apiDoc = await resolveReferences(this.apiDoc)
+    }
     abstract getName(): string
     abstract getVersion(): string
     abstract getServices(): ApiService[]

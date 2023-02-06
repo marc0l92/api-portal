@@ -4,7 +4,6 @@
   import Footer from 'components/footer.svelte';
   import { onMount } from 'svelte';
   import Navbar from '../components/navbar.svelte';
-  import { resolveReferences } from 'common/refParser';
   import { apiFactory } from 'common/apiFactory';
   import Tabs from './tabs.svelte';
   import ApiTab from './apiTab.svelte';
@@ -22,8 +21,8 @@
     const response = await fetch(apiLink);
     if (response.ok) {
       const apiObject = yaml.load(await response.text());
-      apiDoc = await resolveReferences(apiObject);
-      api = apiFactory(apiDoc);
+      api = apiFactory(apiObject);
+      await api.resolveReferences()
     }
   });
 </script>

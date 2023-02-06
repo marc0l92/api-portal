@@ -1,6 +1,6 @@
 import type { Api, ApiGenericDoc } from "./api"
-import { ApiOpenApi, type ApiOpenApiDoc } from "./apiOpenApi"
-import { ApiSwagger, type ApiSwaggerDoc } from "./apiSwagger"
+import { ApiOpenApi } from "./apiOpenApi"
+import { ApiSwagger } from "./apiSwagger"
 
 enum ApiVersion {
     Swagger2 = 2,
@@ -20,9 +20,9 @@ const getApiDocumentationVersion = (api: ApiGenericDoc): ApiVersion => {
 export const apiFactory = (apiDoc: ApiGenericDoc): Api => {
     switch (getApiDocumentationVersion(apiDoc)) {
         case ApiVersion.Swagger2:
-            return new ApiSwagger(apiDoc as ApiSwaggerDoc)
+            return new ApiSwagger(apiDoc)
         case ApiVersion.OpenAPI3:
-            return new ApiOpenApi(apiDoc as ApiOpenApiDoc)
+            return new ApiOpenApi(apiDoc)
     }
     throw new Error('Api not recognized')
 }
