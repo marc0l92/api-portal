@@ -5,9 +5,12 @@
     import { readInputFile } from '../common/filesUtils';
 
     const LOCAL_STORAGE_SELECTED_TAB_KEY = 'inputApi.selectedTab';
+    const LOCAL_STORAGE_LINK_KEY = 'inputApi.link';
+    const LOCAL_STORAGE_TEXT_KEY = 'inputApi.text';
+    const EXAMPLE_API_LINK = 'https://petstore3.swagger.io/api/v3/openapi.json';
 
     let selectedTab = 'link';
-    let link = 'https://petstore3.swagger.io/api/v3/openapi.json';
+    let link = EXAMPLE_API_LINK;
     let inputError = '';
     let files: any = null;
     let text = '';
@@ -23,6 +26,7 @@
                 const linkResponse = await fetch(link);
                 if (linkResponse.ok) {
                     apiObject = yaml.load(await linkResponse.text());
+                    storeOptions(LOCAL_STORAGE_LINK_KEY, link);
                 } else {
                     inputError = 'Error: ' + linkResponse.status;
                 }
@@ -30,6 +34,7 @@
                 apiObject = yaml.load(await readInputFile(files[0]));
             } else if (selectedTab === 'text') {
                 apiObject = yaml.load(text);
+                storeOptions(LOCAL_STORAGE_TEXT_KEY, text);
             }
         } catch (e: any) {
             console.error(e);
@@ -47,6 +52,8 @@
 
     onMount(() => {
         selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
+        link = getOptions(LOCAL_STORAGE_LINK_KEY) || EXAMPLE_API_LINK;
+        text = getOptions(LOCAL_STORAGE_TEXT_KEY) || '';
         onApiChange();
     });
 </script>
@@ -79,7 +86,7 @@
     <div>
         <div class="field {selectedTab === 'link' ? '' : 'is-hidden'}">
             <div class="control is-expanded {isLoading ? 'is-loading' : ''}">
-                <input type="text" class="input" bind:value={link} on:input={onApiChange} placeholder="Example: https://petstore3.swagger.io/api/v3/openapi.json" />
+                <input type="text" class="input" bind:value={link} on:input={onApiChange} placeholder="Example: {EXAMPLE_API_LINK}" />
             </div>
         </div>
     </div>

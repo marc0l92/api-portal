@@ -27,7 +27,7 @@
                         {#each diagrams as diagram}
                             <li>
                                 <a
-                                    class={selectedDiagram === diagram ? 'is-active' : ''}
+                                    class="break-text {selectedDiagram === diagram ? 'is-active' : ''}"
                                     href={'#' + diagram.name}
                                     on:click={() => {
                                         selectedDiagram = diagram;
@@ -67,5 +67,8 @@
     .diagram-image {
         width: auto;
         max-width: 100%;
+    }
+    .break-text{
+        word-break: break-all;
     }
 </style>
