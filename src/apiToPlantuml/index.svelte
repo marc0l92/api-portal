@@ -1,13 +1,20 @@
 <script lang="ts">
   import Navbar from '../components/navbar.svelte';
   import InputApi from '../components/inputApi.svelte';
-  import SelectServices from '../components/selectServices.svelte';
-  import DownloadSpreadsheets from './downloadSpreadsheets.svelte';
-  import { resolveReferences } from '../common/refParser';
   import Errors from 'components/errors.svelte';
-  import { apiFactory } from 'common/apiFactory';
   import type { Api, ApiService } from 'common/api';
+  import { resolveReferences } from 'common/refParser';
+  import { apiFactory } from 'common/apiFactory';
+  import SelectServices from 'components/selectServices.svelte';
   import Footer from 'components/footer.svelte';
+  import Diagrams from './diagrams.svelte';
+  import DiagramsOption from './diagramsOption.svelte';
+  import { onMount } from 'svelte';
+  import { getOptions, storeOptions } from 'common/localStorage';
+  import { diagramBuilderOptions } from './diagramBuilderOptions';
+  import DownloadDiagrams from './downloadDiagrams.svelte';
+
+  const LOCAL_STORAGE_KEY = 'apiToPlantuml.diagramsBuilderOptions';
 
   let api: Api = null;
   let services: ApiService[] = [];
@@ -16,10 +23,10 @@
 
   async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
     try {
-      errors = [];
       api = null;
       services = [];
       selectedService = null;
+      errors = [];
       const apiObject = event.detail.apiObject;
       if (apiObject) {
         const apiDoc = await resolveReferences(apiObject);
@@ -37,25 +44,33 @@
   function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
     selectedService = services[event.detail.selectedServiceIndex];
   }
+
+  $: storeOptions(LOCAL_STORAGE_KEY, $diagramBuilderOptions);
+
+  onMount(() => {
+    diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY));
+  });
 </script>
 
-<Navbar activePage="apiToSpreadsheet" />
+<Navbar activePage="apiToPlantuml" />
 <div class="container">
   <section class="hero is-small">
     <div class="hero-body">
-      <h1 class="title">Api to Spreadsheet</h1>
-      <p class="subtitle">Convert OpenAPI/Swagger file to flat Spreadsheets</p>
+      <h1 class="title">Api to PlantUML</h1>
+      <p class="subtitle">Generate PlantUML diagram of REST API</p>
     </div>
   </section>
   <InputApi on:apiChange={onApiChange} />
   {#if services.length > 0}
-    <SelectServices {services} servicesSelectSize={8} on:serviceSelect={onServiceSelect} />
+    <SelectServices {services} servicesSelectSize={1} on:serviceSelect={onServiceSelect} />
   {/if}
   {#if errors.length > 0}
     <Errors messages={errors} />
   {/if}
   {#if selectedService}
-    <DownloadSpreadsheets {selectedService} {services} apiName={api.getName()} />
+    <Diagrams service={selectedService} />
+    <DiagramsOption />
+    <DownloadDiagrams apiName={api.getName()} {selectedService} {services} />
   {/if}
 </div>
 <Footer />

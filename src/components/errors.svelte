@@ -13,15 +13,4 @@
 </div>
 
 <style>
-    .box {
-        background-color: var(--color-background-accent);
-    }
-    .notification.is-small {
-        padding: 0.5em;
-    }
-    .notification.is-small pre {
-        background: none;
-        color: #fff;
-        padding: 0;
-    }
 </style>

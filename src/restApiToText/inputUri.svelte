@@ -77,7 +77,4 @@
 </section>
 
 <style>
-    .box {
-        background-color: var(--color-background-accent);
-    }
 </style>

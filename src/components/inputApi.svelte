@@ -1,16 +1,21 @@
 <script lang="ts">
+    import { getOptions, storeOptions } from 'common/localStorage';
     import yaml from 'js-yaml';
     import { createEventDispatcher, onMount } from 'svelte';
-    import { readInputFile } from './utils/filesUtils';
+    import { readInputFile } from '../common/filesUtils';
+
+    const LOCAL_STORAGE_SELECTED_TAB_KEY = 'inputApi.selectedTab';
 
     let selectedTab = 'link';
     let link = 'https://petstore3.swagger.io/api/v3/openapi.json';
     let inputError = '';
     let files: any = null;
     let text = '';
+    let isLoading = false;
 
     const dispatch = createEventDispatcher();
     async function onApiChange() {
+        isLoading = true;
         inputError = '';
         let apiObject: any = null;
         try {
@@ -30,15 +35,18 @@
             console.error(e);
             inputError = 'Error: ' + e.message;
         }
+        isLoading = false;
         dispatch('apiChange', { apiObject });
     }
 
     function changeTab(newTab: string) {
         selectedTab = newTab;
+        storeOptions(LOCAL_STORAGE_SELECTED_TAB_KEY, newTab);
         onApiChange();
     }
 
     onMount(() => {
+        selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
         onApiChange();
     });
 </script>
@@ -67,10 +75,10 @@
         </ul>
     </div>
 </div>
-<div class="box">
+<div class="box flat-top">
     <div>
         <div class="field {selectedTab === 'link' ? '' : 'is-hidden'}">
-            <div class="control is-expanded">
+            <div class="control is-expanded {isLoading ? 'is-loading' : ''}">
                 <input type="text" class="input" bind:value={link} on:input={onApiChange} placeholder="Example: https://petstore3.swagger.io/api/v3/openapi.json" />
             </div>
         </div>
@@ -90,31 +98,11 @@
         </div>
     </div>
     {#if inputError}
-        <div class="margin-top">
+        <div class="mt-3">
             <div class="notification is-danger is-small">{inputError}</div>
         </div>
     {/if}
 </div>
 
 <style>
-    .tabs.is-boxed.is-floating li.is-active {
-        box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
-    }
-    .tabs.is-boxed.is-floating li.is-active > a {
-        border: 0;
-    }
-    .tabs.is-boxed.is-floating ul {
-        border-bottom-width: 0;
-    }
-    .box {
-        background-color: var(--color-background-accent);
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-    div.notification.is-small {
-        padding: 0.5em;
-    }
-    div.margin-top {
-        margin-top: 0.75rem;
-    }
 </style>

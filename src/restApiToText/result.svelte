@@ -62,10 +62,6 @@
 </div>
 
 <style lang="scss">
-    .box {
-        background-color: var(--color-background-accent);
-    }
-
     .icon.is-warning {
         color: #ffe86e;
     }

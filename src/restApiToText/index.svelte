@@ -5,6 +5,7 @@
   import Errors from '../components/errors.svelte';
   import Help from './help.svelte';
   import { ApiMethods, apiTokensToString, apiToTokens, refreshApiTokens, rotateTokenType, type RestApiToTextResults } from './restApiToText';
+  import Footer from 'components/footer.svelte';
 
   let apiTokens: RestApiToTextResults = { errors: [], tokens: [] };
   let apiText: string = '';
@@ -59,6 +60,7 @@
     <Help />
   {/if}
 </div>
+<Footer />
 
 <style>
   .hero.is-small .hero-body {
