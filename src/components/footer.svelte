@@ -1,7 +1,9 @@
 <script lang="ts">
 </script>
 
-<footer />
+<footer class="mt-5">
+    &nbsp;
+</footer>
 
 <style>
 </style>
