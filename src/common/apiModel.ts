@@ -29,6 +29,10 @@ export enum ModelType {
     String = 'string',
 }
 
+export interface ApiModelDocMap {
+    [name: string]: ApiModelDoc
+}
+
 export const mergeAllOfDefinitions = (model: ApiModelDoc, path: string = ''): ApiModelDoc => {
     // console.log(path, 'mergeAllOfDefinitions->input', model)
     if (!model) {

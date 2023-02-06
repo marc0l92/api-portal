@@ -1,4 +1,5 @@
 import { Api, ApiService, type ApiParameterDoc } from "./api"
+import type { ApiModelDocMap } from "./apiModel"
 
 export interface ApiSwaggerDoc {
     swagger: string
@@ -12,6 +13,7 @@ export interface ApiSwaggerDoc {
             [method: string]: ApiSwaggerServiceDoc | ApiParameterDoc[]
         }
     }
+    definitions: ApiModelDocMap
 }
 
 interface ApiSwaggerServiceDoc {
@@ -59,6 +61,10 @@ export class ApiSwagger extends Api {
             }
         }
         return services
+    }
+
+    getModels(): ApiModelDocMap {
+        return this.apiDoc.definitions
     }
 }
 

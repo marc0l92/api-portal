@@ -1,5 +1,5 @@
 import type { ApiParameterDoc, ApiService } from "common/api"
-import type { ApiModelDoc } from "common/apiModel"
+import type { ApiModelDoc, ApiModelDocMap } from "common/apiModel"
 import DiagramBuilder from "./diagramBuilder"
 import type { DiagramBuilderOptions } from "./diagramBuilderOptions"
 
@@ -7,6 +7,14 @@ export interface DiagramData {
     name: string
     uml: string
     image: string
+}
+
+export const setModelsTitle = (models: ApiModelDocMap): void => {
+    for (const defName in models) {
+        if (!models[defName].hasOwnProperty('title')) {
+            models[defName].title = defName
+        }
+    }
 }
 
 function getDiagramData(model: ApiModelDoc, parameters: ApiParameterDoc[], title: string, options: DiagramBuilderOptions): DiagramData {

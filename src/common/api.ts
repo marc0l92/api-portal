@@ -1,4 +1,4 @@
-import type { ApiModelDoc } from "./apiModel"
+import type { ApiModelDoc, ApiModelDocMap } from "./apiModel"
 
 export interface ApiGenericDoc {
     swagger?: string
@@ -23,6 +23,7 @@ export abstract class Api {
     abstract getName(): string
     abstract getVersion(): string
     abstract getServices(): ApiService[]
+    abstract getModels(): ApiModelDocMap
 }
 
 export abstract class ApiService {

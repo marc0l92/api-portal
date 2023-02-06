@@ -1,4 +1,5 @@
 import { Api, ApiService, type ApiParameterDoc } from "./api"
+import type { ApiModelDocMap } from "./apiModel"
 
 const PATH_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
 
@@ -13,6 +14,9 @@ export interface ApiOpenApiDoc {
             parameters?: ApiParameterDoc[]
             [method: string]: ApiOpenApiServiceDoc | ApiParameterDoc[]
         }
+    }
+    components: {
+        schemas: ApiModelDocMap
     }
 }
 
@@ -66,6 +70,10 @@ export class ApiOpenApi extends Api {
             }
         }
         return services
+    }
+
+    getModels(): ApiModelDocMap {
+        return this.apiDoc.components.schemas
     }
 }
 

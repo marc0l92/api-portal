@@ -13,6 +13,7 @@
   import { getOptions, storeOptions } from 'common/localStorage';
   import { diagramBuilderOptions } from './diagramBuilderOptions';
   import DownloadDiagrams from './downloadDiagrams.svelte';
+  import { setModelsTitle } from './serivceDiagrams';
 
   const LOCAL_STORAGE_KEY = 'apiToPlantuml.diagramsBuilderOptions';
 
@@ -31,6 +32,7 @@
       if (apiObject) {
         const apiDoc = await resolveReferences(apiObject);
         api = apiFactory(apiDoc);
+        setModelsTitle(api.getModels());
         services = api.getServices();
         if (services.length === 0) {
           errors = [...errors, 'Warning: No services found'];
