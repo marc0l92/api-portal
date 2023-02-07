@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
 
-    let selectedTab = 'api';
+    export let selectedTab = 'api';
 
     const dispatch = createEventDispatcher();
     async function changeTab(newTab: string) {

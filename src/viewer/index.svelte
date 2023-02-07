@@ -7,6 +7,10 @@
   import { apiFactory } from 'common/apiFactory';
   import Tabs from './tabs.svelte';
   import ApiTab from './apiTab.svelte';
+  import RawTab from './rawTab.svelte';
+  import ReleaseNotesTab from './releaseNotesTab.svelte';
+  import DiagramsTab from './diagramsTab.svelte';
+  import ValidationTab from './validationTab.svelte';
 
   let apiDoc: any = {};
   let api: Api = null;
@@ -41,18 +45,18 @@
         </div>
       </div>
     </section>
-    <Tabs on:tabChange={onTabChange} />
+    <Tabs on:tabChange={onTabChange} {selectedTab} />
     <div class="box flat-top">
       {#if selectedTab === 'release-notes'}
-        Release notes
+        <ReleaseNotesTab />
       {:else if selectedTab === 'api'}
         <ApiTab {apiDoc} />
       {:else if selectedTab === 'diagrams'}
-        diagrams
+        <DiagramsTab />
       {:else if selectedTab === 'validation'}
-        validation
+        <ValidationTab />
       {:else if selectedTab === 'raw'}
-        raw
+        <RawTab {apiDoc} />
       {/if}
     </div>
   {:else}
