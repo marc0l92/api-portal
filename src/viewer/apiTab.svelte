@@ -5,7 +5,6 @@
     export let apiDoc: any = null;
 
     onMount(() => {
-        console.log({ apiDoc });
         if (apiDoc) {
             SwaggerUI({
                 dom_id: '#swaggerUiRoot',

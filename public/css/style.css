@@ -51,3 +51,9 @@ strong {
     color: #fff;
     padding: 0;
 }
+
+/* Swagger UI */
+
+.swagger-ui .info .title small pre{
+    background-color: transparent;
+}

@@ -3,6 +3,7 @@ import process from 'process'
 import builtins from 'builtin-modules'
 import sveltePlugin from "esbuild-svelte"
 import sveltePreprocess from "svelte-preprocess"
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
 const prod = (process.argv[2] === 'production')
 
@@ -41,10 +42,13 @@ const webOptions = {
   define: {
     IS_TEST: JSON.stringify(!prod),
   },
-  plugins: [sveltePlugin({
-    preprocess: sveltePreprocess(),
-    compilerOptions: { css: true },
-  })],
+  plugins: [
+    sveltePlugin({
+      preprocess: sveltePreprocess(),
+      compilerOptions: { css: true },
+    }),
+    NodeModulesPolyfillPlugin(),
+  ],
 }
 
 /** @type {esbuild.BuildOptions} */

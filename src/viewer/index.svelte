@@ -20,9 +20,9 @@
     const apiLink = 'https://petstore3.swagger.io/api/v3/openapi.json';
     const response = await fetch(apiLink);
     if (response.ok) {
-      const apiObject = yaml.load(await response.text());
-      api = apiFactory(apiObject);
-      await api.resolveReferences()
+      apiDoc = yaml.load(await response.text());
+      api = apiFactory(apiDoc);
+      await api.resolveReferences();
     }
   });
 </script>
