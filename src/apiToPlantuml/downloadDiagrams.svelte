@@ -8,7 +8,8 @@
     export let apiName: string = '';
     export let services: ApiService[] = [];
     export let selectedService: ApiService = null;
-    let processing = false;
+    let isProcessing = false;
+    let processingIndex = -1;
 
     async function addDiagramsDataToZip(zip: JSZip, diagramsData: DiagramData[], format: string) {
         for (const diagramData of diagramsData) {
@@ -21,33 +22,43 @@
     }
 
     async function downloadSelectedService() {
-        processing = true;
+        isProcessing = true;
+        processingIndex = -1;
         if (selectedService) {
             const diagramsData = parseServiceDiagrams(selectedService, $diagramBuilderOptions);
             const zip = new JSZip();
             await addDiagramsDataToZip(zip, diagramsData, $diagramBuilderOptions.format);
             await generateAndDownloadZip(apiName, zip);
         }
-        processing = false;
+        isProcessing = false;
     }
 
     async function downloadAllServices() {
-        processing = true;
+        isProcessing = true;
+        processingIndex = 0;
         if (services.length > 0) {
             const zip = new JSZip();
             for (const service of services) {
                 const diagramsData = parseServiceDiagrams(service, $diagramBuilderOptions);
                 await addDiagramsDataToZip(zip, diagramsData, $diagramBuilderOptions.format);
+                processingIndex++;
             }
             await generateAndDownloadZip(apiName, zip);
         }
-        processing = false;
+        isProcessing = false;
     }
 </script>
 
 <div class="box">
-    <button class="button is-primary {processing ? 'is-loading' : ''}" disabled={processing} on:click={downloadSelectedService}>Download selected service</button>
-    <button class="button is-primary {processing ? 'is-loading' : ''}" disabled={processing} on:click={downloadAllServices}>Download all services</button>
+    <div class="block">
+        <button class="button is-primary {isProcessing ? 'is-loading' : ''}" disabled={isProcessing} on:click={downloadSelectedService}>Download selected service</button>
+        <button class="button is-primary {isProcessing ? 'is-loading' : ''}" disabled={isProcessing} on:click={downloadAllServices}>Download all services</button>
+    </div>
+    {#if isProcessing && processingIndex >= 0}
+        <div class="block">
+            <progress class="progress is-info is-small" value={processingIndex} max={services.length} />
+        </div>
+    {/if}
 </div>
 
 <style>

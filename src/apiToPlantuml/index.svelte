@@ -8,10 +8,11 @@
   import Footer from 'components/footer.svelte';
   import Diagrams from './diagrams.svelte';
   import DiagramsOption from './diagramsOption.svelte';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
   import { diagramBuilderOptions } from './diagramBuilderOptions';
   import DownloadDiagrams from './downloadDiagrams.svelte';
+  import type { Unsubscriber } from 'svelte/store';
 
   const LOCAL_STORAGE_KEY = 'apiToPlantuml.diagramsBuilderOptions';
 
@@ -19,6 +20,7 @@
   let services: ApiService[] = [];
   let selectedService: ApiService = null;
   let errors: string[] = [];
+  let diagramBuilderOptionsUnsubscribe: Unsubscriber = null;
 
   async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
     try {
@@ -45,10 +47,14 @@
     selectedService = services[event.detail.selectedServiceIndex];
   }
 
-  $: storeOptions(LOCAL_STORAGE_KEY, $diagramBuilderOptions);
-
   onMount(() => {
     diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY));
+    diagramBuilderOptionsUnsubscribe = diagramBuilderOptions.subscribe(() => {
+      storeOptions(LOCAL_STORAGE_KEY, $diagramBuilderOptions);
+    });
+  });
+  onDestroy(() => {
+    diagramBuilderOptionsUnsubscribe();
   });
 </script>
 
