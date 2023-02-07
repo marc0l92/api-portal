@@ -10,7 +10,7 @@
   import DiagramsOption from './diagramsOption.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
-  import { diagramBuilderOptions } from './diagramBuilderOptions';
+  import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, diagramBuilderOptions } from './diagramBuilderOptions';
   import DownloadDiagrams from './downloadDiagrams.svelte';
   import type { Unsubscriber } from 'svelte/store';
 
@@ -48,7 +48,7 @@
   }
 
   onMount(() => {
-    diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY));
+    diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS));
     diagramBuilderOptionsUnsubscribe = diagramBuilderOptions.subscribe(() => {
       storeOptions(LOCAL_STORAGE_KEY, $diagramBuilderOptions);
     });

@@ -10,9 +10,11 @@
     $: parseService(service, $diagramBuilderOptions);
 
     function parseService(serviceToProcess: ApiService, options: DiagramBuilderOptions) {
-        diagrams = parseServiceDiagrams(serviceToProcess, options);
-        if (diagrams.length > 0) {
-            selectedDiagram = diagrams[0];
+        if (serviceToProcess && options) {
+            diagrams = parseServiceDiagrams(serviceToProcess, options);
+            if (diagrams.length > 0) {
+                selectedDiagram = diagrams[0];
+            }
         }
     }
 </script>
@@ -68,7 +70,7 @@
         width: auto;
         max-width: 100%;
     }
-    .break-text{
+    .break-text {
         word-break: break-all;
     }
 </style>
