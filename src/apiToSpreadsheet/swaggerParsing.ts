@@ -79,6 +79,16 @@ function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, pat
             )
         }
     }
+    if ('additionalProperties' in model) {
+        flatMap = flatMap.concat(
+            generateModelFlatMap(
+                model.additionalProperties,
+                false,
+                path + '/< * >',
+                level + 1
+            )
+        )
+    }
     return flatMap
 }
 
