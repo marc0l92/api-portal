@@ -81,33 +81,41 @@ describe('RefParser', () => {
                 c: { ca: 3, cb: { '$ref': '#/a' } }
             }
             const kExpected = {
-                a: { aa: 1, ab: { ba: 2, bb: { ca: 3, cb: { aa: 1, ab: {} } } } },
-                b: { ba: 2, bb: { ca: 3, cb: { aa: 1, ab: {} } } },
-                c: { ca: 3, cb: { aa: 1, ab: {} } }
+                a: { aa: 1, ab: { ba: 2, bb: { ca: 3, cb: {} } } },
+                b: { ba: 2, bb: { ca: 3, cb: {} } },
+                c: { ca: 3, cb: {} }
             }
             expect(resolveReferences(kInput)).toEqual(kExpected)
         })
 
-        // test('Object with cyclic reference', () => {
-        //     const kInput = {
-        //         a: { aa: 1, ab: { '$ref': '#/b' } },
-        //         b: { ba: 2, bb: { '$ref': '#/c' } },
-        //         c: { ca: 3, cb: { '$ref': '#/a' } },
-        //     }
-        //     const kExpected = {
-        //         a: { aa: 1, ab: { ba: 2, bb: {} } },
-        //         b: { ba: 2, bb: {} },
-        //         c: { ca: 3, cb: { aa: 1, ab: { ba: 2, bb: {} } } },
-        //     }
-        //     expect(resolveReferences(kInput)).toEqual(kExpected)
-        // })
-
         test('Object with self reference', () => {
             const kInput = {
-                a: { '$ref': '#/a' }
+                a: { b: { '$ref': '#/a' } }
             }
             const kExpected = {
-                a: {}
+                a: { b: { b: {} } }
+            }
+            expect(resolveReferences(kInput)).toEqual(kExpected)
+        })
+
+        test('Concatenate references in api example', () => {
+            const kInput = {
+                "swagger": "2.0",
+                "paths": { "/": { "post": {} } },
+                "definitions": {
+                    "Def1": { "properties": { "field1": { "$ref": "#/definitions/Def2" } } },
+                    "Def2": { "properties": { "field2": { "$ref": "#/definitions/Def3" } } },
+                    "Def3": { "properties": { "field3": { "$ref": "#/definitions/Def1" } } }
+                }
+            }
+            const kExpected = {
+                "swagger": "2.0",
+                "paths": { "/": { "post": {} } },
+                "definitions": {
+                    "Def1": { "properties": { "field1": { "properties": { "field2": { "properties": { "field3": {} } } } } } },
+                    "Def2": { "properties": { "field2": { "properties": { "field3": {} } } } },
+                    "Def3": { "properties": { "field3": {} } }
+                }
             }
             expect(resolveReferences(kInput)).toEqual(kExpected)
         })
