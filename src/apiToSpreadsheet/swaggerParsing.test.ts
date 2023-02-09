@@ -82,7 +82,7 @@ describe('SwaggerParsing', () => {
                         "Example": "",
                         "Level": 1,
                         "Location": "Body",
-                        "Path": "/< * >",
+                        "Path": "/<*>",
                         "Type": "string",
                     },
                 ]

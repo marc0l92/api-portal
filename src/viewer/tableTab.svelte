@@ -4,7 +4,6 @@
     import { modelPropertiesToTable } from 'apiToSpreadsheet/xlsxUtils';
     import type { Api, ApiService } from 'common/api';
     import SelectServices from 'components/selectServices.svelte';
-    import { beforeUpdate } from 'svelte';
 
     export let api: Api = null;
     let services: ApiService[] = [];
