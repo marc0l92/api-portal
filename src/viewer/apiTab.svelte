@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { afterUpdate } from 'svelte';
     import SwaggerUI from 'swagger-ui';
 
     export let apiDoc: any = null;
@@ -9,9 +10,11 @@
         });
     }
 
-    $: if (apiDoc) {
-        updateSwaggerUi();
-    }
+    afterUpdate(() => {
+        if (apiDoc) {
+            updateSwaggerUi();
+        }
+    });
 </script>
 
 <div id="swaggerUiRoot" />
