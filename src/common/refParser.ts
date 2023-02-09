@@ -39,7 +39,7 @@ const resolveReferencesRecursive = (root: any, obj: any, currentPath: string, ex
         obj = mapAllRef(obj, currentPath, (item, ref, refPath) => {
             // console.log('mapAllRef begin:', { item, ref, refPath, exploredPaths: JSON.stringify(exploredPaths) })
             let referencedObj = {}
-            if (exploredPaths.indexOf(ref) === -1 && !currentPath.startsWith(ref)) {
+            if (exploredPaths.indexOf(ref) === -1 && !refPath.startsWith(ref)) {
                 exploredPaths.push(ref)
                 referencedObj = getObjectByRef(root, ref)
                 // console.log('mapAllRef getObjectByRef:', { referencedObj: JSON.stringify(referencedObj) })
