@@ -15,7 +15,7 @@
         <ul>
             <li class={selectedTab === 'release-notes' ? 'is-active' : ''}>
                 <a href={'#'} on:click={() => changeTab('release-notes')}>
-                    <span class="icon is-small"><i class="fas fa-file-lines" /></span>
+                    <span class="icon is-small"><i class="far fa-file-lines" /></span>
                     <span>Release Notes</span>
                 </a>
             </li>
@@ -39,8 +39,13 @@
             </li>
             <li class={selectedTab === 'raw' ? 'is-active' : ''}>
                 <a href={'#'} on:click={() => changeTab('raw')}>
-                    <span class="icon is-small"><i class="fas fa-font" /></span>
+                    <span class="icon is-small"><i class="fas fa-paragraph" /></span>
                     <span>Raw</span>
+                </a>
+            </li>
+            <li>
+                <a href={'#'} class="small-item">
+                    <span class="icon is-small"><i class="fas fa-ellipsis-vertical" /></span>
                 </a>
             </li>
         </ul>
@@ -48,4 +53,11 @@
 </div>
 
 <style>
+    .small-item {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .tabs.is-boxed a.small-item:hover{
+        border-bottom-color: transparent;
+    }
 </style>
