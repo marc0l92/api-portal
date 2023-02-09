@@ -1,8 +1,6 @@
 <script lang="ts">
-  import yaml from 'js-yaml';
   import type { Api } from 'common/api';
   import Footer from 'components/footer.svelte';
-  import { onMount } from 'svelte';
   import Navbar from '../components/navbar.svelte';
   import { apiFactory } from 'common/apiFactory';
   import Tabs from './tabs.svelte';
@@ -11,28 +9,31 @@
   import ReleaseNotesTab from './releaseNotesTab.svelte';
   import DiagramsTab from './diagramsTab.svelte';
   import ValidationTab from './validationTab.svelte';
+  import TableTab from './tableTab.svelte';
+  import InputApi from 'components/inputApi.svelte';
 
   let apiDoc: any = {};
   let api: Api = null;
-  let selectedTab: string = 'api';
+  let selectedTab: string = 'table';
+
+  async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
+    try {
+      apiDoc = event.detail.apiObject;
+      api = apiFactory(apiDoc);
+      await api.resolveReferences();
+    } catch (e) {
+      api = null;
+    }
+  }
 
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
     selectedTab = event.detail.selectedTab;
   }
-
-  onMount(async () => {
-    const apiLink = 'https://petstore3.swagger.io/api/v3/openapi.json';
-    const response = await fetch(apiLink);
-    if (response.ok) {
-      apiDoc = yaml.load(await response.text());
-      api = apiFactory(apiDoc);
-      await api.resolveReferences();
-    }
-  });
 </script>
 
 <Navbar activePage="viewer" />
 <div class="container">
+  <InputApi on:apiChange={onApiChange} />
   {#if api}
     <section class="hero is-small">
       <div class="hero-body">
@@ -52,7 +53,9 @@
       {:else if selectedTab === 'api'}
         <ApiTab {apiDoc} />
       {:else if selectedTab === 'diagrams'}
-        <DiagramsTab />
+        <DiagramsTab {api} />
+      {:else if selectedTab === 'table'}
+        <TableTab {api} />
       {:else if selectedTab === 'validation'}
         <ValidationTab />
       {:else if selectedTab === 'raw'}

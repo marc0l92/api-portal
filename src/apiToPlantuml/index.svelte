@@ -68,7 +68,9 @@
   </section>
   <InputApi on:apiChange={onApiChange} />
   {#if services.length > 0}
-    <SelectServices {services} servicesSelectSize={1} on:serviceSelect={onServiceSelect} />
+    <div class="box">
+      <SelectServices {services} servicesSelectSize={1} on:serviceSelect={onServiceSelect} />
+    </div>
   {/if}
   {#if errors.length > 0}
     <Errors messages={errors} />

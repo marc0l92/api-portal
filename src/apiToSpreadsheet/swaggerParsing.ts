@@ -35,7 +35,7 @@ function getAuthorizedValues(model: ApiModelDoc): string {
         rules.push(`format=${model.format}`)
     }
     if (model.enum) {
-        rules.push(`enum=[${model.enum.join(',')}]`)
+        rules.push(`enum=[${model.enum.join(', ')}]`)
     }
     return rules.join('; ')
 }
@@ -84,7 +84,7 @@ function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, pat
             generateModelFlatMap(
                 model.additionalProperties,
                 false,
-                path + '/< * >',
+                path + '/<*>',
                 level + 1
             )
         )
@@ -107,16 +107,16 @@ function generateParameterFlatMap(parameter: ApiParameterDoc): ModelProperty {
 }
 
 export const generateServiceWorkbook = (service: ApiService): ModelPropertiesMap => {
-    console.log('Service:', { service })
+    // console.log('Service:', { service })
     const workbook: ModelPropertiesMap = { Request: [] }
     const parameters = service.getRequestParameters()
-    console.log('Parameters:', { parameters })
+    // console.log('Parameters:', { parameters })
     for (const parameter of parameters) {
         workbook.Request.push(generateParameterFlatMap(parameter))
     }
 
     const request = service.getRequest()
-    console.log('Request:', { request })
+    // console.log('Request:', { request })
     if (request && request.schema) {
         request.schema = mergeAllOfDefinitions(request.schema)
         workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
@@ -127,7 +127,7 @@ export const generateServiceWorkbook = (service: ApiService): ModelPropertiesMap
 
     // console.log({ workbook })
     const responses = service.getResponses()
-    console.log('Responses:', { responses })
+    // console.log('Responses:', { responses })
     for (const statusCode in responses) {
         const response = responses[statusCode]
         response.schema = mergeAllOfDefinitions(response.schema)

@@ -31,6 +31,12 @@
                     <span>Diagrams</span>
                 </a>
             </li>
+            <li class={selectedTab === 'table' ? 'is-active' : ''}>
+                <a href={'#'} on:click={() => changeTab('table')}>
+                    <span class="icon is-small"><i class="fas fa-table" /></span>
+                    <span>Table</span>
+                </a>
+            </li>
             <li class={selectedTab === 'validation' ? 'is-active' : ''}>
                 <a href={'#'} on:click={() => changeTab('validation')}>
                     <span class="icon is-small"><i class="fas fa-list-check" /></span>

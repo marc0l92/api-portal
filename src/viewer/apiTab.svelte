@@ -1,17 +1,17 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import SwaggerUI from 'swagger-ui';
 
     export let apiDoc: any = null;
+    function updateSwaggerUi() {
+        SwaggerUI({
+            dom_id: '#swaggerUiRoot',
+            spec: apiDoc,
+        });
+    }
 
-    onMount(() => {
-        if (apiDoc) {
-            SwaggerUI({
-                dom_id: '#swaggerUiRoot',
-                spec: apiDoc,
-            });
-        }
-    });
+    $: if (apiDoc) {
+        updateSwaggerUi();
+    }
 </script>
 
 <div id="swaggerUiRoot" />
