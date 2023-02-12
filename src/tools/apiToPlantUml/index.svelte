@@ -1,12 +1,16 @@
 <script lang="ts">
-  import Navbar from '../components/navbar.svelte';
-  import InputApi from '../components/inputApi.svelte';
-  import SelectServices from '../components/selectServices.svelte';
-  import DownloadSpreadsheets from './downloadSpreadsheets.svelte';
+  import Navbar from '../../components/navbar.svelte';
+  import InputApi from '../../components/inputApi.svelte';
   import Errors from 'components/errors.svelte';
-  import { apiFactory } from 'common/apiFactory';
   import type { Api, ApiService } from 'common/api';
+  import { apiFactory } from 'common/apiFactory';
+  import SelectServices from 'components/selectServices.svelte';
   import Footer from 'components/footer.svelte';
+  import Diagrams from './diagrams.svelte';
+  import DiagramsOption from './diagramsOption.svelte';
+  import { onDestroy, onMount } from 'svelte';
+  import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from './diagramBuilderOptions';
+  import DownloadDiagrams from './downloadDiagrams.svelte';
 
   let api: Api = null;
   let services: ApiService[] = [];
@@ -15,13 +19,14 @@
 
   async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
     try {
-      errors = [];
       api = null;
       services = [];
       selectedService = null;
+      errors = [];
       const apiObject = event.detail.apiObject;
       if (apiObject) {
         api = apiFactory(apiObject);
+        api.setModelsTitle();
         await api.resolveReferences();
         services = api.getServices();
         if (services.length === 0) {
@@ -36,27 +41,36 @@
   function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
     selectedService = services[event.detail.selectedServiceIndex];
   }
+
+  onMount(() => {
+    diagramBuilderOptionsMount();
+  });
+  onDestroy(() => {
+    diagramBuilderOptionsDestroy();
+  });
 </script>
 
-<Navbar activePage="apiToSpreadsheet" />
+<Navbar activePage="apiToPlantuml" />
 <div class="container">
   <section class="hero is-small">
     <div class="hero-body">
-      <h1 class="title">Api to Spreadsheet</h1>
-      <p class="subtitle">Convert OpenAPI/Swagger file to flat Spreadsheets</p>
+      <h1 class="title">Api to PlantUML</h1>
+      <p class="subtitle">Generate PlantUML diagram of REST API</p>
     </div>
   </section>
   <InputApi on:apiChange={onApiChange} />
   {#if services.length > 0}
     <div class="box">
-      <SelectServices {services} servicesSelectSize={8} on:serviceSelect={onServiceSelect} />
+      <SelectServices {services} servicesSelectSize={1} on:serviceSelect={onServiceSelect} />
     </div>
   {/if}
-  {#if errors.length > 0}
-    <Errors messages={errors} />
-  {/if}
+  <Errors messages={errors} />
   {#if selectedService}
-    <DownloadSpreadsheets {selectedService} {services} apiName={api.getName()} />
+    <Diagrams service={selectedService} />
+    <div class="box">
+      <DiagramsOption />
+    </div>
+    <DownloadDiagrams apiName={api.getName()} {selectedService} {services} />
   {/if}
 </div>
 <Footer />

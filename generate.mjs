@@ -7,7 +7,7 @@ import apiTools from './dist/api-tools.js'
 
 const INPUT_FOLDER = './inputApi'
 const OUTPUT_FOLDER = './public/apis'
-const INDEX_FILE_NAME = 'index.json'
+const INDEX_FILE_PATH = './src/apiIndex.json'
 const API_SUFFIX = '.api.json'
 const DIAGRAMS_SUFFIX = '.diagrams.json'
 const TABLES_SUFFIX = '.tables.json'
@@ -47,7 +47,7 @@ glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {
         exit(1)
     }
 
-    const indexObject = {}
+    const apiIndex = []
     for (const fileName of fileNames) {
         const apiDoc = yaml.load(await fs.readFile(fileName))
         const apiHash = hash(apiDoc)
@@ -58,21 +58,14 @@ glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {
         await generateValidation(apiDoc, apiHash)
         await generateReleaseNotes(apiDoc, apiHash)
 
-        indexObject[apiHash] = {
-            api: `${apiHash}${API_SUFFIX}`,
-            diagrams: `${apiHash}${DIAGRAMS_SUFFIX}`,
-            table: `${apiHash}${TABLES_SUFFIX}`,
-            validation: `${apiHash}${VALIDATION_SUFFIX}`,
-            releaseNotes: `${apiHash}${RELEASE_NOTES_SUFFIX}`,
-        }
+        const api = await apiTools.parseApi(apiDoc)
+
+        apiIndex.push({
+            name: api.getName(),
+            version: api.getVersion(),
+            hash: apiHash,
+        })
     }
-    fs.outputJson(`${OUTPUT_FOLDER}/${INDEX_FILE_NAME}`, indexObject)
+    fs.outputJson(INDEX_FILE_PATH, apiIndex)
 
 })
-
-// load files
-// generate browse index
-// generate diagram
-// generate table
-// generate spectral
-// generate release notes

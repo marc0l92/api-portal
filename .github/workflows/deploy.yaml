@@ -23,6 +23,9 @@ jobs:
       - name: Build website
         run: |
           pnpm run build
+      - name: Generate api cache
+        run: |
+          pnpm run generate
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { TablesMap } from 'apiToSpreadsheet/interfaces';
-    import { generateServiceWorkbook } from 'apiToSpreadsheet/swaggerParsing';
-    import { modelPropertiesToTables } from 'apiToSpreadsheet/xlsxUtils';
+    import type { TablesMap } from 'tools/apiToSpreadsheet/interfaces';
+    import { generateServiceWorkbook } from 'tools/apiToSpreadsheet/swaggerParsing';
+    import { modelPropertiesToTables } from 'tools/apiToSpreadsheet/xlsxUtils';
     import type { Api, ApiService } from 'common/api';
     import SelectServices from 'components/selectServices.svelte';
 

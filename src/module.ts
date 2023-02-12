@@ -1,7 +1,7 @@
-import type { DiagramBuilderOptions } from "apiToPlantuml/diagramBuilderOptions"
-import { parseServiceDiagrams, type DiagramData } from "apiToPlantuml/serivceDiagrams"
-import { generateServiceWorkbook } from "apiToSpreadsheet/swaggerParsing"
-import { modelPropertiesToTables, tablesMapToXLSX } from "apiToSpreadsheet/xlsxUtils"
+import type { DiagramBuilderOptions } from "tools/apiToPlantUml/diagramBuilderOptions"
+import { parseServiceDiagrams, type DiagramData } from "tools/apiToPlantUml/serivceDiagrams"
+import { generateServiceWorkbook } from "tools/apiToSpreadsheet/swaggerParsing"
+import { modelPropertiesToTables, tablesMapToXLSX } from "tools/apiToSpreadsheet/xlsxUtils"
 import type { Api } from "common/api"
 import { apiFactory } from "common/apiFactory"
 import { toBlob } from "common/filesUtils"
@@ -9,7 +9,7 @@ import * as RefParser from "common/refParser"
 
 export const resolveReferences = RefParser.resolveReferences
 
-async function parseApi(apiObject: any): Promise<Api> {
+export async function parseApi(apiObject: any): Promise<Api> {
     const api = apiFactory(apiObject)
     api.setModelsTitle()
     await api.resolveReferences()

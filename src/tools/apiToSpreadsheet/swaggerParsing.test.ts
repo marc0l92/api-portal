@@ -1,5 +1,5 @@
-import { type ApiOpenApiServiceDoc, ApiServiceOpenApi } from '../common/apiOpenApi'
-import { type ApiModelDoc, ModelType } from '../common/apiModel'
+import { type ApiOpenApiServiceDoc, ApiServiceOpenApi } from '../../common/apiOpenApi'
+import { type ApiModelDoc, ModelType } from '../../common/apiModel'
 import { generateServiceWorkbook } from './swaggerParsing'
 
 const kModelWithAdditionalProperties: ApiModelDoc = {

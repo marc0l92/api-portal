@@ -1,6 +1,6 @@
-import { setupHotReload } from "common/hotReload"
-import ApiToPlantuml from "./apiToPlantuml/index.svelte"
+import { setupHotReload } from "./common/hotReload"
+import ApiToPlantUml from "./tools/apiToPlantUml/index.svelte"
 
-new ApiToPlantuml({ target: document.body })
+new ApiToPlantUml({ target: document.body })
 
 setupHotReload()

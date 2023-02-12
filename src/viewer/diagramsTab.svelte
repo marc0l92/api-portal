@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { diagramBuilderOptions } from 'apiToPlantuml/diagramBuilderOptions';
-    import DiagramsOption from 'apiToPlantuml/diagramsOption.svelte';
-    import { parseServiceDiagrams, type DiagramData } from 'apiToPlantuml/serivceDiagrams';
+    import { diagramBuilderOptions } from 'tools/apiToPlantUml/diagramBuilderOptions';
+    import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
+    import { parseServiceDiagrams, type DiagramData } from 'tools/apiToPlantUml/serivceDiagrams';
     import type { Api, ApiService } from 'common/api';
     import SelectServices from 'components/selectServices.svelte';
 
@@ -13,7 +13,6 @@
         const selectedService = services[event.detail.selectedServiceIndex];
         if (selectedService && $diagramBuilderOptions) {
             diagrams = parseServiceDiagrams(selectedService, $diagramBuilderOptions);
-            console.log(diagrams);
         }
     }
 

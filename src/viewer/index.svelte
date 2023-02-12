@@ -1,4 +1,5 @@
 <script lang="ts">
+  import yaml from 'js-yaml';
   import type { Api } from 'common/api';
   import Footer from 'components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
@@ -10,30 +11,46 @@
   import DiagramsTab from './diagramsTab.svelte';
   import ValidationTab from './validationTab.svelte';
   import TablesTab from './tablesTab.svelte';
-  import InputApi from 'components/inputApi.svelte';
   import { viewerOptions, viewerOptionsDestroy, viewerOptionsMount } from './viewerOptions';
   import { onDestroy, onMount } from 'svelte';
+  import Errors from 'components/errors.svelte';
+  import { getOptions, storeOptions } from 'common/localStorage';
 
-  let apiDoc: any = {};
-  let api: Api = null;
+  const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
+
   let selectedTab: string = 'api';
-
-  async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
-    try {
-      apiDoc = event.detail.apiObject;
-      api = apiFactory(apiDoc);
-      await api.resolveReferences();
-    } catch (e) {
-      api = null;
-    }
-  }
+  let apiHash: string = null;
+  let apiDoc: any = null;
+  let api: Api = null;
+  let errors: string[] = [];
 
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
     selectedTab = event.detail.selectedTab;
+    storeOptions(LOCAL_STORAGE_SELECTED_TAB_KEY, selectedTab);
   }
 
-  onMount(() => {
+  onMount(async () => {
     viewerOptionsMount();
+    selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'api';
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('api')) {
+      apiHash = urlParams.get('api');
+      try {
+        const apiResponse = await fetch(`./apis/${apiHash}.api.json`);
+        if (apiResponse.ok) {
+          apiDoc = yaml.load(await apiResponse.text());
+          api = apiFactory(apiDoc);
+          await api.resolveReferences();
+        } else {
+          errors = [...errors, 'Error: ' + apiResponse.status];
+        }
+      } catch (e) {
+        api = null;
+        errors = [...errors, 'Error while fetching the api'];
+      }
+    } else {
+      errors = [...errors, 'No api selected'];
+    }
   });
   onDestroy(() => {
     viewerOptionsDestroy();
@@ -42,7 +59,6 @@
 
 <Navbar activePage="viewer" />
 <div class="container {$viewerOptions.fluidLayout ? 'is-fluid' : ''}">
-  <InputApi on:apiChange={onApiChange} />
   {#if api}
     <section class="hero is-small">
       <div class="hero-body">
@@ -77,6 +93,7 @@
         <h1 class="title">Loading...</h1>
       </div>
     </section>
+    <Errors messages={errors} />
   {/if}
 </div>
 <Footer />
