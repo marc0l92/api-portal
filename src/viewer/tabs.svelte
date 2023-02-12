@@ -1,7 +1,9 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
+    import { viewerOptions } from './viewerOptions';
 
     export let selectedTab = 'api';
+    let showMenu = false;
 
     const dispatch = createEventDispatcher();
     async function changeTab(newTab: string) {
@@ -10,7 +12,7 @@
     }
 </script>
 
-<div>
+<div class="tabs-with-options">
     <div class="tabs is-boxed is-floating is-right">
         <ul>
             <li class={selectedTab === 'release-notes' ? 'is-active' : ''}>
@@ -49,21 +51,51 @@
                     <span>Raw</span>
                 </a>
             </li>
-            <li>
-                <a href={'#'} class="small-item">
-                    <span class="icon is-small"><i class="fas fa-ellipsis-vertical" /></span>
-                </a>
-            </li>
         </ul>
+    </div>
+    <div class="dropdown is-right {showMenu ? 'is-active' : ''}">
+        <div class="dropdown-trigger">
+            <a href={'#'} on:click={() => (showMenu = !showMenu)}>
+                <i class="fas fa-ellipsis-vertical" />
+            </a>
+        </div>
+        <div class="dropdown-menu">
+            <div class="dropdown-content">
+                <a href={'#'} class="dropdown-item" on:click={() => ($viewerOptions.fluidLayout = !$viewerOptions.fluidLayout)}>
+                    <i class="far {$viewerOptions.fluidLayout ? 'fa-square-check' : 'fa-square'}" />Fluid container
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-    .small-item {
-        padding-left: 0;
-        padding-right: 0;
+    .tabs-with-options {
+        display: flex;
+        flex-wrap: nowrap;
+        align-content: center;
+        align-items: stretch;
     }
-    .tabs.is-boxed a.small-item:hover{
-        border-bottom-color: transparent;
+    .tabs-with-options .tabs {
+        flex-grow: 1;
+        margin-bottom: 0;
+    }
+    .dropdown-trigger {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        vertical-align: top;
+    }
+    .dropdown-trigger a {
+        padding: 0.5em 1em;
+    }
+    .dropdown-trigger a:hover,
+    .dropdown.is-active .dropdown-trigger a {
+        background-color: #f5f5f5;
+        border-bottom-color: #dbdbdb;
+        border-radius: 4px 4px 0 0;
+    }
+    .dropdown-menu a i {
+        margin-right: 1em;
     }
 </style>

@@ -54,6 +54,10 @@ strong {
 
 /* Swagger UI */
 
-.swagger-ui .info .title small pre{
+#swaggerUiRoot .swagger-ui .info .title small pre{
     background-color: transparent;
+}
+
+#swaggerUiRoot .swagger-ui .wrapper {
+    max-width: none;
 }

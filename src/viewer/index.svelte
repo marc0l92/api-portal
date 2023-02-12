@@ -11,10 +11,12 @@
   import ValidationTab from './validationTab.svelte';
   import TableTab from './tableTab.svelte';
   import InputApi from 'components/inputApi.svelte';
+  import { viewerOptions, viewerOptionsDestroy, viewerOptionsMount } from './viewerOptions';
+  import { onDestroy, onMount } from 'svelte';
 
   let apiDoc: any = {};
   let api: Api = null;
-  let selectedTab: string = 'diagrams';
+  let selectedTab: string = 'api';
 
   async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
     try {
@@ -29,10 +31,17 @@
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
     selectedTab = event.detail.selectedTab;
   }
+
+  onMount(() => {
+    viewerOptionsMount();
+  });
+  onDestroy(() => {
+    viewerOptionsDestroy();
+  });
 </script>
 
 <Navbar activePage="viewer" />
-<div class="container">
+<div class="container {$viewerOptions.fluidLayout ? 'is-fluid' : ''}">
   <InputApi on:apiChange={onApiChange} />
   {#if api}
     <section class="hero is-small">
