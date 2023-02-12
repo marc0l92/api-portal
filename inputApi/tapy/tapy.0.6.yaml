@@ -1,0 +1,470 @@
+info:
+  title: tapy Dokumentation
+  description: "Alle X Sekunden wird jeder Endpunkt vom Cadu-Server angefragt. Bei einer Antwort des tapy-Servers mit nextRequest=true enthält die nächste Anfrage des Cadu-Servers die angeforderten Daten"
+  version: '0.6'
+# servers:
+#   - url: https://mock-server
+tags:
+  - name: tables
+    description: Bonierte Bestellungen des gesamten POS
+  - name: table
+    description: Bonierte Bestellungen eines einzelnen Tisches
+  - name: locked
+    description: Sperren und Freigeben einzelner Bestellungen
+  - name: payment
+    description: Bezahlen einzelner Bestellungen
+  - name: invoices
+    description: Rechnungsbezogene Daten
+  
+    
+paths:
+  /tables/get:
+    post:
+      tags:
+        - tables
+      description: >-
+        Request an tapy-Server. Request enthält ein aktuelles Abbild des
+        Cadu-POS.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ackBody:
+                  $ref: '#/components/schemas/ackObj'
+                requestBody:
+                  $ref: '#/components/schemas/allTables'
+                
+            example:
+              ackBody: 
+                requestId: "AF155F"
+                responseCode: 200
+                responseMsg: "OK"
+              requestBody:
+                tables:
+                  - tableId: '2421242'
+                    items:
+                      - orderId: '626307377'
+                        orderUnixTimestamp: 1666533212
+                        itemId: 26909720
+                        # quantity: 1
+                        priceItem: 490
+                        priceTotal: 490
+                        itemName: Corona
+                        orderComment: Ohne Zitrone
+                        isFood: false
+                        isLocked: false
+                      - orderId: '626307399'
+                        orderUnixTimestamp: 1666523212
+                        itemId: 26902720
+                        quantity: 1
+                        priceItem: 1790
+                        priceTotal: 1790
+                        itemName: Rinderhüftsteak
+                        orderComment: ''
+                        isFood: true
+                        isLocked: false
+                  - tableId: '2421243'
+                    items:
+                      - orderId: '626317399'
+                        orderUnixTimestamp: 1666333200
+                        itemId: 26909719
+                        # quantity: 1
+                        priceItem: 1290
+                        priceTotal: 1290
+                        itemName: Penne "Two Broke Girls"
+                        orderComment: ''
+                        isFood: true
+                        isLocked: false
+                      - orderId: '626307123'
+                        orderUnixTimestamp: 1666323200
+                        itemId: 26909721
+                        quantity: 1
+                        priceItem: 850
+                        priceTotal: 850
+                        itemName: Gin Tonic
+                        orderComment: ohen Eis
+                        isFood: false
+                        isLocked: false
+      responses:
+        '200':
+          description: >-
+            Gibt an ob bei der nächsten Anfrage die Daten des POS geschickt
+            werden sollen. Keine optinale nextRequestParams.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/nextRequestObj'
+              example: 
+                nextRequest: true
+                nextRequestId: "AF155F"
+                nextRequestParams: {}
+          
+          
+  /table/get:
+    post:
+      tags:
+        - table
+      description: >-
+        Ermöglicht das Anfragen der bonierten Bestellungen eines einzelnen
+        Tisches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ackBody:
+                  $ref: '#/components/schemas/ackObj'
+                requestBody:
+                  $ref: '#/components/schemas/tableState'
+            example: 
+              ackBody: 
+                requestId: "AF1601"
+                responseCode: 200
+                responseMsg: "OK"
+              requestBody:
+                tableId: '2421242'
+                items:
+                  - orderId: '626307377'
+                    orderUnixTimestamp: 1666533212
+                    itemId: 26909720
+                    quantity: 1
+                    priceItem: 490
+                    priceTotal: 490
+                    itemName: Corona
+                    orderComment: Ohne Zitrone
+                    isFood: false
+                    isLocked: false
+                  - orderId: '626307399'
+                    orderUnixTimestamp: 1666523212
+                    itemId: 26902720
+                    quantity: 1
+                    priceItem: 1790
+                    priceTotal: 1790
+                    itemName: Rinderhüftsteak
+                    orderComment: ''
+                    isFood: true
+                    isLocked: false
+      responses:
+        '200':
+          description: >-
+            Gibt an ob bei der nächsten Anfrage die Daten des POS geschickt
+            werden sollen. Enthält als nextRequestParams eine Tisch ID zu welchem die
+            aktuell bonierten Bestellungen geschickt werden sollen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/nextRequestObj'
+              example: 
+                nextRequest: true
+                nextRequestId: "AF1601"
+                nextRequestParams: { tableID: '2421242'}
+
+
+  /locked/post:
+    post:
+      tags:
+        - locked
+      requestBody:
+        description: Der requestBody fungiert als ack der vorrausgegangenen Response
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ackObj'
+      responses:
+        '200':
+          description: Übermittelt welche bonierte Bestellungen ent-/gesperrt werden sollen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/nextRequestObjLocked'
+                        
+                        
+              example: 
+                nextRequest: true
+                nextRequestId: "AF1602"
+                nextRequestParams:
+                  tableId: '2421242'
+                  toLocked: true
+                  orders:
+                    - '626307399'
+                    - '626307377'
+                            
+                            
+  /payment/post:
+    post:
+      tags:
+        - payment
+      requestBody:
+        description: Der requestBody fungiert als ack der vorrausgegangenen Response
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ackObj'
+      responses:
+        '200':
+          description: Übermittelt welche bonierte Bestellungen bezahlt wurde
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/nextRequestObjPayment'
+              examples: 
+                hospitalityReceiptFalse:
+                  value:
+                    nextRequest: true
+                    nextRequestId: "AF1603"
+                    nextRequestParams:
+                      invoiceId: "XX1603"
+                      tableId: '2421242'
+                      orders:
+                        - '626307399'
+                        - '626307377'
+                      hospitalityReceipt: false
+                      priceTotal: 2580
+                      tip: 300
+                      paymentMethod: applePay
+                
+                hospitalityReceiptTrue:
+                  value:
+                    nextRequest: true
+                    nextRequestId: "AF1603"
+                    nextRequestParams:
+                      invoiceId: "XX1603"
+                      tableId: '2421242'
+                      orders:
+                        - '626307399'
+                        - '626307377'
+                      hospitalityReceipt: true
+                      hospitalityInfo:
+                        comapnyName: "Burgers and More"
+                        companyStreet: "Schleißheimerstraße 84"
+                        companyZip: 80797
+                        occasion: "Kundenakquise"
+                        attendees:
+                          - {"Thilo Reintjes": "Entwickler"}
+                          - {"Eric Bergmann": "Sales"}
+                        signature: signature-XX1603.jpg
+                        
+                      priceTotal: 2580
+                      tip: 300
+                      paymentMethod: applePay
+                
+  
+  
+  /invoices/get:
+    post:
+      tags:
+        - invoices
+      description: >-
+        Ermöglicht das Anfragen der Rechnung einer bezahlten Bestellung
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ackBody:
+                  $ref: '#/components/schemas/ackObj'
+                requestBody:
+                  type: object
+                  properties:
+                    invoiceId:
+                      type: string
+                      description: "Eindeutige ID der zu Rechnung"
+                    hospitalityReceipt:
+                      type: boolean
+                      description: "Boolean ob es sich um einen Bewritschaftungsbeleg handelt oder nicht"
+                    url:
+                      type: string
+                      description: "Downloadlink zur Rechnung"
+            examples:
+              hospitalityReceiptFalse:
+                value:
+                  ackBody: 
+                    requestId: "AF1604"
+                    responseCode: 200
+                    responseMsg: "OK"
+                  requestBody:
+                    invoiceId: "XX1603"
+                    hospitalityReceipt: false
+                    url: "invoices.cadu.de/XX1603"
+              hospitalityReceiptTrue:
+                value:
+                  ackBody: 
+                    requestId: "AF1604"
+                    responseCode: 200
+                    responseMsg: "OK"
+                  requestBody:
+                    invoiceId: "XX1603"
+                    hospitalityReceipt: true
+                    url: "invoices.cadu.de/XX1603"
+                
+                
+      responses:
+        '200':
+          description: >-
+            Gibt an ob bei der nächsten Anfrage die eine Rechnung weitergeleitet werden soll. Enthält als Parameter eine invoiceId zur Anfrage, welche Rechnung geschickt werden soll
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/nextRequestObj'
+              example:
+                nextRequest: true
+                nextRequestId: "AF1604"
+                nextRequestParams: { invoiceId: 'XX1603'}
+                
+
+
+
+components:
+  schemas:
+    nextRequestObj:
+      type: object
+      properties:
+        nextRequest:
+          type: boolean
+          description: Boolean ob bei der nächsten Request Daten übermittelt werden sollen
+        nextRequestId:
+          type: string
+          description: Eindeutige ID zum identifizieren des nächsten Request
+        nextRequestParams:
+          type: object
+          description: >-
+            Optionale Parameter, welche für die folge Request relevant sind.
+            Siehe Beispiel
+    nextRequestObjLocked:
+      type: object
+      properties:
+        nextRequest:
+          type: boolean
+          description: Boolean ob bei der nächsten Request Daten übermittelt werden sollen
+        nextRequestId:
+          type: string
+          description: Eindeutige ID zum identifizieren des nächsten Request
+        nextRequestParams:
+          type: object
+          properties:
+            tableId:
+              type: string
+              description: "Eindeutige ID des Tisches"
+            toLocked:
+              type: boolean
+              description: >-
+                Boolean ob die Bestellungen zu entsperren oder sperren
+                sind
+            orders:
+              type: array
+              items:
+                type: string
+                description: "Eindeutige IDs der bonierten Bestellungen"
+    nextRequestObjPayment:
+      type: object
+      properties:
+        nextRequest:
+          type: boolean
+          description: "Boolean ob bei der nächsten Request Daten übermittelt werden sollen"
+        nextRequestId:
+          type: string
+          description: "Eindeutige ID zum identifizieren des nächsten Request"
+        nextRequestParams:
+          type: object
+          properties:
+            invoiceId:
+              type: string
+              description: "Eindeutige ID der zu Bezahlung. Soll verwendet werden können um Rechnung anzufragen"
+            tableId:
+              type: string
+              description: "Eindeutige ID des jeweiligen Tisches"
+            orders:
+              type: array
+              items:
+                type: string
+                description: "Eindeutige ID der bonierten Bestellung"
+            hospitalityReceipt:
+              type: boolean
+              description: "Boolean ob es sich um einen Bewritschaftungsbeleg handelt oder nicht"
+            priceTotal:
+              type: integer
+              description: "Gesamtpreis in Cent, inkl. Trinkgeld"
+            tip:
+              type: integer
+              description: "Höhe des Trinkgeldes in Cent"
+            paymentMethod:
+              type: string
+              description: "Enum der verwendeten Bezahlmethode"
+    ackObj:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: Eindeutige ID zum identifizieren des nächsten Request
+        responseCode:
+          type: integer
+          description: Response Code der zugehörigen Requst nach REST-Standards
+          example: 200
+        responseMsg:
+          type: string
+          description: Optinale Response-Nachricht. Z.Bsp. Fehlerbeschreibung
+          example: OK
+      description: Fungiert als Anfragenrückmeldung, bzw. als Ack-Response auf die gesendeten Request
+    item:
+      type: object
+      properties:
+        orderId:
+          type: string
+          description: Eindeutige ID der bonierten Bestellung
+        orderUnixTimestamp:
+          type: integer
+          description: Unix timestamp der jeweiligen Bestellung
+        itemId:
+          type: string
+          description: Eindeutige ID des bestellten Produkts
+        # quantity:
+        #   type: integer
+        #   description: Anzahl an bestellten Produkten
+        priceItem:
+          type: integer
+          description: Einzelpreis des bestellten Produkts
+        priceTotal:
+          type: integer
+          description: Gesamtpreis der bonierten Bestellung
+        itemName:
+          type: string
+          description: Name des bestellten Produkts
+        orderComment:
+          type: string
+          description: Kommentar zur Bestellung
+        isFood:
+          type: boolean
+          description: Boolean ob es sich um eine Speise oder um ein Getränk handelt
+        isLocked:
+          type: boolean
+          description: >-
+            Boolean ob die Bestellung sich aktuell in einem Bezahlvorgang
+            befindet oder nicht
+    tableState:
+      type: object
+      properties:
+        tableId:
+          type: string
+          description: Eindeutige ID des Tisches
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/item'
+          description: Liste an auf dem Tisch aktuell bonierte Bestellungen
+      description: Aktueller ist-Zustand des Tisches
+    allTables:
+      type: object
+      properties:
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/tableState'
+          description: >-
+            Liste an allen Tischen in der Gastro und deren zugehörigen
+            Informationen´
+      description: ''
+openapi: 3.0.0

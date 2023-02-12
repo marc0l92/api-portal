@@ -1,0 +1,244 @@
+openapi: 3.0.0
+
+info:
+  version: '1.0'
+  title: SmartCapacity - Capacity by Load
+  termsOfService: https://www.truckertools.com/terms/
+  contact:
+    name: Integrations Support
+    email: integrations@truckertools.com
+  description: |
+    Get carrier capacity by load.
+
+    # Authentication
+    Authentication is done using the provided API Key and a Signature, encrypted using the Secret
+    Key, in the header of the API call.
+
+    ```
+    X-Api-Key: ${ApiKey}
+    X-Signature: ${Signature}
+    ```
+
+    | Sample Keys | |
+    | - | - |
+    | API Key | `f3f4b655b406bfa2e5ea81d02e862db0` |
+    | Secret Key | `37d7118e12551a58a5431db8a6944baef085426b7b2bd07b1249b7a11f7ea289` |
+
+    ## Steps to create encrypted signature
+
+    1. Build a URL-encoded query string with the following values:
+
+        | Field | Description | Example |
+        | - | - | - |
+        | `accountId` | This is your Account ID which will be provided to you. | `12345` |
+        | `userName` | This is the email of the user that needs access to the SmartCapacity system. | `user@domain.com` |
+        | `timestamp` | Current time in UTC when the request was initiated in `YYYYMMDDHHmmss` format. The request should reach Trucker Tools within 10 minutes from this timestamp. | `20220315153030` |
+
+        ```
+        accountId=12345&userName=user%40domain.com&timestamp=20220315153030
+        ```
+
+    2. Encrypt the string using the AES-256-CBC encryption method, using the MD5 hash of the
+      Secret Key as the passphrase and the first 16 characters of the secret key as the IV (initialization
+      vector), then get the result as a UTF8-encoded, base 64 string.
+
+        | Encryption | |
+        |-|-|
+        | **Cipher Algorithm** | AES |
+        | **Mode** | CBC |
+        | **Key Size** | 256 |
+        | **Data** | `accountId=12345&userName=user%40domain.com&timestamp=20220315153030` |
+        | **Passphrase** | `56d64066e6035e0ac38d246a27c71027` |
+        | **IV / Nonce** | `37d7118e12551a58` |
+
+        ```
+        aIvJ83KqAw/T/L+xHkyzwW75xwSrjZZTxN2drRYyOqtrxJoSkb/pdpAG+Pl+RT+XuVv0Gfwe1774GLtxFWNgNbv9Ko4chfboDfLqD5Mvgno=
+        ```
+
+    3. In order to use the output above in API calls we need to make it URL safe. To do that you need to:
+
+        - replace all `+` (plus) characters with `-` (dash)
+        - replace all `/` (slash) characters with `_` (underscore)
+        - remove all `=` (equal) characters
+
+        ```
+        aIvJ83KqAw_T_L-xHkyzwW75xwSrjZZTxN2drRYyOqtrxJoSkb_pdpAG-Pl-RT-XuVv0Gfwe1774GLtxFWNgNbv9Ko4chfboDfLqD5Mvgno
+        ```
+
+    4. Convert signature to Base 64 encoding:
+
+        ```
+        YUl2SjgzS3FBd19UX0wteEhreXp3Vzc1eHdTcmpaWlR4TjJkclJZeU9xdHJ4Sm9Ta2JfcGRwQUctUGwtUlQtWHVWdjBHZndlMTc3NEdMdHhGV05nTmJ2OUtvNGNoZmJvRGZMcUQ1TXZnbm8=
+        ```
+
+servers:
+  - url: 'https://scapi.truckertools.com'
+    description: |
+      Production Server
+  - url: 'https://scapi-staging.truckertools.com'
+    description: |
+      Staging Server
+
+paths:
+  '/api/carrierCapacityForLoad':
+    get:
+      tags:
+      - Requests
+      summary: Carrier Capacity by Load
+      description: |
+        Get carrier capacity by load number.
+      parameters:
+        - $ref: '#/components/parameters/ApiKey'
+        - $ref: '#/components/parameters/Signature'
+        - $ref: '#/components/parameters/LoadNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/LoadCapacityResponse'
+        '401':
+          $ref: '#/components/responses/UnauthenticatedResponse'
+
+components:
+
+  parameters:
+
+    ApiKey:
+      description: |
+        Public key provided at signup.
+      name: X-Api-Key
+      in: header
+      schema:
+        type: string
+        example: f3f4b655b406bfa2e5ea81d02e862db0
+
+    Signature:
+      description: |
+        Unique request signature.
+      name: X-Signature
+      in: header
+      schema:
+        type: string
+        example: YUl2SjgzS3FBd19UX0wteEhreXp3Vzc1eHdTcmpaWlR4TjJkclJZeU9xdHJ4Sm9Ta2JfcGRwQUctUGwtUlQtWHVWdjBHZndlMTc3NEdMdHhGV05nTmJ2OUtvNGNoZmJvRGZMcUQ1TXZnbm8=
+
+    LoadNumber:
+      description: |
+        Load number
+      name: loadNumber
+      in: query
+      required: true
+      schema:
+        type: string
+        example: 9001
+
+  responses:
+
+    UnauthenticatedResponse:
+      description: |
+        Response indicating invalid authentication.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - status
+            properties:
+              status:
+                description: |
+                  Indicates a successful response.
+                type: boolean
+                default: false
+              error:
+                description: |
+                  Any possible error message.
+                type: string
+                default: Invalid Credentials
+
+    LoadCapacityResponse:
+      description: |
+        test
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Carrier'
+
+  schemas:
+
+    Carrier:
+      type: object
+      properties:
+        companyName:
+          type: string
+          example: Carrier Services, Ltd.
+        legalName:
+          type: string
+          example: Carrier Services, Ltd.
+        mc:
+          type: string
+          example: MC12345
+        dot:
+          type: string
+          example: 1234567
+        contactName:
+          type: string
+          example: Jon Doe
+        contactPhone:
+          type: string
+          example: (202) 555-1234
+        contactEmail:
+          type: string
+          pattern: email
+          example: jon.doe@carriersvcs.web
+        eta:
+          type: string
+          example: 03/15/2025 14:30
+        deadHead:
+          type: string
+          example: 123.45
+        lastVerified:
+          type: string
+          example: 03/10/2025 14:30
+        lastUsedByAnyBrokerage:
+          type: string
+          example: 03/10/2025 14:30
+        lastHauledForMe:
+          type: string
+          example: 03/10/2025 14:30
+        confirmed:
+          type: boolean
+          example: true
+        type:
+          type: string
+          enum:
+          - in network
+          - out of network
+          - my capacity
+          - dibs
+          example: in network
+        preferredDestinations:
+          type: array
+          items:
+            type: string
+            example:
+            - DC
+            - MD
+            - VA
+        equipmentType:
+          type: string
+          example: Flatbed Hazardous
+        availableCity:
+          type: string
+          example: Washington
+        availableState:
+          type: string
+          example: DC
+        availableTime:
+          type: string
+          example: 03/15/2025 14:30
+        confidencePercentage:
+          type: number
+          example: 95.5
+        numberTrucksAvailable:
+          type: integer
+          minimum: 0
+          example: 1
