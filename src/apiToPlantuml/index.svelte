@@ -77,7 +77,9 @@
   {/if}
   {#if selectedService}
     <Diagrams service={selectedService} />
-    <DiagramsOption />
+    <div class="box">
+      <DiagramsOption />
+    </div>
     <DownloadDiagrams apiName={api.getName()} {selectedService} {services} />
   {/if}
 </div>

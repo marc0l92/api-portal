@@ -14,7 +14,7 @@
 
   let apiDoc: any = {};
   let api: Api = null;
-  let selectedTab: string = 'table';
+  let selectedTab: string = 'diagrams';
 
   async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
     try {
