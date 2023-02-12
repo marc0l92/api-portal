@@ -1,1 +1,1 @@
-{}
+[{"code":"no-empty-description","message":"Description must not be empty","path":["paths","/tables/get","post","requestBody","content","application/json","schema","properties","requestBody","description"],"severity":1,"range":{"start":{"line":44,"character":32},"end":{"line":45,"character":60}}},{"code":"no-empty-description","message":"Description must not be empty","path":["components","schemas","allTables","description"],"severity":1,"range":{"start":{"line":620,"character":23},"end":{"line":620,"character":25}}}]
