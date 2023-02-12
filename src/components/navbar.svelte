@@ -32,7 +32,7 @@
         <div class="navbar-dropdown">
           <a class="navbar-item {activePage === 'restApiToText' ? 'is-active' : ''}" href={basePath + 'tools/restApiToText.html'}>REST Api to Text</a>
           <a class="navbar-item {activePage === 'apiToSpreadsheet' ? 'is-active' : ''}" href={basePath + 'tools/apiToSpreadsheet.html'}>API to Spreadsheet</a>
-          <a class="navbar-item {activePage === 'apiToPlantuml' ? 'is-active' : ''}" href={basePath + 'tools/apiToPlantuml.html'}>API to PlantUML</a>
+          <a class="navbar-item {activePage === 'apiToPlantUml' ? 'is-active' : ''}" href={basePath + 'tools/apiToPlantUml.html'}>API to PlantUml</a>
         </div>
       </div>
     </div>

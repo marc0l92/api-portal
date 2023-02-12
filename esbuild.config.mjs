@@ -19,7 +19,7 @@ const webOptions = {
     './src/viewer.ts',
     './src/apiToSpreadsheet.ts',
     './src/restApiToText.ts',
-    './src/apiToPlantuml.ts'
+    './src/apiToPlantUml.ts'
   ],
   bundle: true,
   external: [...builtins],

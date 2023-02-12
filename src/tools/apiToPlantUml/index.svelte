@@ -50,7 +50,7 @@
   });
 </script>
 
-<Navbar activePage="apiToPlantuml" />
+<Navbar activePage="apiToPlantUml" />
 <div class="container">
   <section class="hero is-small">
     <div class="hero-body">
