@@ -33,10 +33,10 @@
                     <span>Diagrams</span>
                 </a>
             </li>
-            <li class={selectedTab === 'table' ? 'is-active' : ''}>
-                <a href={'#'} on:click={() => changeTab('table')}>
+            <li class={selectedTab === 'tables' ? 'is-active' : ''}>
+                <a href={'#'} on:click={() => changeTab('tables')}>
                     <span class="icon is-small"><i class="fas fa-table" /></span>
-                    <span>Table</span>
+                    <span>Tables</span>
                 </a>
             </li>
             <li class={selectedTab === 'validation' ? 'is-active' : ''}>

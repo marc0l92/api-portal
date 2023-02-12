@@ -1,7 +1,7 @@
 import type { ModelPropertiesMap, TablesMap } from "./interfaces"
 import * as XLSX from "xlsx"
 
-export const modelPropertiesToTable = (modelPropertiesMap: ModelPropertiesMap): TablesMap => {
+export const modelPropertiesToTables = (modelPropertiesMap: ModelPropertiesMap): TablesMap => {
     const tablesMap: TablesMap = {}
     for (const sheetName in modelPropertiesMap) {
         const modelProperties = modelPropertiesMap[sheetName]

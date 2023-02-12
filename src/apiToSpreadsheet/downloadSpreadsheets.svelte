@@ -3,7 +3,7 @@
     import type { ApiService } from 'common/api';
     import { downloadFile, generateAndDownloadZip, sanitizeFilename, toBlob } from 'common/filesUtils';
     import { generateServiceWorkbook } from './swaggerParsing';
-    import { modelPropertiesToTable, tablesMapToXLSX } from './xlsxUtils';
+    import { modelPropertiesToTables, tablesMapToXLSX } from './xlsxUtils';
 
     export let apiName: string = '';
     export let services: ApiService[] = [];
@@ -13,7 +13,7 @@
 
     function serviceToSpreadsheet(service: ApiService): Buffer {
         const itemMap = generateServiceWorkbook(service);
-        const workbook = modelPropertiesToTable(itemMap);
+        const workbook = modelPropertiesToTables(itemMap);
         return tablesMapToXLSX(workbook);
     }
 

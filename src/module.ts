@@ -1,7 +1,7 @@
 import type { DiagramBuilderOptions } from "apiToPlantuml/diagramBuilderOptions"
 import { parseServiceDiagrams, type DiagramData } from "apiToPlantuml/serivceDiagrams"
 import { generateServiceWorkbook } from "apiToSpreadsheet/swaggerParsing"
-import { modelPropertiesToTable, tablesMapToXLSX } from "apiToSpreadsheet/xlsxUtils"
+import { modelPropertiesToTables, tablesMapToXLSX } from "apiToSpreadsheet/xlsxUtils"
 import type { Api } from "common/api"
 import { apiFactory } from "common/apiFactory"
 import { toBlob } from "common/filesUtils"
@@ -16,7 +16,7 @@ async function parseApi(apiObject: any): Promise<Api> {
     return api
 }
 
-export const apiToPlantumlDiagrams = async (apiObject: any, options: DiagramBuilderOptions) => {
+export const apiToPlantUmlDiagrams = async (apiObject: any, options: DiagramBuilderOptions) => {
     const api = await parseApi(apiObject)
     let diagramsData: DiagramData[] = []
     for (const service of api.getServices()) {
@@ -25,16 +25,30 @@ export const apiToPlantumlDiagrams = async (apiObject: any, options: DiagramBuil
     return diagramsData
 }
 
-export const apiToSpreadsheet = async (apiObject: any, options: DiagramBuilderOptions) => {
+export const apiToSpreadsheet = async (apiObject: any) => {
     const api = await parseApi(apiObject)
     let spreadsheetsData: { name: string, data: Blob }[] = []
     for (const service of api.getServices()) {
         const itemMap = generateServiceWorkbook(service);
-        const workbook = modelPropertiesToTable(itemMap);
+        const workbook = modelPropertiesToTables(itemMap);
         spreadsheetsData.push({
             name: service.getName(),
             data: toBlob(tablesMapToXLSX(workbook)),
         })
     }
     return spreadsheetsData
+}
+
+export const apiToTables = async (apiObject: any) => {
+    const api = await parseApi(apiObject)
+    let tablesData: { name: string, tables: any }[] = []
+    for (const service of api.getServices()) {
+        const itemMap = generateServiceWorkbook(service);
+        const tables = modelPropertiesToTables(itemMap);
+        tablesData.push({
+            name: service.getName(),
+            tables: tables,
+        })
+    }
+    return tablesData
 }

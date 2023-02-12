@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { TablesMap } from 'apiToSpreadsheet/interfaces';
     import { generateServiceWorkbook } from 'apiToSpreadsheet/swaggerParsing';
-    import { modelPropertiesToTable } from 'apiToSpreadsheet/xlsxUtils';
+    import { modelPropertiesToTables } from 'apiToSpreadsheet/xlsxUtils';
     import type { Api, ApiService } from 'common/api';
     import SelectServices from 'components/selectServices.svelte';
 
@@ -14,7 +14,7 @@
         const selectedService = services[event.detail.selectedServiceIndex];
         if (selectedService) {
             const itemMap = generateServiceWorkbook(selectedService);
-            workbook = modelPropertiesToTable(itemMap);
+            workbook = modelPropertiesToTables(itemMap);
             selectedSheet = Object.keys(workbook)[0];
         } else {
             workbook = null;

@@ -9,7 +9,7 @@
   import ReleaseNotesTab from './releaseNotesTab.svelte';
   import DiagramsTab from './diagramsTab.svelte';
   import ValidationTab from './validationTab.svelte';
-  import TableTab from './tableTab.svelte';
+  import TablesTab from './tablesTab.svelte';
   import InputApi from 'components/inputApi.svelte';
   import { viewerOptions, viewerOptionsDestroy, viewerOptionsMount } from './viewerOptions';
   import { onDestroy, onMount } from 'svelte';
@@ -63,8 +63,8 @@
         <ApiTab {apiDoc} />
       {:else if selectedTab === 'diagrams'}
         <DiagramsTab {api} />
-      {:else if selectedTab === 'table'}
-        <TableTab {api} />
+      {:else if selectedTab === 'tables'}
+        <TablesTab {api} />
       {:else if selectedTab === 'validation'}
         <ValidationTab />
       {:else if selectedTab === 'raw'}

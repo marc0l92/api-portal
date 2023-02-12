@@ -53,7 +53,7 @@ export default class DiagramBuilder {
     }
 
     buildParameters(parameters: ApiParameterDoc[]): void {
-        console.log({parameters})
+        console.log({ parameters })
         // this.diagramText += `interface ${safeStr(name)} {\n`
     }
 
@@ -77,6 +77,7 @@ export default class DiagramBuilder {
                 break
             case ModelType.Boolean:
             case ModelType.Integer:
+            case ModelType.Number:
             case ModelType.String:
                 this.buildBasicType(model.type)
                 break
@@ -116,6 +117,7 @@ export default class DiagramBuilder {
                 break
             case ModelType.Boolean:
             case ModelType.Integer:
+            case ModelType.Number:
             case ModelType.String:
                 this.buildField(name, this.color(`<i>${property.type}</i>`, COLORS.nativeTypes), mandatory)
                 break
