@@ -1,4 +1,4 @@
-import { Api, ApiService, type ApiParameterDoc } from "./api"
+import { Api, ApiService, type ApiParameterDoc, type ApiReleaseNotes } from "./api"
 import type { ApiModelDocMap } from "./apiModel"
 
 export interface ApiSwaggerDoc {
@@ -6,6 +6,7 @@ export interface ApiSwaggerDoc {
     info?: {
         title?: string
         version?: string
+        'x-release-notes'?: ApiReleaseNotes
     }
     paths: {
         [path: string]: {
@@ -65,6 +66,13 @@ export class ApiSwagger extends Api {
             return this.getApi().definitions
         }
         return {}
+    }
+
+    getReleaseNotes(): ApiReleaseNotes {
+        if (this.getApi() && this.getApi().info && this.getApi().info["x-release-notes"]) {
+            return this.getApi().info["x-release-notes"]
+        }
+        return null
     }
 }
 

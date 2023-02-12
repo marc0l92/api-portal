@@ -20,6 +20,10 @@ export interface ApiParameterDocMap {
     [key: string]: ApiParameterDoc
 }
 
+export interface ApiReleaseNotes {
+    [version: string]: string[]
+}
+
 export abstract class Api {
     protected apiDoc: ApiGenericDoc = null
     constructor(apiDoc: ApiGenericDoc) {
@@ -36,6 +40,7 @@ export abstract class Api {
     async resolveReferences(): Promise<void> {
         this.apiDoc = await resolveReferences(this.apiDoc)
     }
+    abstract getReleaseNotes(): ApiReleaseNotes
     abstract getName(): string
     abstract getVersion(): string
     abstract getServices(): ApiService[]

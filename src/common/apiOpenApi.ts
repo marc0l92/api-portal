@@ -1,4 +1,4 @@
-import { Api, ApiService, type ApiParameterDoc } from "./api"
+import { Api, ApiService, type ApiParameterDoc, type ApiReleaseNotes } from "./api"
 import type { ApiModelDocMap } from "./apiModel"
 
 const PATH_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
@@ -8,6 +8,7 @@ export interface ApiOpenApiDoc {
     info?: {
         title?: string
         version?: string
+        'x-release-notes'?: ApiReleaseNotes
     }
     paths: {
         [path: string]: {
@@ -76,6 +77,13 @@ export class ApiOpenApi extends Api {
             return this.getApi().components.schemas
         }
         return {}
+    }
+
+    getReleaseNotes(): ApiReleaseNotes {
+        if (this.getApi() && this.getApi().info && this.getApi().info["x-release-notes"]) {
+            return this.getApi().info["x-release-notes"]
+        }
+        return null
     }
 }
 

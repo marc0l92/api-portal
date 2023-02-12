@@ -1,6 +1,6 @@
 <script lang="ts">
   import yaml from 'js-yaml';
-  import type { Api } from 'common/api';
+  import type { Api, ApiReleaseNotes } from 'common/api';
   import Footer from 'components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
   import { apiFactory } from 'common/apiFactory';
@@ -22,6 +22,7 @@
   let apiHash: string = null;
   let apiDoc: any = null;
   let api: Api = null;
+  let releaseNotes: ApiReleaseNotes = null;
   let errors: string[] = [];
 
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
@@ -41,6 +42,7 @@
           apiDoc = yaml.load(await apiResponse.text());
           api = apiFactory(apiDoc);
           await api.resolveReferences();
+          releaseNotes = api.getReleaseNotes();
         } else {
           errors = [...errors, 'Error: ' + apiResponse.status];
         }
@@ -71,10 +73,10 @@
         </div>
       </div>
     </section>
-    <Tabs on:tabChange={onTabChange} {selectedTab} />
+    <Tabs on:tabChange={onTabChange} {selectedTab} hasReleaseNotes={!!releaseNotes} />
     <div class="box flat-top">
       {#if selectedTab === 'release-notes'}
-        <ReleaseNotesTab />
+        <ReleaseNotesTab {releaseNotes} />
       {:else if selectedTab === 'api'}
         <ApiTab {apiDoc} />
       {:else if selectedTab === 'diagrams'}

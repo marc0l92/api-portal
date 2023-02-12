@@ -3,6 +3,7 @@
     import { viewerOptions } from './viewerOptions';
 
     export let selectedTab = 'api';
+    export let hasReleaseNotes = true;
     let showMenu = false;
 
     const dispatch = createEventDispatcher();
@@ -15,12 +16,14 @@
 <div class="tabs-with-options">
     <div class="tabs is-boxed is-floating is-right">
         <ul>
-            <li class={selectedTab === 'release-notes' ? 'is-active' : ''}>
-                <a href={'#'} on:click={() => changeTab('release-notes')}>
-                    <span class="icon is-small"><i class="far fa-file-lines" /></span>
-                    <span>Release Notes</span>
-                </a>
-            </li>
+            {#if hasReleaseNotes}
+                <li class={selectedTab === 'release-notes' ? 'is-active' : ''}>
+                    <a href={'#'} on:click={() => changeTab('release-notes')}>
+                        <span class="icon is-small"><i class="far fa-file-lines" /></span>
+                        <span>Release Notes</span>
+                    </a>
+                </li>
+            {/if}
             <li class={selectedTab === 'api' ? 'is-active' : ''}>
                 <a href={'#'} on:click={() => changeTab('api')}>
                     <span class="icon is-small"><i class="fas fa-circle-nodes" /></span>
