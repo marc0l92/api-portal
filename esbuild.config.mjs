@@ -4,6 +4,7 @@ import builtins from 'builtin-modules'
 import sveltePlugin from "esbuild-svelte"
 import sveltePreprocess from "svelte-preprocess"
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
+import fs from 'fs'
 
 const prod = (process.argv[2] === 'production')
 
@@ -77,6 +78,9 @@ const moduleOptions = {
   },
 }
 
+// Copy modules css
+fs.copyFileSync('./node_modules/swagger-ui/dist/swagger-ui.css', './public/css/swagger-ui.css')
+fs.copyFileSync('./node_modules/swagger-ui/dist/swagger-ui.css.map', './public/css/swagger-ui.css.map')
 
 if (prod) {
   esbuild.build(webOptions).catch(() => process.exit(1))

@@ -57,7 +57,7 @@ export abstract class ApiService {
     }
 
     addGlobalParameters(globalParameters: ApiParameterDoc[]): void {
-        this.requestParameters.concat(globalParameters)
+        this.requestParameters = this.requestParameters.concat(globalParameters)
     }
 
     getName(): string {
