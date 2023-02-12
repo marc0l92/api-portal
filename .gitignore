@@ -5,4 +5,3 @@ coverage
 public/js/*
 public/apis/*
 dist/*
-src/apiIndex.json
