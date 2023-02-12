@@ -4,6 +4,8 @@ import hash from 'object-hash'
 import { exit } from 'process'
 import fs from 'fs-extra'
 import apiTools from './dist/api-tools.js'
+import SpectralCore from "@stoplight/spectral-core"
+import { truthy } from "@stoplight/spectral-functions"
 
 const INPUT_FOLDER = './inputApi'
 const OUTPUT_FOLDER = './public/apis'
@@ -16,7 +18,20 @@ async function generateApi(apiDoc, apiHash) {
 }
 
 async function generateValidation(apiDoc, apiHash) {
-    await fs.outputJson(`${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`, {})
+    const spectral = new SpectralCore.Spectral()
+    spectral.setRuleset({
+        rules: {
+            "no-empty-description": {
+                given: "$..description",
+                message: "Description must not be empty",
+                then: {
+                    function: truthy,
+                },
+            },
+        },
+    });
+    const spectralResults = await spectral.run(apiDoc)
+    await fs.outputJson(`${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`, spectralResults)
 }
 
 glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import yaml from 'js-yaml';
-  import type { Api, ApiReleaseNotes } from 'common/api';
+  import type { Api, ApiReleaseNotes, ApiValidation } from 'common/api';
   import Footer from 'components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
   import { apiFactory } from 'common/apiFactory';
@@ -22,6 +22,7 @@
   let apiHash: string = null;
   let apiDoc: any = null;
   let api: Api = null;
+  let validationData: ApiValidation[] = null;
   let releaseNotes: ApiReleaseNotes = null;
   let errors: string[] = [];
 
@@ -30,26 +31,45 @@
     storeOptions(LOCAL_STORAGE_SELECTED_TAB_KEY, selectedTab);
   }
 
+  async function fetchApi() {
+    try {
+      const response = await fetch(`./apis/${apiHash}.api.json`);
+      if (response.ok) {
+        apiDoc = yaml.load(await response.text());
+        api = apiFactory(apiDoc);
+        await api.resolveReferences();
+        releaseNotes = api.getReleaseNotes();
+      } else {
+        errors = [...errors, 'Error: ' + response.status];
+      }
+    } catch (e) {
+      api = null;
+      errors = [...errors, 'Error while fetching the api'];
+    }
+  }
+
+  async function fetchValidation() {
+    try {
+      const response = await fetch(`./apis/${apiHash}.validation.json`);
+      if (response.ok) {
+        validationData = yaml.load(await response.text()) as ApiValidation[];
+      } else {
+        errors = [...errors, 'Error: ' + response.status];
+      }
+    } catch (e) {
+      api = null;
+      errors = [...errors, 'Error while fetching the api validation'];
+    }
+  }
+
   onMount(async () => {
     viewerOptionsMount();
     selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'api';
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('api')) {
       apiHash = urlParams.get('api');
-      try {
-        const apiResponse = await fetch(`./apis/${apiHash}.api.json`);
-        if (apiResponse.ok) {
-          apiDoc = yaml.load(await apiResponse.text());
-          api = apiFactory(apiDoc);
-          await api.resolveReferences();
-          releaseNotes = api.getReleaseNotes();
-        } else {
-          errors = [...errors, 'Error: ' + apiResponse.status];
-        }
-      } catch (e) {
-        api = null;
-        errors = [...errors, 'Error while fetching the api'];
-      }
+      fetchApi();
+      fetchValidation();
     } else {
       errors = [...errors, 'No api selected'];
     }
@@ -84,7 +104,7 @@
       {:else if selectedTab === 'tables'}
         <TablesTab {api} />
       {:else if selectedTab === 'validation'}
-        <ValidationTab />
+        <ValidationTab {validationData} />
       {:else if selectedTab === 'raw'}
         <RawTab {apiDoc} />
       {/if}
