@@ -42,7 +42,7 @@ paths:
       description: Returns a full list of Trackgood organizations. No paging
       operationId: findAllOrganizations
       responses:
-        '200':
+        "200":
           description: A json array of organizations
           content:
             application/json:
@@ -52,8 +52,8 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Organization'
-                      
+                      $ref: "#/components/schemas/Organization"
+
   /organization/findByGln:
     get:
       tags:
@@ -69,13 +69,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'          
-        '404':
+                $ref: "#/components/schemas/Organization"
+        "404":
           description: Organization with GLN provided not found
   /organization/{id}:
     get:
@@ -93,15 +93,15 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'      
-        '400':
+                $ref: "#/components/schemas/Organization"
+        "400":
           description: Invalid id value
-        '404':
+        "404":
           description: Organization not found
   /organization/{id}/products:
     get:
@@ -120,7 +120,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -130,12 +130,12 @@ paths:
                   products:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Product'
+                      $ref: "#/components/schemas/Product"
                   organization:
-                    $ref: '#/components/schemas/Organization'
-        '400':
+                    $ref: "#/components/schemas/Organization"
+        "400":
           description: Invalid id value
-        '404':
+        "404":
           description: Organization not found
   /product:
     get:
@@ -145,7 +145,7 @@ paths:
       description: Returns a full list of all products on Trackgood. No paging
       operationId: findAllProducts
       responses:
-        '200':
+        "200":
           description: A json array of organizations
           content:
             application/json:
@@ -155,8 +155,8 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Product'
-  
+                      $ref: "#/components/schemas/Product"
+
   /product/findByOrganization:
     get:
       tags:
@@ -172,7 +172,7 @@ paths:
           schema:
             type: number
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -182,8 +182,8 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Product'         
-        '404':
+                      $ref: "#/components/schemas/Product"
+        "404":
           description: Product with GTIN provided not found
   /product/findByGtin:
     get:
@@ -200,13 +200,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'          
-        '404':
+                $ref: "#/components/schemas/Product"
+        "404":
           description: Product with GTIN provided not found
   /product/{id}:
     get:
@@ -224,15 +224,15 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'      
-        '400':
+                $ref: "#/components/schemas/Product"
+        "400":
           description: Invalid id value
-        '404':
+        "404":
           description: Product not found
   /product/{id}/impacts:
     get:
@@ -251,7 +251,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -261,12 +261,12 @@ paths:
                   impacts:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Impact'
+                      $ref: "#/components/schemas/Impact"
                   product:
-                    $ref: '#/components/schemas/Product'
-        '400':
+                    $ref: "#/components/schemas/Product"
+        "400":
           description: Invalid id value
-        '404':
+        "404":
           description: Product not found
   /product/{id}/transactions:
     get:
@@ -285,7 +285,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -295,12 +295,12 @@ paths:
                   transactions:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Transaction'
+                      $ref: "#/components/schemas/Transaction"
                   product:
-                    $ref: '#/components/schemas/Product'
-        '400':
+                    $ref: "#/components/schemas/Product"
+        "400":
           description: Invalid id value
-        '404':
+        "404":
           description: Product not found
   /product/{id}/supplychain:
     get:
@@ -319,7 +319,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -329,15 +329,15 @@ paths:
                   supply_chain_nodes:
                     type: array
                     items:
-                      $ref: '#/components/schemas/SupplyChainNode'
+                      $ref: "#/components/schemas/SupplyChainNode"
                   product:
-                    $ref: '#/components/schemas/Product'
+                    $ref: "#/components/schemas/Product"
                   supplychain:
-                    $ref: '#/components/schemas/SupplyChain'
-                  
-        '400':
+                    $ref: "#/components/schemas/SupplyChain"
+
+        "400":
           description: Invalid id value
-        '404':
+        "404":
           description: Product not found
   /impact:
     get:
@@ -347,7 +347,7 @@ paths:
       description: Returns a full list of Trackgood impacts. No paging
       operationId: findAllImpacts
       responses:
-        '200':
+        "200":
           description: A json array of impacts
           content:
             application/json:
@@ -357,7 +357,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Impact'
+                      $ref: "#/components/schemas/Impact"
   /impact/{id}:
     get:
       tags:
@@ -374,15 +374,15 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Impact'      
-        '400':
+                $ref: "#/components/schemas/Impact"
+        "400":
           description: Invalid id value
-        '404':
+        "404":
           description: Impact not found
   /impact/findByName:
     get:
@@ -399,15 +399,15 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Impact'          
-        '404':
+                $ref: "#/components/schemas/Impact"
+        "404":
           description: Impact with name provided not found
-  
+
 components:
   schemas:
     Organization:
@@ -449,11 +449,11 @@ components:
           example: 9000
         awards:
           type: array
-          items: 
+          items:
             type: string
         images:
           type: array
-          items: 
+          items:
             type: string
     Product:
       type: object
@@ -503,13 +503,13 @@ components:
     GeoLocation:
       type: object
       properties:
-        lat: 
+        lat:
           type: number
-        lng: 
+        lng:
           type: number
     SupplyChain:
       type: object
-      properties: 
+      properties:
         id:
           type: integer
           format: int64
@@ -527,10 +527,10 @@ components:
         supply_chain_id:
           type: integer
           format: int64
-        order: 
+        order:
           type: integer
           format: int32
-        name: 
+        name:
           type: string
           example: Blue Baron
         description:
@@ -550,14 +550,14 @@ components:
           type: string
           example: "Auckland, New Zealand"
         geo:
-          $ref: '#/components/schemas/GeoLocation'
+          $ref: "#/components/schemas/GeoLocation"
     SupplyChainNodeFile:
       type: object
       properties:
         id:
           type: integer
           format: int64
-        name: 
+        name:
           type: string
         path:
           type: string
@@ -570,7 +570,7 @@ components:
     Transaction:
       type: object
       properties:
-        id: 
+        id:
           type: integer
           format: int64
         product_id:
