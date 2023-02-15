@@ -9,7 +9,7 @@ import { truthy } from "@stoplight/spectral-functions"
 
 const INPUT_FOLDER = './inputApi'
 const OUTPUT_FOLDER = './public/apis'
-const INDEX_FILE_PATH = './src/apiIndex.json'
+const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/apiIndex.json`
 const API_SUFFIX = '.api.json'
 const VALIDATION_SUFFIX = '.validation.json'
 
@@ -34,13 +34,23 @@ async function generateValidation(apiDoc, apiHash) {
     await fs.outputJson(`${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`, spectralResults)
 }
 
+function isSmallerVersion(v1, v2) {
+    return v1 < v2
+}
+
+function sortOtherVersions(apiIndex) {
+    for (const apiName in apiIndex) {
+        apiIndex[apiName].otherVersions = apiIndex[apiName].otherVersions.sort((a, b) => isSmallerVersion(a.version, b.version))
+    }
+}
+
 glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     if (error) {
         console.error(error)
         exit(1)
     }
 
-    const apiIndex = []
+    const apiIndex = {}
     for (const fileName of fileNames) {
         const apiDoc = yaml.load(await fs.readFile(fileName))
         const apiHash = hash(apiDoc)
@@ -50,11 +60,20 @@ glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {
 
         const api = await apiTools.parseApi(apiDoc)
 
-        apiIndex.push({
-            name: api.getName(),
+        if (!apiIndex[api.getName()]) {
+            apiIndex[api.getName()] = { hash: null, version: null, otherVersions: [] }
+        }
+        if (!apiIndex[api.getName()].version || isSmallerVersion(apiIndex[api.getName()].version, api.getVersion())) {
+            apiIndex[api.getName()].version = api.getVersion()
+            apiIndex[api.getName()].hash = apiHash
+        }
+        apiIndex[api.getName()].otherVersions.push({
             version: api.getVersion(),
             hash: apiHash,
+            fileName: fileName.replace(INPUT_FOLDER, ''),
         })
     }
+
+    sortOtherVersions(apiIndex)
     fs.outputJson(INDEX_FILE_PATH, apiIndex)
 })

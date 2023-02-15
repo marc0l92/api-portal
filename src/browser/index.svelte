@@ -1,9 +1,25 @@
 <script lang="ts">
+  import Errors from 'components/errors.svelte';
   import Footer from 'components/footer.svelte';
+  import { onMount } from 'svelte';
   import Navbar from '../components/navbar.svelte';
+  import type { ApiIndex } from './apiIndex';
   import ApiSummary from './apiSummary.svelte';
+  import SearchBar from './searchBar.svelte';
 
-  const apiIndex = require('../apiIndex.json');
+  const API_INDEX_PATH = './apis/apiIndex.json';
+
+  let apiIndex: ApiIndex = null;
+  let errors: string[] = [];
+
+  onMount(async () => {
+    const response = await fetch(API_INDEX_PATH);
+    if (response.ok) {
+      apiIndex = (await response.json()) as ApiIndex;
+    } else {
+      errors = [...errors, 'Error while fetching api index: ' + response.status];
+    }
+  });
 </script>
 
 <Navbar activePage="browser" />
@@ -14,9 +30,15 @@
     </div>
   </section>
 
-  {#each apiIndex as apiSummary}
-    <ApiSummary {apiSummary} />
-  {/each}
+  <SearchBar />
+  <Errors messages={errors} />
+  {#if apiIndex}
+    {#each Object.entries(apiIndex) as apiIndexItem}
+      <ApiSummary name={apiIndexItem[0]} apiSummary={apiIndexItem[1]} />
+    {/each}
+  {:else}
+    <div class="box">Fetching api index...</div>
+  {/if}
 </div>
 <Footer />
 
