@@ -15,8 +15,8 @@ export const viewerOptions = writable(Object.assign({}, DEFAULT_OPTIONS))
 let unsubscribe: Unsubscriber = null
 export const viewerOptionsMount = () => {
     viewerOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS));
-    unsubscribe = viewerOptions.subscribe(() => {
-        storeOptions(LOCAL_STORAGE_KEY, viewerOptions);
+    unsubscribe = viewerOptions.subscribe((newValue: ViewerOptions) => {
+        storeOptions(LOCAL_STORAGE_KEY, newValue);
     });
 }
 export const viewerOptionsDestroy = () => {

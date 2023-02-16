@@ -1,13 +1,22 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import type { ApiSummary, ApiVersion } from './apiIndex';
+    import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
 
     export let name: string = null;
     export let apiSummary: ApiSummary = null;
     let lastVersion: ApiVersion = null;
 
+    function onFavoriteToggle() {
+        $browserOptions.favorites[lastVersion.hash] = !$browserOptions.favorites[lastVersion.hash];
+    }
+
     onMount(() => {
+        browserOptionsMount();
         lastVersion = apiSummary.versions[apiSummary.lastVersion];
+    });
+    onDestroy(() => {
+        browserOptionsDestroy();
     });
 </script>
 
@@ -23,9 +32,9 @@
                 </a>
             </div>
             <div class="column is-narrow">
-                <button class="button is-small">
+                <button class="button is-small" on:click={onFavoriteToggle}>
                     <span class="icon is-small">
-                        <i class="fa-regular fa-star" />
+                        <i class="{$browserOptions.favorites[lastVersion.hash] ? 'fas' : 'far'} fa-star" />
                     </span>
                 </button>
             </div>
