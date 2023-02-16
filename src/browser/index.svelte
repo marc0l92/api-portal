@@ -12,6 +12,14 @@
 
   let apiIndex: ApiIndex = null;
   let errors: string[] = [];
+  let favoriteCount = 0;
+  $: {
+    favoriteCount = Object.values($browserOptions.favorites).filter((pi) => Object.values(pi).filter((fi) => fi).length).length;
+  }
+
+  function sortByKey(x: any, y: any) {
+    return x[0] < y[0];
+  }
 
   onMount(async () => {
     const response = await fetch(API_INDEX_PATH);
@@ -34,23 +42,26 @@
   <SearchBar />
   <Errors messages={errors} />
   {#if apiIndex}
-    {#if Object.entries($browserOptions.favorites).filter((f) => f[1]).length > 0}
+    {#if favoriteCount > 0}
       <h4 class="subtitle is-4"><i class="fas fa-star" /> Favorites</h4>
       <div class="columns is-multiline">
-        {#each Object.entries($browserOptions.favorites).filter((f) => f[1]) as favorite}
-          <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-            {favorite}
-            <!-- <ApiSummary name={apiItem[0]} apiSummary={apiItem[1]} apiPath={packageItem[0] + apiItem[0]} /> -->
-          </div>
+        {#each Object.entries($browserOptions.favorites) as packageItem}
+          {#each Object.entries(packageItem[1]) as favorite}
+            {#if favorite[1]}
+              <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
+                <ApiSummary packageName={packageItem[0]} name={favorite[0]} apiSummary={apiIndex[packageItem[0]][favorite[0]]} />
+              </div>
+            {/if}
+          {/each}
         {/each}
       </div>
     {/if}
-    {#each Object.entries(apiIndex) as packageItem}
+    {#each Object.entries(apiIndex).sort(sortByKey) as packageItem}
       <h4 class="subtitle is-4">{packageItem[0]}</h4>
       <div class="columns is-multiline">
-        {#each Object.entries(packageItem[1]) as apiItem}
+        {#each Object.entries(packageItem[1]).sort(sortByKey) as apiItem}
           <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-            <ApiSummary name={apiItem[0]} apiSummary={apiItem[1]} apiPath={packageItem[0] + apiItem[0]} />
+            <ApiSummary packageName={packageItem[0]} name={apiItem[0]} apiSummary={apiItem[1]} />
           </div>
         {/each}
       </div>

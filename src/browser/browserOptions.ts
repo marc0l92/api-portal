@@ -3,7 +3,9 @@ import { getOptions, storeOptions } from "common/localStorage";
 
 interface BrowserOptions {
     favorites: {
-        [apiName: string]: boolean
+        [packageName: string]: {
+            [apiName: string]: boolean
+        }
     }
 }
 

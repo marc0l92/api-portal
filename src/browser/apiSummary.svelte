@@ -5,14 +5,18 @@
 
     const VERSION_LIMIT = 5;
 
+    export let packageName: string = null;
     export let name: string = null;
     export let apiSummary: ApiSummary = null;
     let lastVersion: ApiVersion = null;
-    export let apiPath: string = null;
     let isExpanded = false;
 
     function onFavoriteToggle() {
-        $browserOptions.favorites[apiPath] = !$browserOptions.favorites[apiPath];
+        console.log(JSON.stringify($browserOptions));
+        if (!$browserOptions.favorites[packageName]) {
+            $browserOptions.favorites[packageName] = {};
+        }
+        $browserOptions.favorites[packageName][name] = !$browserOptions.favorites[packageName][name];
     }
 
     onMount(() => {
@@ -30,7 +34,7 @@
             <p class="card-header-title">{name} - {apiSummary.lastVersion}</p>
             <button class="card-header-icon" on:click={onFavoriteToggle}>
                 <span class="icon">
-                    <i class="{$browserOptions.favorites[apiPath] ? 'fas' : 'far'} fa-star" />
+                    <i class="{$browserOptions.favorites[packageName] && $browserOptions.favorites[packageName][name] ? 'fas' : 'far'} fa-star" />
                 </span>
             </button>
         </header>
@@ -66,5 +70,7 @@
     .is-tag-size {
         height: 2em;
         vertical-align: baseline;
+        padding-left: 0.75em;
+        padding-right: 0.75em;
     }
 </style>
