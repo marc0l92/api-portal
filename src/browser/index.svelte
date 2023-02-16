@@ -35,9 +35,13 @@
   {#if apiIndex}
     {#each Object.entries(apiIndex) as packageItem}
       <h4 class="subtitle is-4">{packageItem[0]}</h4>
-      {#each Object.entries(packageItem[1]) as apiItem}
-        <ApiSummary name={apiItem[0]} apiSummary={apiItem[1]} />
-      {/each}
+      <div class="columns is-multiline">
+        {#each Object.entries(packageItem[1]) as apiItem}
+          <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
+            <ApiSummary name={apiItem[0]} apiSummary={apiItem[1]} apiPath={packageItem[0] + apiItem[0]} />
+          </div>
+        {/each}
+      </div>
     {/each}
   {:else}
     <div class="box">Fetching api index...</div>

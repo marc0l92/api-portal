@@ -48,6 +48,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
 
     const apiIndex = {}
     for (const fileName of fileNames) {
+        console.log('+', fileName)
         const apiDoc = yaml.load(await fs.readFile(fileName))
         const apiHash = hash(apiDoc)
         const relativeFileName = fileName.replace(INPUT_FOLDER, '')
