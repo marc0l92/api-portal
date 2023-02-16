@@ -50,6 +50,8 @@
 <style>
   .navbar {
     border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
   }
   .navbar .navbar-item.is-active {
     color: var(--color-primary);

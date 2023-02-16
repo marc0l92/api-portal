@@ -5,6 +5,7 @@
   import Navbar from '../components/navbar.svelte';
   import type { ApiIndex } from './apiIndex';
   import ApiSummary from './apiSummary.svelte';
+  import { browserOptions } from './browserOptions';
   import SearchBar from './searchBar.svelte';
 
   const API_INDEX_PATH = './apis/apiIndex.json';
@@ -33,6 +34,17 @@
   <SearchBar />
   <Errors messages={errors} />
   {#if apiIndex}
+    {#if Object.entries($browserOptions.favorites).filter((f) => f[1]).length > 0}
+      <h4 class="subtitle is-4"><i class="fas fa-star" /> Favorites</h4>
+      <div class="columns is-multiline">
+        {#each Object.entries($browserOptions.favorites).filter((f) => f[1]) as favorite}
+          <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
+            {favorite}
+            <!-- <ApiSummary name={apiItem[0]} apiSummary={apiItem[1]} apiPath={packageItem[0] + apiItem[0]} /> -->
+          </div>
+        {/each}
+      </div>
+    {/if}
     {#each Object.entries(apiIndex) as packageItem}
       <h4 class="subtitle is-4">{packageItem[0]}</h4>
       <div class="columns is-multiline">
