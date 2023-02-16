@@ -1,3 +1,4 @@
+import path from 'path'
 import glob from 'glob'
 import yaml from 'js-yaml'
 import hash from 'object-hash'
@@ -44,6 +45,7 @@ function sortOtherVersions(apiIndex) {
     }
 }
 
+fs.removeSync(OUTPUT_FOLDER)
 glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     if (error) {
         console.error(error)
@@ -61,17 +63,16 @@ glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {
         const api = await apiTools.parseApi(apiDoc)
 
         if (!apiIndex[api.getName()]) {
-            apiIndex[api.getName()] = { hash: null, version: null, otherVersions: [] }
+            apiIndex[api.getName()] = { lastVersion: null, versions: {} }
         }
-        if (!apiIndex[api.getName()].version || isSmallerVersion(apiIndex[api.getName()].version, api.getVersion())) {
-            apiIndex[api.getName()].version = api.getVersion()
-            apiIndex[api.getName()].hash = apiHash
+        if (!apiIndex[api.getName()].lastVersion || isSmallerVersion(apiIndex[api.getName()].lastVersion, api.getVersion())) {
+            apiIndex[api.getName()].lastVersion = api.getVersion()
         }
-        apiIndex[api.getName()].otherVersions.push({
-            version: api.getVersion(),
+        apiIndex[api.getName()].versions[api.getVersion()] = {
             hash: apiHash,
             fileName: fileName.replace(INPUT_FOLDER, ''),
-        })
+            package: path.dirname(fileName.replace(INPUT_FOLDER, '')),
+        }
     }
 
     sortOtherVersions(apiIndex)
