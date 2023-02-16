@@ -33,8 +33,11 @@
   <SearchBar />
   <Errors messages={errors} />
   {#if apiIndex}
-    {#each Object.entries(apiIndex) as apiIndexItem}
-      <ApiSummary name={apiIndexItem[0]} apiSummary={apiIndexItem[1]} />
+    {#each Object.entries(apiIndex) as packageItem}
+      <h4 class="subtitle is-4">{packageItem[0]}</h4>
+      {#each Object.entries(packageItem[1]) as apiItem}
+        <ApiSummary name={apiItem[0]} apiSummary={apiItem[1]} />
+      {/each}
     {/each}
   {:else}
     <div class="box">Fetching api index...</div>

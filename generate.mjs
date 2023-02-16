@@ -8,7 +8,7 @@ import apiTools from './dist/api-tools.js'
 import SpectralCore from "@stoplight/spectral-core"
 import { truthy } from "@stoplight/spectral-functions"
 
-const INPUT_FOLDER = './inputApi'
+const INPUT_FOLDER = './inputApi/'
 const OUTPUT_FOLDER = './public/apis'
 const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/apiIndex.json`
 const API_SUFFIX = '.api.json'
@@ -39,14 +39,8 @@ function isSmallerVersion(v1, v2) {
     return v1 < v2
 }
 
-function sortOtherVersions(apiIndex) {
-    for (const apiName in apiIndex) {
-        apiIndex[apiName].otherVersions = apiIndex[apiName].otherVersions.sort((a, b) => isSmallerVersion(a.version, b.version))
-    }
-}
-
 fs.removeSync(OUTPUT_FOLDER)
-glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {
+glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     if (error) {
         console.error(error)
         exit(1)
@@ -56,25 +50,27 @@ glob(`${INPUT_FOLDER}/**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     for (const fileName of fileNames) {
         const apiDoc = yaml.load(await fs.readFile(fileName))
         const apiHash = hash(apiDoc)
+        const relativeFileName = fileName.replace(INPUT_FOLDER, '')
+        const packageName = path.dirname(relativeFileName)
 
         await generateApi(apiDoc, apiHash)
         await generateValidation(apiDoc, apiHash)
 
         const api = await apiTools.parseApi(apiDoc)
 
-        if (!apiIndex[api.getName()]) {
-            apiIndex[api.getName()] = { lastVersion: null, versions: {} }
+        if (!apiIndex[packageName]) {
+            apiIndex[packageName] = {}
         }
-        if (!apiIndex[api.getName()].lastVersion || isSmallerVersion(apiIndex[api.getName()].lastVersion, api.getVersion())) {
-            apiIndex[api.getName()].lastVersion = api.getVersion()
+        if (!apiIndex[packageName][api.getName()]) {
+            apiIndex[packageName][api.getName()] = { lastVersion: null, versions: {} }
         }
-        apiIndex[api.getName()].versions[api.getVersion()] = {
+        if (!apiIndex[packageName][api.getName()].lastVersion || isSmallerVersion(apiIndex[packageName][api.getName()].lastVersion, api.getVersion())) {
+            apiIndex[packageName][api.getName()].lastVersion = api.getVersion()
+        }
+        apiIndex[packageName][api.getName()].versions[api.getVersion()] = {
             hash: apiHash,
-            fileName: fileName.replace(INPUT_FOLDER, ''),
-            package: path.dirname(fileName.replace(INPUT_FOLDER, '')),
+            fileName: relativeFileName,
         }
     }
-
-    sortOtherVersions(apiIndex)
     fs.outputJson(INDEX_FILE_PATH, apiIndex)
 })

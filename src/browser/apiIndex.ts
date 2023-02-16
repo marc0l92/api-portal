@@ -1,12 +1,17 @@
 export interface ApiIndex {
-    [name: string]: ApiSummary
+    [packageName: string]: {
+        [name: string]: ApiSummary
+    }
 }
 
 export interface ApiSummary {
-    version: string;
+    lastVersion: string;
+    versions: {
+        [version: string]: ApiVersion
+    };
+}
+
+export interface ApiVersion {
+    fileName: string;
     hash: string;
-    otherVersions: {
-        version: string;
-        hash: string;
-    }[];
 }
