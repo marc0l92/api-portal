@@ -22,7 +22,7 @@ jobs:
           pnpm install --frozen-lockfile
       - name: Build website
         run: |
-          pnpm run build --basePath="//api-tools"
+          pnpm run build --basePath="/api-tools"
       - name: Copy api examples
         run: |
           cp -r -f test/data/* inputApi
