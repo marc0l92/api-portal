@@ -1,4 +1,4 @@
-import { setupHotReload } from "common/hotReload"
+import { setupHotReload } from "common/globals"
 import Home from "./home/index.svelte"
 
 new Home({ target: document.body })

@@ -31,6 +31,7 @@ specifiers:
   typescript: ^4.9.4
   util: ^0.12.5
   xlsx: ^0.18.5
+  yargs: ^17.7.0
 
 dependencies:
   js-yaml: 4.1.0
@@ -65,6 +66,7 @@ devDependencies:
   ts-jest: 29.0.5_qmjcolsmiqa4o3fj43a5l63qlm
   tslib: 2.4.1
   typescript: 4.9.4
+  yargs: 17.7.0
 
 packages:
 
@@ -2675,7 +2677,7 @@ packages:
       jest-util: 29.3.1
       jest-validate: 29.3.1
       prompts: 2.4.2
-      yargs: 17.6.2
+      yargs: 17.7.0
     transitivePeerDependencies:
       - '@types/node'
       - supports-color
@@ -4586,8 +4588,8 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /yargs/17.6.2:
-    resolution: {integrity: sha512-1/9UrdHjDZc0eOU0HxOHoS78C69UD3JRMvzlJ7S79S2nTaWRA/whGCTV8o9e/N/1Va9YIV7Q4sOxD8VV4pCWOw==}
+  /yargs/17.7.0:
+    resolution: {integrity: sha512-dwqOPg5trmrre9+v8SUo2q/hAwyKoVfu8OC1xPHKJGNdxAvPl4sKxL4vBnh3bQz/ZvvGAFeA5H3ou2kcOY8sQQ==}
     engines: {node: '>=12'}
     dependencies:
       cliui: 8.0.1

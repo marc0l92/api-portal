@@ -5,8 +5,12 @@ import sveltePlugin from "esbuild-svelte"
 import sveltePreprocess from "svelte-preprocess"
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import fs from 'fs'
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
 
-const prod = (process.argv[2] === 'production')
+const argv = yargs(hideBin(process.argv)).argv
+const prod = argv._.indexOf('production') >= 0
+const basePath = argv.basePath || ''
 
 /** @type {esbuild.BuildOptions} */
 const webOptions = {
@@ -42,6 +46,7 @@ const webOptions = {
   ],
   define: {
     IS_TEST: JSON.stringify(!prod),
+    BASE_PATH: JSON.stringify(basePath),
   },
   plugins: [
     sveltePlugin({
@@ -75,6 +80,7 @@ const moduleOptions = {
   ],
   define: {
     IS_TEST: JSON.stringify(!prod),
+    BASE_PATH: JSON.stringify(basePath),
   },
 }
 
