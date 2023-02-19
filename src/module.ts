@@ -9,10 +9,18 @@ import * as RefParser from "common/refParser"
 
 export const resolveReferences = RefParser.resolveReferences
 
-export async function parseApi(apiObject: any): Promise<Api> {
+export async function parseApi(apiObject: any, options: { ignoreReferenceErrors?: boolean } = {}): Promise<Api> {
     const api = apiFactory(apiObject)
     api.setModelsTitle()
-    await api.resolveReferences()
+    try {
+        await api.resolveReferences()
+    } catch (e) {
+        if (e instanceof RefParser.ReferenceNotFoundError && options.ignoreReferenceErrors) {
+            console.error(e.message)
+        } else {
+            throw e
+        }
+    }
     return api
 }
 

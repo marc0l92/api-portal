@@ -48,29 +48,33 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
 
     const apiIndex = {}
     for (const fileName of fileNames) {
-        console.log('+', fileName)
-        const apiDoc = yaml.load(await fs.readFile(fileName))
-        const apiHash = hash(apiDoc)
-        const relativeFileName = fileName.replace(INPUT_FOLDER, '')
-        const packageName = path.dirname(relativeFileName)
+        try {
+            console.log('+', fileName)
+            const apiDoc = yaml.load(await fs.readFile(fileName))
+            const apiHash = hash(apiDoc)
+            const relativeFileName = fileName.replace(INPUT_FOLDER, '')
+            const packageName = path.dirname(relativeFileName)
 
-        await generateApi(apiDoc, apiHash)
-        await generateValidation(apiDoc, apiHash)
+            await generateApi(apiDoc, apiHash)
+            await generateValidation(apiDoc, apiHash)
 
-        const api = await apiTools.parseApi(apiDoc)
+            const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
-        if (!apiIndex[packageName]) {
-            apiIndex[packageName] = {}
-        }
-        if (!apiIndex[packageName][api.getName()]) {
-            apiIndex[packageName][api.getName()] = { lastVersion: null, versions: {} }
-        }
-        if (!apiIndex[packageName][api.getName()].lastVersion || isSmallerVersion(apiIndex[packageName][api.getName()].lastVersion, api.getVersion())) {
-            apiIndex[packageName][api.getName()].lastVersion = api.getVersion()
-        }
-        apiIndex[packageName][api.getName()].versions[api.getVersion()] = {
-            hash: apiHash,
-            fileName: relativeFileName,
+            if (!apiIndex[packageName]) {
+                apiIndex[packageName] = {}
+            }
+            if (!apiIndex[packageName][api.getName()]) {
+                apiIndex[packageName][api.getName()] = { lastVersion: null, versions: {} }
+            }
+            if (!apiIndex[packageName][api.getName()].lastVersion || isSmallerVersion(apiIndex[packageName][api.getName()].lastVersion, api.getVersion())) {
+                apiIndex[packageName][api.getName()].lastVersion = api.getVersion()
+            }
+            apiIndex[packageName][api.getName()].versions[api.getVersion()] = {
+                hash: apiHash,
+                fileName: relativeFileName,
+            }
+        } catch (e) {
+            console.error('Error:', e.message)
         }
     }
     fs.outputJson(INDEX_FILE_PATH, apiIndex)

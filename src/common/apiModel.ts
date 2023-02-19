@@ -19,6 +19,7 @@ export interface ApiModelDoc {
     }
     allOf?: ApiModelDoc[]
     additionalProperties?: ApiModelDoc
+    $ref?: string
 }
 
 export enum ModelType {

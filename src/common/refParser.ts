@@ -1,3 +1,5 @@
+export class ReferenceNotFoundError extends Error {}
+
 type MapAllRefCallback = (item: any, ref: string, currentPath: string) => void
 
 const mapAllRef = (obj: any, currentPath: string, callback: MapAllRefCallback): any => {
@@ -21,7 +23,7 @@ const getObjectByRef = (root: any, ref: string): any => {
         if (step in referencedObj) {
             referencedObj = referencedObj[step]
         } else {
-            throw new Error(`Reference not found: ${ref}`)
+            throw new ReferenceNotFoundError(`Reference not found: ${ref}`)
         }
     }
     return referencedObj
