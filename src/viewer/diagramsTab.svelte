@@ -1,6 +1,5 @@
 <script lang="ts">
     import { diagramBuilderOptions } from 'tools/apiToPlantUml/diagramBuilderOptions';
-    import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
     import { parseServiceDiagrams, type DiagramData } from 'tools/apiToPlantUml/serivceDiagrams';
     import type { Api, ApiService } from 'common/api';
     import SelectServices from 'components/selectServices.svelte';
@@ -31,7 +30,6 @@
     </figure>
     <hr />
 {/each}
-<DiagramsOption />
 
 <style>
 </style>
