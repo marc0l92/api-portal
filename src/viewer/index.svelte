@@ -37,14 +37,20 @@
       if (response.ok) {
         apiDoc = yaml.load(await response.text());
         api = apiFactory(apiDoc);
-        await api.resolveReferences();
         releaseNotes = api.getReleaseNotes();
       } else {
         errors = [...errors, 'Error: ' + response.status];
       }
     } catch (e) {
+      console.error(e);
       api = null;
       errors = [...errors, 'Error while fetching the api'];
+    }
+    try {
+      await api.resolveReferences();
+    } catch (e) {
+      console.error(e);
+      errors = [...errors, 'Error while parsing api: ' + e.message];
     }
   }
 
@@ -57,6 +63,7 @@
         errors = [...errors, 'Error: ' + response.status];
       }
     } catch (e) {
+      console.error(e);
       api = null;
       errors = [...errors, 'Error while fetching the api validation'];
     }
@@ -93,6 +100,15 @@
         </div>
       </div>
     </section>
+  {:else}
+    <section class="hero is-small">
+      <div class="hero-body">
+        <h1 class="title">Loading...</h1>
+      </div>
+    </section>
+  {/if}
+  <Errors messages={errors} />
+  {#if api}
     <Tabs on:tabChange={onTabChange} {selectedTab} hasReleaseNotes={!!releaseNotes} />
     <div class="box flat-top">
       {#if selectedTab === 'release-notes'}
@@ -109,13 +125,6 @@
         <RawTab {apiDoc} />
       {/if}
     </div>
-  {:else}
-    <section class="hero is-small">
-      <div class="hero-body">
-        <h1 class="title">Loading...</h1>
-      </div>
-    </section>
-    <Errors messages={errors} />
   {/if}
 </div>
 <Footer />

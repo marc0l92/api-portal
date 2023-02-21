@@ -1,9 +1,11 @@
 <script lang="ts">
+    import { getBasePath } from 'common/globals';
     import { onDestroy, onMount } from 'svelte';
     import type { ApiSummary, ApiVersion } from './apiIndex';
     import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
 
     const VERSION_LIMIT = 5;
+    const basePath = getBasePath();
 
     export let packageName: string = null;
     export let name: string = null;
@@ -44,7 +46,7 @@
                 <div class="columns is-multiline">
                     <div class="column">
                         {#each Object.entries(apiSummary.versions).slice(0, isExpanded ? undefined : 5) as version}
-                            <a class="tag ml-1 mb-1" href="./viewer.html?api={version[1].hash}">
+                            <a class="tag ml-1 mb-1" href="{basePath}/viewer.html?api={version[1].hash}">
                                 {version[0]}
                             </a>
                         {/each}

@@ -24,15 +24,15 @@
 
   <div id="my-navbar" class="navbar-menu {showMenu ? 'is-active' : ''}">
     <div class="navbar-start">
-      <a class="navbar-item {activePage === 'home' ? 'is-active' : ''}" href={basePath + '/index.html'}>Home</a>
-      <a class="navbar-item {activePage === 'browser' ? 'is-active' : ''}" href={basePath + '/browser.html'}>Browser</a>
+      <a class="navbar-item {activePage === 'home' ? 'is-active' : ''}" href="{basePath}/index.html">Home</a>
+      <a class="navbar-item {activePage === 'browser' ? 'is-active' : ''}" href="{basePath}/browser.html">Browser</a>
 
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link" href={'#tools'}>Tools</a>
         <div class="navbar-dropdown">
-          <a class="navbar-item {activePage === 'restApiToText' ? 'is-active' : ''}" href={basePath + '/tools/restApiToText.html'}>REST Api to Text</a>
-          <a class="navbar-item {activePage === 'apiToSpreadsheet' ? 'is-active' : ''}" href={basePath + '/tools/apiToSpreadsheet.html'}>API to Spreadsheet</a>
-          <a class="navbar-item {activePage === 'apiToPlantUml' ? 'is-active' : ''}" href={basePath + '/tools/apiToPlantUml.html'}>API to PlantUml</a>
+          <a class="navbar-item {activePage === 'restApiToText' ? 'is-active' : ''}" href="{basePath}/tools/restApiToText.html">REST Api to Text</a>
+          <a class="navbar-item {activePage === 'apiToSpreadsheet' ? 'is-active' : ''}" href="{basePath}/tools/apiToSpreadsheet.html">API to Spreadsheet</a>
+          <a class="navbar-item {activePage === 'apiToPlantUml' ? 'is-active' : ''}" href="{basePath}/tools/apiToPlantUml.html">API to PlantUml</a>
         </div>
       </div>
     </div>

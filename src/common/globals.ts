@@ -1,12 +1,26 @@
 declare const IS_TEST: boolean
-declare const BASE_PATH: string
+declare const APP_CONFIG: any
 
-export const isTest = (): boolean => {
+const isTest = (): boolean => {
     return IS_TEST
 }
 
 export const getBasePath = (): string => {
-    return BASE_PATH
+    return APP_CONFIG.basePath || ''
+}
+
+export const getDiagramsDefaultServer = (): string => {
+    if (APP_CONFIG.diagrams && APP_CONFIG.diagrams.defaultServer) {
+        return APP_CONFIG.diagrams.defaultServer
+    }
+    return 'https://www.plantuml.com/plantuml'
+}
+
+export const isChangeDiagramServerAllowed = (): boolean => {
+    if (APP_CONFIG.diagrams && APP_CONFIG.diagrams.allowServerChange) {
+        return !!APP_CONFIG.diagrams.allowServerChange
+    }
+    return true
 }
 
 export const setupHotReload = () => {

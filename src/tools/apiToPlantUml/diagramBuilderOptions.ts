@@ -1,3 +1,4 @@
+import { getDiagramsDefaultServer } from "common/globals"
 import { getOptions, storeOptions } from "common/localStorage"
 import { writable, type Unsubscriber } from "svelte/store"
 
@@ -12,7 +13,7 @@ export interface DiagramBuilderOptions {
 
 const LOCAL_STORAGE_KEY = 'diagramsBuilderOptions';
 export const DEFAULT_DIAGRAM_BUILDER_OPTIONS: DiagramBuilderOptions = {
-    serverUrl: 'https://www.plantuml.com/plantuml',
+    serverUrl: getDiagramsDefaultServer(),
     diagramHeader: '',
     format: 'svg',
     colors: true,

@@ -4,13 +4,17 @@ import builtins from 'builtin-modules'
 import sveltePlugin from "esbuild-svelte"
 import sveltePreprocess from "svelte-preprocess"
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
-import fs from 'fs'
+import fs from 'fs-extra'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
+import yaml from 'js-yaml'
 
 const argv = yargs(hideBin(process.argv)).argv
 const prod = argv._.indexOf('production') >= 0
-const basePath = argv.basePath || ''
+let appConfig = {}
+if (argv.configFile) {
+  appConfig = yaml.load(fs.readFileSync(argv.configFile))
+}
 
 /** @type {esbuild.BuildOptions} */
 const webOptions = {
@@ -46,7 +50,7 @@ const webOptions = {
   ],
   define: {
     IS_TEST: JSON.stringify(!prod),
-    BASE_PATH: JSON.stringify(basePath),
+    APP_CONFIG: JSON.stringify(appConfig),
   },
   plugins: [
     sveltePlugin({
@@ -80,7 +84,7 @@ const moduleOptions = {
   ],
   define: {
     IS_TEST: JSON.stringify(!prod),
-    BASE_PATH: JSON.stringify(basePath),
+    APP_CONFIG: JSON.stringify(appConfig),
   },
 }
 

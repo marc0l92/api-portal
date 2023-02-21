@@ -1,16 +1,19 @@
 <script lang="ts">
+    import { isChangeDiagramServerAllowed } from 'common/globals';
     import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, diagramBuilderOptions } from './diagramBuilderOptions';
 </script>
 
 <details>
     <summary>Diagrams generation options</summary>
     <div class="mt-4">
-        <div class="field">
-            <label class="label" for="serverUrl">PlantUML server</label>
-            <div class="control">
-                <input class="input" type="text" placeholder={`Default: ${DEFAULT_DIAGRAM_BUILDER_OPTIONS.serverUrl}`} bind:value={$diagramBuilderOptions.serverUrl} />
+        {#if isChangeDiagramServerAllowed()}
+            <div class="field">
+                <label class="label" for="serverUrl">PlantUML server</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder={`Default: ${DEFAULT_DIAGRAM_BUILDER_OPTIONS.serverUrl}`} bind:value={$diagramBuilderOptions.serverUrl} />
+                </div>
             </div>
-        </div>
+        {/if}
         <div class="field">
             <label class="label" for="format">Format</label>
             <div class="control">

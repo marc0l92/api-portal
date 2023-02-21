@@ -3,10 +3,19 @@
     import SwaggerUI from 'swagger-ui';
 
     export let apiDoc: any = null;
-    function updateSwaggerUi() {
-        SwaggerUI({
-            dom_id: '#swaggerUiRoot',
-            spec: apiDoc,
+
+    function updateSwaggerUi(): Promise<void> {
+        return new Promise((resolve) => {
+            SwaggerUI({
+                dom_id: '#swaggerUiRoot',
+                spec: apiDoc,
+                displayOperationId: false,
+                tryItOutEnabled: false,
+                defaultModelExpandDepth: 5,
+                onComplete: () => {
+                    return resolve(null);
+                },
+            });
         });
     }
 
