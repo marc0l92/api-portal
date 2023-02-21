@@ -15,11 +15,13 @@
   import { onDestroy, onMount } from 'svelte';
   import Errors from 'components/errors.svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
+  import LazyLoad from 'components/lazyLoad.svelte';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
 
   let selectedTab: string = 'api';
   let apiHash: string = null;
+  let apiText: string = null;
   let apiDoc: any = null;
   let api: Api = null;
   let validationData: ApiValidation[] = null;
@@ -35,7 +37,8 @@
     try {
       const response = await fetch(`./apis/${apiHash}.api.json`);
       if (response.ok) {
-        apiDoc = yaml.load(await response.text());
+        apiText = await response.text();
+        apiDoc = yaml.load(apiText);
         api = apiFactory(apiDoc);
         releaseNotes = api.getReleaseNotes();
       } else {
@@ -111,19 +114,24 @@
   {#if api}
     <Tabs on:tabChange={onTabChange} {selectedTab} hasReleaseNotes={!!releaseNotes} />
     <div class="box flat-top">
-      {#if selectedTab === 'release-notes'}
+      <LazyLoad isVisible={selectedTab === 'release-notes'}>
         <ReleaseNotesTab {releaseNotes} />
-      {:else if selectedTab === 'api'}
+      </LazyLoad>
+      <LazyLoad isVisible={selectedTab === 'api'}>
         <ApiTab {apiDoc} />
-      {:else if selectedTab === 'diagrams'}
+      </LazyLoad>
+      <LazyLoad isVisible={selectedTab === 'diagrams'}>
         <DiagramsTab {api} />
-      {:else if selectedTab === 'tables'}
+      </LazyLoad>
+      <LazyLoad isVisible={selectedTab === 'tables'}>
         <TablesTab {api} />
-      {:else if selectedTab === 'validation'}
+      </LazyLoad>
+      <LazyLoad isVisible={selectedTab === 'validation'}>
         <ValidationTab {validationData} />
-      {:else if selectedTab === 'raw'}
-        <RawTab {apiDoc} />
-      {/if}
+      </LazyLoad>
+      <LazyLoad isVisible={selectedTab === 'raw'}>
+        <RawTab {apiText} />
+      </LazyLoad>
     </div>
   {/if}
 </div>

@@ -58,11 +58,11 @@
             </li>
         </ul>
     </div>
-    <div class="dropdown is-right {showMenu ? 'is-active' : ''}">
+    <div class="dropdown is-right {showMenu ? 'is-active' : ''}" on:click={() => (showMenu = !showMenu)} on:keypress={() => (showMenu = !showMenu)}>
         <div class="dropdown-trigger">
-            <a href={'#'} on:click={() => (showMenu = !showMenu)}>
+            <button>
                 <i class="fas fa-ellipsis-vertical" />
-            </a>
+            </button>
         </div>
         <div class="dropdown-menu">
             <div class="dropdown-content">
@@ -108,7 +108,19 @@
         justify-content: center;
         vertical-align: top;
     }
-    .dropdown-trigger a {
+    .dropdown-trigger button {
+        padding: 0em 0.7em;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+    }
+    .dropdown-trigger button:hover,
+    .dropdown.is-active .dropdown-trigger button {
+        background-color: #f5f5f5;
+        border-bottom-color: #dbdbdb;
+        border-radius: 4px 4px 0 0;
+    }
+    /* .dropdown-trigger a {
         padding: 0.5em 1em;
     }
     .dropdown-trigger a:hover,
@@ -116,7 +128,7 @@
         background-color: #f5f5f5;
         border-bottom-color: #dbdbdb;
         border-radius: 4px 4px 0 0;
-    }
+    } */
 
     .dropdown-item {
         display: flex;
