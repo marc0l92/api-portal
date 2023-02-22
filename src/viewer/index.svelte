@@ -16,9 +16,14 @@
   import Errors from 'components/errors.svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
   import LazyLoad from 'components/lazyLoad.svelte';
+  import { getApiByHash as getFullApiSummaryByHash, sortVersions, type ApiIndex, type FullApiSummary } from 'common/apiIndex';
+  import { getBasePath } from 'common/globals';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
+  const API_INDEX_PATH = './apis/apiIndex.json';
+  const basePath = getBasePath();
 
+  let apiSummary: FullApiSummary = null;
   let selectedTab: string = 'api';
   let apiHash: string = null;
   let apiText: string = null;
@@ -27,6 +32,7 @@
   let validationData: ApiValidation[] = null;
   let releaseNotes: ApiReleaseNotes = null;
   let errors: string[] = [];
+  let isVersionDropdownExpanded = false;
 
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
     selectedTab = event.detail.selectedTab;
@@ -72,6 +78,16 @@
     }
   }
 
+  async function fetchApiSummary() {
+    const response = await fetch(API_INDEX_PATH);
+    if (response.ok) {
+      const apiIndex = (await response.json()) as ApiIndex;
+      apiSummary = getFullApiSummaryByHash(apiHash, apiIndex);
+    } else {
+      errors = [...errors, 'Error while fetching api index: ' + response.status];
+    }
+  }
+
   onMount(async () => {
     viewerOptionsMount();
     selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'api';
@@ -80,6 +96,7 @@
       apiHash = urlParams.get('api');
       fetchApi();
       fetchValidation();
+      fetchApiSummary();
     } else {
       errors = [...errors, 'No api selected'];
     }
@@ -91,14 +108,34 @@
 
 <Navbar activePage="viewer" />
 <div class="container {$viewerOptions.fluidLayout ? 'is-fluid' : ''}">
-  {#if api}
+  {#if apiSummary}
     <section class="hero is-small">
       <div class="hero-body">
-        <h1 class="title">{api.getName()}</h1>
-        <div class="control">
-          <div class="tags has-addons">
-            <span class="tag is-dark">Version</span>
-            <span class="tag is-success">{api.getVersion()}</span>
+        <div class="columns">
+          <div class="column">
+            <h1 class="title">{apiSummary.apiName}</h1>
+            <h3 class="subtitle">{apiSummary.packageName}</h3>
+          </div>
+          <div class="column is-narrow">
+            <div class="dropdown is-right {isVersionDropdownExpanded ? 'is-active' : ''}">
+              <div class="dropdown-trigger">
+                <button class="button" on:click={() => (isVersionDropdownExpanded = !isVersionDropdownExpanded)}>
+                  <span>{apiSummary.versionName}</span>
+                  <span class="icon is-small">
+                    <i class="fas fa-angle-down" aria-hidden="true" />
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                  {#each Object.entries(apiSummary.apiSummary.versions).sort(sortVersions) as [versionName, versionItem]}
+                    <a href="{basePath}/viewer.html?api={versionItem.hash}" class="dropdown-item">
+                      {versionName}
+                    </a>
+                  {/each}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

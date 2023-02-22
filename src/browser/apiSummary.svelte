@@ -1,11 +1,10 @@
 <script lang="ts">
     import { getBasePath } from 'common/globals';
     import { onDestroy, onMount } from 'svelte';
-    import type { ApiSummary, ApiVersion } from './apiIndex';
+    import { sortVersions, type ApiSummary, type ApiVersion } from '../common/apiIndex';
     import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
 
     const VERSION_LIMIT = 5;
-    const MAX_VERSION_DIGITS = 5;
     const basePath = getBasePath();
 
     export let packageName: string = null;
@@ -14,18 +13,6 @@
     let lastVersion: ApiVersion = null;
     let isExpanded = false;
 
-    function sortVersions(v1: [string, ApiVersion], v2: [string, ApiVersion]) {
-        function versionToNumber(v: string): number {
-            let total = 0;
-            let i = 0;
-            for (const split of v.split('.').reverse()) {
-                total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
-                i++;
-            }
-            return total;
-        }
-        return versionToNumber(v2[0]) - versionToNumber(v1[0]);
-    }
 
     function onFavoriteToggle() {
         console.log(JSON.stringify($browserOptions));
@@ -47,7 +34,9 @@
 {#if lastVersion}
     <div class="card">
         <header class="card-header">
-            <p class="card-header-title">{name} - {apiSummary.lastVersion}</p>
+            <a href="{basePath}/viewer.html?api={lastVersion.hash}">
+                <p class="card-header-title">{name} - {apiSummary.lastVersion}</p>
+            </a>
             <button class="card-header-icon" on:click={onFavoriteToggle}>
                 <span class="icon">
                     <i class="{$browserOptions.favorites[packageName] && $browserOptions.favorites[packageName][name] ? 'fas' : 'far'} fa-star" />

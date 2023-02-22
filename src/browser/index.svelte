@@ -3,7 +3,7 @@
   import Footer from 'components/footer.svelte';
   import { onMount } from 'svelte';
   import Navbar from '../components/navbar.svelte';
-  import type { ApiIndex } from './apiIndex';
+  import type { ApiIndex } from '../common/apiIndex';
   import ApiSummary from './apiSummary.svelte';
   import { browserOptions } from './browserOptions';
   import SearchBar from './searchBar.svelte';
