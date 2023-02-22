@@ -13,6 +13,7 @@ const OUTPUT_FOLDER = './public/apis'
 const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/apiIndex.json`
 const API_SUFFIX = '.api.json'
 const VALIDATION_SUFFIX = '.validation.json'
+const MAX_VERSION_DIGITS = 5;
 
 async function generateApi(apiDoc, apiHash) {
     await fs.outputJson(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, apiDoc)
@@ -36,7 +37,16 @@ async function generateValidation(apiDoc, apiHash) {
 }
 
 function isSmallerVersion(v1, v2) {
-    return v1 < v2
+    function versionToNumber(v) {
+        let total = 0;
+        let i = 0;
+        for (const split of v.split('.').reverse()) {
+            total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
+            i++;
+        }
+        return total;
+    }
+    return versionToNumber(v1) < versionToNumber(v2)
 }
 
 fs.removeSync(OUTPUT_FOLDER)

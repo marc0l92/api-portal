@@ -17,8 +17,8 @@
     favoriteCount = Object.values($browserOptions.favorites).filter((pi) => Object.values(pi).filter((fi) => fi).length).length;
   }
 
-  function sortByKey(x: any, y: any) {
-    return x[0] < y[0];
+  function sortByKey(x: [string, any], y: [string, any]) {
+    return x[0] === y[0] ? 0 : x[0] < y[0] ? -1 : 1;
   }
 
   onMount(async () => {
@@ -45,23 +45,23 @@
     {#if favoriteCount > 0}
       <h4 class="subtitle is-4"><i class="fas fa-star" /> Favorites</h4>
       <div class="columns is-multiline">
-        {#each Object.entries($browserOptions.favorites) as packageItem}
-          {#each Object.entries(packageItem[1]) as favorite}
-            {#if favorite[1]}
+        {#each Object.entries($browserOptions.favorites) as [packageName, packageItem]}
+          {#each Object.entries(packageItem) as [favoriteName, favoriteItem]}
+            {#if favoriteItem}
               <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                <ApiSummary packageName={packageItem[0]} name={favorite[0]} apiSummary={apiIndex[packageItem[0]][favorite[0]]} />
+                <ApiSummary {packageName} name={favoriteName} apiSummary={apiIndex[packageName][favoriteName]} />
               </div>
             {/if}
           {/each}
         {/each}
       </div>
     {/if}
-    {#each Object.entries(apiIndex).sort(sortByKey) as packageItem}
-      <h4 class="subtitle is-4">{packageItem[0]}</h4>
+    {#each Object.entries(apiIndex).sort(sortByKey) as [packageName, packageItem]}
+      <h4 class="subtitle is-4">{packageName}</h4>
       <div class="columns is-multiline">
-        {#each Object.entries(packageItem[1]).sort(sortByKey) as apiItem}
+        {#each Object.entries(packageItem).sort(sortByKey) as [apiName, apiItem]}
           <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-            <ApiSummary packageName={packageItem[0]} name={apiItem[0]} apiSummary={apiItem[1]} />
+            <ApiSummary {packageName} name={apiName} apiSummary={apiItem} />
           </div>
         {/each}
       </div>

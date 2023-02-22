@@ -5,6 +5,7 @@
     import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
 
     const VERSION_LIMIT = 5;
+    const MAX_VERSION_DIGITS = 5;
     const basePath = getBasePath();
 
     export let packageName: string = null;
@@ -12,6 +13,19 @@
     export let apiSummary: ApiSummary = null;
     let lastVersion: ApiVersion = null;
     let isExpanded = false;
+
+    function sortVersions(v1: [string, ApiVersion], v2: [string, ApiVersion]) {
+        function versionToNumber(v: string): number {
+            let total = 0;
+            let i = 0;
+            for (const split of v.split('.').reverse()) {
+                total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
+                i++;
+            }
+            return total;
+        }
+        return versionToNumber(v2[0]) - versionToNumber(v1[0]);
+    }
 
     function onFavoriteToggle() {
         console.log(JSON.stringify($browserOptions));
@@ -45,12 +59,14 @@
                 <p class="subtitle is-6">{lastVersion.fileName}</p>
                 <div class="columns is-multiline">
                     <div class="column">
-                        {#each Object.entries(apiSummary.versions).slice(0, isExpanded ? undefined : 5) as version}
-                            <a class="tag ml-1 mb-1" href="{basePath}/viewer.html?api={version[1].hash}">
-                                {version[0]}
+                        {#each Object.entries(apiSummary.versions)
+                            .sort(sortVersions)
+                            .slice(0, isExpanded ? undefined : 5) as [versionName, versionSummary]}
+                            <a class="tag ml-1 mb-1" href="{basePath}/viewer.html?api={versionSummary.hash}">
+                                {versionName}
                             </a>
                         {/each}
-                        {#if Object.entries(apiSummary.versions).length > VERSION_LIMIT}
+                        {#if Object.keys(apiSummary.versions).length > VERSION_LIMIT}
                             <button class="button is-white is-small is-tag-size" on:click={() => (isExpanded = !isExpanded)}>
                                 <i class="fas fa-angle-{isExpanded ? 'left' : 'right'}" />
                             </button>
