@@ -1,0 +1,2 @@
+// Project: https://github.com/marc0l92/api-tools
+import{h as o}from"./chunk-PBHWOJOK.js";o();function m(t,i){for(let r in i)for(let e in i[r])for(let n in i[r][e].versions)if(i[r][e].versions[n].hash===t)return{packageName:r,apiName:e,versionName:n,apiSummary:i[r][e]}}function g(t,i){function r(e){let n=0,s=0;for(let a of e.split(".").reverse())n+=parseInt(a)*Math.pow(10,s*5),s++;return n}return r(i[0])-r(t[0])}export{m as a,g as b};
