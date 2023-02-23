@@ -18,8 +18,10 @@
         dispatch('tabChange', { selectedTab });
     }
     onMount(() => {
-        validationErrorsCount = validationData.length;
-        validationErrorsCss = getValidationBadgeCss(validationData);
+        if (validationData) {
+            validationErrorsCount = validationData.length;
+            validationErrorsCss = getValidationBadgeCss(validationData);
+        }
     });
 </script>
 

@@ -19,7 +19,7 @@
     });
 </script>
 
-<div>
+{#if validationData}
     <div class="columns">
         <div class="column is-one-quarter">
             <aside class="menu">
@@ -52,7 +52,7 @@
             {/each}
         </div>
     </div>
-</div>
+{/if}
 
 <style>
 </style>
