@@ -3,4 +3,4 @@ diagrams:
   defaultServer: https://www.plantuml.com/plantuml
   allowServerChange: true
 validation:
-  spectralRulesFile: ''
+  spectralRulesFile: ./.spectral.yaml

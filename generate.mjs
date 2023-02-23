@@ -5,35 +5,49 @@ import hash from 'object-hash'
 import { exit } from 'process'
 import fs from 'fs-extra'
 import apiTools from './dist/api-tools.js'
-import SpectralCore from "@stoplight/spectral-core"
-import { truthy } from "@stoplight/spectral-functions"
+import { exec } from 'child_process'
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
+import process from 'process'
 
 const INPUT_FOLDER = './inputApi/'
 const OUTPUT_FOLDER = './public/apis'
 const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/apiIndex.json`
 const API_SUFFIX = '.api.json'
 const VALIDATION_SUFFIX = '.validation.json'
-const MAX_VERSION_DIGITS = 5;
+const MAX_VERSION_DIGITS = 5
+const MAX_PARALLEL_VALIDATIONS = 10
+
+const argv = yargs(hideBin(process.argv)).argv
+let appConfig = {}
+console.log(argv)
+if (argv.configFile) {
+    appConfig = yaml.load(fs.readFileSync(argv.configFile))
+    console.log('Config loaded:', appConfig)
+}
 
 async function generateApi(apiDoc, apiHash) {
     await fs.outputJson(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, apiDoc)
 }
 
-async function generateValidation(apiDoc, apiHash) {
-    const spectral = new SpectralCore.Spectral()
-    spectral.setRuleset({
-        rules: {
-            "no-empty-description": {
-                given: "$..description",
-                message: "Description must not be empty",
-                then: {
-                    function: truthy,
-                },
-            },
-        },
-    });
-    const spectralResults = await spectral.run(apiDoc)
-    await fs.outputJson(`${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`, spectralResults)
+async function generateValidation(apiHash) {
+    return new Promise((resolve, reject) => {
+        if (appConfig && appConfig.validation && appConfig.validation.spectralRulesFile) {
+            const inputFile = `${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`
+            const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
+            const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'
+            const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${inputFile} --output ${outputFile}`
+            exec(`${executable} ${options}`, (error, stdout, stderr) => {
+                if (stderr) {
+                    return reject(stderr)
+                } else {
+                    return resolve(null)
+                }
+            })
+        } else {
+            return resolve(null)
+        }
+    })
 }
 
 function isSmallerVersion(v1, v2) {
@@ -57,6 +71,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     }
 
     const apiIndex = {}
+    let validationPromises = []
     for (const fileName of fileNames) {
         try {
             console.log('+', fileName)
@@ -66,7 +81,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
             const packageName = path.dirname(relativeFileName)
 
             await generateApi(apiDoc, apiHash)
-            await generateValidation(apiDoc, apiHash)
+            validationPromises.push(generateValidation(apiHash))
 
             const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
@@ -82,6 +97,10 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
             apiIndex[packageName][api.getName()].versions[api.getVersion()] = {
                 hash: apiHash,
                 fileName: relativeFileName,
+            }
+            if (validationPromises.length > MAX_PARALLEL_VALIDATIONS) {
+                await Promise.all(validationPromises)
+                validationPromises = []
             }
         } catch (e) {
             console.error('Error:', e.message)

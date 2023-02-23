@@ -28,7 +28,7 @@ jobs:
           cp -r -f test/data/* inputApi
       - name: Generate api cache
         run: |
-          pnpm run generate
+          pnpm run generate -- --configFile="./config.yaml"
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
