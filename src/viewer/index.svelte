@@ -1,6 +1,6 @@
 <script lang="ts">
   import yaml from 'js-yaml';
-  import type { Api, ApiReleaseNotes, ApiValidation } from 'common/api';
+  import type { Api, ApiReleaseNotes } from 'common/api';
   import Footer from 'components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
   import { apiFactory } from 'common/apiFactory';
@@ -19,6 +19,7 @@
   import { getApiByHash as getFullApiSummaryByHash, sortVersions, type ApiIndex, type FullApiSummary } from 'common/apiIndex';
   import { getBasePath } from 'common/globals';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
+  import type { ApiValidation } from './validation';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const API_INDEX_PATH = './apis/apiIndex.json';
@@ -153,7 +154,7 @@
   {/if}
   <Errors messages={errors} />
   {#if api}
-    <Tabs on:tabChange={onTabChange} {selectedTab} hasReleaseNotes={!!releaseNotes} validationErrorsCount={validationData.length} />
+    <Tabs on:tabChange={onTabChange} {selectedTab} hasReleaseNotes={!!releaseNotes} {validationData} />
     <div class="box flat-top">
       <LazyLoad isVisible={selectedTab === 'release-notes'}>
         <ReleaseNotesTab {releaseNotes} />

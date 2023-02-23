@@ -1,16 +1,9 @@
 <script lang="ts">
-    import type { ApiValidation } from 'common/api';
     import { onMount } from 'svelte';
-    interface ValidationSummary {
-        [code: string]: {
-            [code: string]: { count: number };
-        };
-    }
-
-    const severityNames: { [severity: string]: string } = { '0': 'Errors', '1': 'Warnings', '2': 'Infos', '3': 'Hints' };
+    import { getValidationSummary, severityNames, type ApiValidation, type ValidationSummary } from './validation';
 
     export let validationData: ApiValidation[] = [];
-    let summary: ValidationSummary = { 0: {}, 1: {}, 2: {}, 3: {} };
+    export let validationSummary: ValidationSummary = {};
     let selectedErrorCode: string = '';
 
     function selectErrorCode(errorCode: string) {
@@ -22,14 +15,7 @@
     }
 
     onMount(() => {
-        for (const validationItem of validationData) {
-            if (validationItem.code in summary[validationItem.severity]) {
-                summary[validationItem.severity][validationItem.code].count++;
-            } else {
-                summary[validationItem.severity][validationItem.code] = { count: 1 };
-            }
-        }
-        console.log(summary);
+        validationSummary = getValidationSummary(validationData);
     });
 </script>
 
@@ -37,14 +23,14 @@
     <div class="columns">
         <div class="column is-one-quarter">
             <aside class="menu">
-                {#each Object.entries(summary) as [severityCode, errorItems]}
+                {#each Object.entries(validationSummary) as [severityCode, errorItems]}
                     {#if Object.keys(errorItems).length}
-                        <p class="menu-label">{severityNames[severityCode]}</p>
+                        <p class="menu-label">{severityNames[severityCode].title}</p>
                         <ul class="menu-list">
                             {#each Object.entries(errorItems) as [errorCode, errorInfo]}
                                 <li>
                                     <a href={'#'} class={selectedErrorCode === errorCode ? 'is-active' : ''} on:click={() => selectErrorCode(errorCode)}>
-                                        <span class="tag is-info">{errorInfo.count}</span>
+                                        <span class="tag {severityNames[severityCode].css}">{errorInfo.count}</span>
                                         {errorCode}
                                     </a>
                                 </li>
@@ -54,7 +40,17 @@
                 {/each}
             </aside>
         </div>
-        <div class="column" />
+        <div class="column">
+            {#each validationData as validationItem}
+                {#if !selectedErrorCode || selectedErrorCode === validationItem.code}
+                    <div class="notification {severityNames[validationItem.severity].css}">
+                        <p>Code: {validationItem.code}</p>
+                        <p>Message: {validationItem.message}</p>
+                        <p>Path: /{validationItem.path.join('/')}</p>
+                    </div>
+                {/if}
+            {/each}
+        </div>
     </div>
 </div>
 

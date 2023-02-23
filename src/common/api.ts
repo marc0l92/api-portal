@@ -24,23 +24,6 @@ export interface ApiReleaseNotes {
     [version: string]: string[]
 }
 
-export interface ApiValidation {
-    code: string
-    message: string
-    path: string[]
-    severity: number
-    range: {
-        start: {
-            line: number
-            character: number
-        }
-        end: {
-            line: number
-            character: number
-        }
-    }
-}
-
 export abstract class Api {
     protected apiDoc: ApiGenericDoc = null
     constructor(apiDoc: ApiGenericDoc) {

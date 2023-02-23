@@ -1,11 +1,14 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
+    import { getValidationBadgeCss, type ApiValidation } from './validation';
     import { viewerOptions } from './viewerOptions';
 
     export let selectedTab = 'api';
     export let hasReleaseNotes = true;
-    export let validationErrorsCount = 0;
+    export let validationData: ApiValidation[] = [];
+    let validationErrorsCount = 0;
+    let validationErrorsCss = '';
     let showMenu = false;
     let showDiagramsOptionsModal = false;
 
@@ -14,6 +17,10 @@
         selectedTab = newTab;
         dispatch('tabChange', { selectedTab });
     }
+    onMount(() => {
+        validationErrorsCount = validationData.length;
+        validationErrorsCss = getValidationBadgeCss(validationData);
+    });
 </script>
 
 <div class="tabs-with-options">
@@ -50,7 +57,7 @@
                     <a href={'#'} on:click={() => changeTab('validation')}>
                         <span class="icon is-small"><i class="fas fa-list-check" /></span>
                         <span>Validation</span>
-                        <span class="tag is-small is-danger">{validationErrorsCount}</span>
+                        <span class="tag is-small {validationErrorsCss}">{validationErrorsCount}</span>
                     </a>
                 </li>
             {/if}
