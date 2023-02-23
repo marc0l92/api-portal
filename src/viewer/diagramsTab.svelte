@@ -6,17 +6,18 @@
 
     export let api: Api = null;
     let services: ApiService[] = [];
+    let selectedService: ApiService = null;
     let diagrams: DiagramData[] = [];
 
     function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
-        const selectedService = services[event.detail.selectedServiceIndex];
-        if (selectedService && $diagramBuilderOptions) {
-            diagrams = parseServiceDiagrams(selectedService, $diagramBuilderOptions);
-        }
+        selectedService = services[event.detail.selectedServiceIndex];
     }
 
     $: if (api) {
         services = api.getServices();
+    }
+    $: if (selectedService && $diagramBuilderOptions) {
+        diagrams = parseServiceDiagrams(selectedService, $diagramBuilderOptions);
     }
 </script>
 

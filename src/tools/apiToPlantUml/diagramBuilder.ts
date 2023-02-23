@@ -53,7 +53,7 @@ export default class DiagramBuilder {
     }
 
     buildParameters(parameters: ApiParameterDoc[]): void {
-        console.log({ parameters })
+        // console.log({ parameters })
         // this.diagramText += `interface ${safeStr(name)} {\n`
     }
 

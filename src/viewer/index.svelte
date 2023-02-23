@@ -18,6 +18,7 @@
   import LazyLoad from 'components/lazyLoad.svelte';
   import { getApiByHash as getFullApiSummaryByHash, sortVersions, type ApiIndex, type FullApiSummary } from 'common/apiIndex';
   import { getBasePath } from 'common/globals';
+  import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const API_INDEX_PATH = './apis/apiIndex.json';
@@ -90,6 +91,7 @@
 
   onMount(async () => {
     viewerOptionsMount();
+    diagramBuilderOptionsMount();
     selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'api';
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('api')) {
@@ -103,6 +105,7 @@
   });
   onDestroy(() => {
     viewerOptionsDestroy();
+    diagramBuilderOptionsDestroy();
   });
 </script>
 
