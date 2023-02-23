@@ -47,7 +47,7 @@
         apiText = await response.text();
         apiDoc = yaml.load(apiText);
         api = apiFactory(apiDoc);
-        api.setModelsTitle()
+        api.setModelsTitle();
         releaseNotes = api.getReleaseNotes();
       } else {
         errors = [...errors, 'Error: ' + response.status];
@@ -153,7 +153,7 @@
   {/if}
   <Errors messages={errors} />
   {#if api}
-    <Tabs on:tabChange={onTabChange} {selectedTab} hasReleaseNotes={!!releaseNotes} />
+    <Tabs on:tabChange={onTabChange} {selectedTab} hasReleaseNotes={!!releaseNotes} validationErrorsCount={validationData.length} />
     <div class="box flat-top">
       <LazyLoad isVisible={selectedTab === 'release-notes'}>
         <ReleaseNotesTab {releaseNotes} />

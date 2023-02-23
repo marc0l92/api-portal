@@ -5,6 +5,7 @@
 
     export let selectedTab = 'api';
     export let hasReleaseNotes = true;
+    export let validationErrorsCount = 0;
     let showMenu = false;
     let showDiagramsOptionsModal = false;
 
@@ -44,12 +45,15 @@
                     <span>Tables</span>
                 </a>
             </li>
-            <li class={selectedTab === 'validation' ? 'is-active' : ''}>
-                <a href={'#'} on:click={() => changeTab('validation')}>
-                    <span class="icon is-small"><i class="fas fa-list-check" /></span>
-                    <span>Validation</span>
-                </a>
-            </li>
+            {#if validationErrorsCount > 0}
+                <li class={selectedTab === 'validation' ? 'is-active' : ''}>
+                    <a href={'#'} on:click={() => changeTab('validation')}>
+                        <span class="icon is-small"><i class="fas fa-list-check" /></span>
+                        <span>Validation</span>
+                        <span class="tag is-small is-danger">{validationErrorsCount}</span>
+                    </a>
+                </li>
+            {/if}
             <li class={selectedTab === 'raw' ? 'is-active' : ''}>
                 <a href={'#'} on:click={() => changeTab('raw')}>
                     <span class="icon is-small"><i class="fas fa-paragraph" /></span>
@@ -137,5 +141,11 @@
     }
     .dropdown-item span {
         flex-grow: 1;
+    }
+
+    .tag.is-small {
+        margin-left: 0.5em;
+        padding: 0 0.5em;
+        border-radius: 100em;
     }
 </style>
