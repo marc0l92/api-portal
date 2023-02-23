@@ -14,6 +14,7 @@ const prod = argv._.indexOf('production') >= 0
 let appConfig = {}
 if (argv.configFile) {
   appConfig = yaml.load(fs.readFileSync(argv.configFile))
+  console.log('Config loaded:', appConfig)
 }
 
 /** @type {esbuild.BuildOptions} */

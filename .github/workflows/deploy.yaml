@@ -22,7 +22,7 @@ jobs:
           pnpm install --frozen-lockfile
       - name: Build website
         run: |
-          pnpm run build --configFile="./config.yaml"
+          pnpm run build -- --configFile="./config.yaml"
       - name: Copy api examples
         run: |
           cp -r -f test/data/* inputApi

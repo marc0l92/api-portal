@@ -8,7 +8,7 @@ export interface ApiOpenApiDoc {
     info?: {
         title?: string
         version?: string
-        'x-release-notes'?: ApiReleaseNotes
+        'x-release-note'?: ApiReleaseNotes
     }
     paths: {
         [path: string]: {
@@ -80,8 +80,8 @@ export class ApiOpenApi extends Api {
     }
 
     getReleaseNotes(): ApiReleaseNotes {
-        if (this.getApi() && this.getApi().info && this.getApi().info["x-release-notes"]) {
-            return this.getApi().info["x-release-notes"]
+        if (this.getApi() && this.getApi().info && this.getApi().info["x-release-note"]) {
+            return this.getApi().info["x-release-note"]
         }
         return null
     }
