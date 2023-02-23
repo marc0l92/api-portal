@@ -47,6 +47,7 @@
         apiText = await response.text();
         apiDoc = yaml.load(apiText);
         api = apiFactory(apiDoc);
+        api.setModelsTitle()
         releaseNotes = api.getReleaseNotes();
       } else {
         errors = [...errors, 'Error: ' + response.status];
