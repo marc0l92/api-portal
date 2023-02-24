@@ -17,7 +17,7 @@ const API_SUFFIX = '.api.json'
 const VALIDATION_SUFFIX = '.validation.json'
 const MAX_VERSION_DIGITS = 5
 const MAX_PARALLEL_VALIDATIONS = 10
-const VALIDATION_TIMEOUT = 20000
+const VALIDATION_TIMEOUT = 30000
 
 const argv = yargs(hideBin(process.argv)).argv
 let appConfig = {}
@@ -57,7 +57,7 @@ function isSmallerVersion(v1, v2) {
     function versionToNumber(v) {
         let total = 0;
         let i = 0;
-        if (v) {
+        if (typeof v === 'string') {
             for (const split of v.split('.').reverse()) {
                 total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
                 i++;
