@@ -17,7 +17,7 @@ const API_SUFFIX = '.api.json'
 const VALIDATION_SUFFIX = '.validation.json'
 const MAX_VERSION_DIGITS = 5
 const MAX_PARALLEL_VALIDATIONS = 10
-const VALIDATION_TIMEOUT = 30000
+const VALIDATION_TIMEOUT = 0
 
 const argv = yargs(hideBin(process.argv)).argv
 let appConfig = {}
@@ -25,6 +25,57 @@ console.log(argv)
 if (argv.configFile) {
     appConfig = yaml.load(fs.readFileSync(argv.configFile))
     console.log('Config loaded:', appConfig)
+}
+
+function deleteFilesByHash(fileName) {
+    const apiHashMatches = fileName.match(/^.*\/([a-z0-9]+)\.[a-z]+\.json$/)
+    if (apiHashMatches) {
+        const apiHash = apiHashMatches[1]
+        fs.remove(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`)
+        fs.remove(`${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`)
+    }
+}
+
+function fixDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
+    for (const packageName in apiIndex) {
+        for (const apiName in apiIndex[packageName]) {
+            for (const versionName in apiIndex[packageName][apiName].versions) {
+                const hash = apiIndex[packageName][apiName].versions[versionName].hash
+                const position = fileNames.indexOf(`${OUTPUT_FOLDER}/${hash}.api.json`)
+                if (position === -1) {
+                    delete apiIndex[packageName][apiName].versions[versionName]
+                } else {
+                    fileNames.splice(position, 1)
+                }
+            }
+            if (Object.keys(apiIndex[packageName][apiName].versions).length === 0) {
+                delete apiIndex[packageName][apiName]
+            }
+        }
+        if (Object.keys(apiIndex[packageName]).length === 0) {
+            delete apiIndex[packageName]
+        }
+    }
+    for (const fileName of fileNames) {
+        console.log(fileName)
+        deleteFilesByHash(fileName)
+    }
+}
+
+function loadAndValidateApiIndex() {
+    return new Promise((resolve, reject) => {
+        let apiIndex = {}
+        if (fs.existsSync(INDEX_FILE_PATH)) {
+            apiIndex = fs.readJsonSync(INDEX_FILE_PATH)
+        }
+        glob(`${OUTPUT_FOLDER}**/*.api.json`, async (error, fileNames) => {
+            if (error) {
+                reject(error)
+            }
+            fixDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames)
+            return resolve(apiIndex)
+        })
+    })
 }
 
 async function generateApi(apiDoc, apiHash) {
@@ -38,6 +89,7 @@ async function generateValidation(apiHash) {
             const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
             const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'
             const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${inputFile} --output ${outputFile}`
+            console.log('Run:',`${executable} ${options}`)
             exec(`${executable} ${options}`, { timeout: VALIDATION_TIMEOUT }, (error, stdout, stderr) => {
                 if (stderr) {
                     return reject(stderr)
@@ -51,6 +103,27 @@ async function generateValidation(apiHash) {
             return resolve(null)
         }
     })
+}
+
+function hasApiVersion(apiIndex, packageName, apiName, apiVersion, apiHash) {
+    return apiIndex[packageName]
+        && apiIndex[packageName][apiName]
+        && apiIndex[packageName][apiName]
+        && apiIndex[packageName][apiName].versions[apiVersion]
+        && apiIndex[packageName][apiName].versions[apiVersion].hash === apiHash
+}
+
+function createApiVersion(apiIndex, packageName, apiName, apiVersion, versionObject) {
+    if (!apiIndex[packageName]) {
+        apiIndex[packageName] = {}
+    }
+    if (!apiIndex[packageName][apiName]) {
+        apiIndex[packageName][apiName] = { lastVersion: null, versions: {} }
+    }
+    if (!apiIndex[packageName][apiName].lastVersion || isSmallerVersion(apiIndex[packageName][apiName].lastVersion, apiVersion)) {
+        apiIndex[packageName][apiName].lastVersion = apiVersion
+    }
+    apiIndex[packageName][apiName].versions[apiVersion] = versionObject
 }
 
 function isSmallerVersion(v1, v2) {
@@ -68,14 +141,13 @@ function isSmallerVersion(v1, v2) {
     return versionToNumber(v1) < versionToNumber(v2)
 }
 
-fs.removeSync(OUTPUT_FOLDER)
 glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     if (error) {
         console.error(error)
         exit(1)
     }
 
-    const apiIndex = {}
+    const apiIndex = await loadAndValidateApiIndex()
     let validationPromises = []
     for (const fileName of fileNames) {
         try {
@@ -84,31 +156,24 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
             const apiHash = hash(apiDoc)
             const relativeFileName = fileName.replace(INPUT_FOLDER, '')
             const packageName = path.dirname(relativeFileName)
-
-            await generateApi(apiDoc, apiHash)
-            validationPromises.push(generateValidation(apiHash).catch(reason => {
-                console.warn('!', reason)
-            }))
-
             const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
-            if (!apiIndex[packageName]) {
-                apiIndex[packageName] = {}
-            }
-            if (!apiIndex[packageName][api.getName()]) {
-                apiIndex[packageName][api.getName()] = { lastVersion: null, versions: {} }
-            }
-            if (!apiIndex[packageName][api.getName()].lastVersion || isSmallerVersion(apiIndex[packageName][api.getName()].lastVersion, api.getVersion())) {
-                apiIndex[packageName][api.getName()].lastVersion = api.getVersion()
-            }
-            apiIndex[packageName][api.getName()].versions[api.getVersion()] = {
-                hash: apiHash,
-                fileName: relativeFileName,
-            }
-            if (validationPromises.length > MAX_PARALLEL_VALIDATIONS) {
-                fs.outputJson(INDEX_FILE_PATH, apiIndex)
-                await Promise.allSettled(validationPromises)
-                validationPromises = []
+            if (!hasApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), apiHash)) {
+                await generateApi(apiDoc, apiHash)
+                validationPromises.push(generateValidation(apiHash).catch(reason => {
+                    console.warn('!', reason)
+                }))
+
+                createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), {
+                    hash: apiHash,
+                    fileName: relativeFileName,
+                })
+
+                if (validationPromises.length > MAX_PARALLEL_VALIDATIONS) {
+                    fs.outputJson(INDEX_FILE_PATH, apiIndex)
+                    await Promise.allSettled(validationPromises)
+                    validationPromises = []
+                }
             }
         } catch (e) {
             console.error('Error:', e.message || e)
