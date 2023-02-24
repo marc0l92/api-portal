@@ -103,7 +103,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
                 validationPromises = []
             }
         } catch (e) {
-            console.error('Error:', e.message)
+            console.error('Error:', e.message || e)
         }
     }
     fs.outputJson(INDEX_FILE_PATH, apiIndex)
