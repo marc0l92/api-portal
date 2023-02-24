@@ -84,7 +84,9 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
             const packageName = path.dirname(relativeFileName)
 
             await generateApi(apiDoc, apiHash)
-            validationPromises.push(generateValidation(apiHash))
+            validationPromises.push(generateValidation(apiHash).catch(reason => {
+                console.warn('!', reason)
+            }))
 
             const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
@@ -102,12 +104,8 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
                 fileName: relativeFileName,
             }
             if (validationPromises.length > MAX_PARALLEL_VALIDATIONS) {
-                const results = await Promise.allSettled(validationPromises)
-                for (const item of results) {
-                    if (item.status === 'rejected') {
-                        console.warn('!', item.reason)
-                    }
-                }
+                fs.outputJson(INDEX_FILE_PATH, apiIndex)
+                await Promise.allSettled(validationPromises)
                 validationPromises = []
             }
         } catch (e) {
