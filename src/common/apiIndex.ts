@@ -38,6 +38,7 @@ export function getApiByHash(hash: string, apiIndex: ApiIndex): FullApiSummary {
             }
         }
     }
+    return null
 }
 
 export function sortVersions(v1: [string, ApiVersion], v2: [string, ApiVersion]) {

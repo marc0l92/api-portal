@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import { getValidationSummary, severityNames, type ApiValidation, type ValidationSummary } from './validation';
 
     export let validationData: ApiValidation[] = [];
@@ -14,9 +13,9 @@
         }
     }
 
-    onMount(() => {
+    $: if (validationData) {
         validationSummary = getValidationSummary(validationData);
-    });
+    }
 </script>
 
 {#if validationData}

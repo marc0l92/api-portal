@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount } from 'svelte';
+    import { createEventDispatcher } from 'svelte';
     import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
     import { getValidationBadgeCss, type ApiValidation } from './validation';
     import { viewerOptions } from './viewerOptions';
@@ -17,12 +17,10 @@
         selectedTab = newTab;
         dispatch('tabChange', { selectedTab });
     }
-    onMount(() => {
-        if (validationData) {
-            validationErrorsCount = validationData.length;
-            validationErrorsCss = getValidationBadgeCss(validationData);
-        }
-    });
+    $: if (validationData) {
+        validationErrorsCount = validationData.length;
+        validationErrorsCss = getValidationBadgeCss(validationData);
+    }
 </script>
 
 <div class="tabs-with-options">
