@@ -27,6 +27,10 @@ if (argv.configFile) {
     console.log('Config loaded:', appConfig)
 }
 
+function dateNow() {
+    return new Date().toISOString()
+}
+
 function deleteFilesByHash(fileName) {
     const apiHashMatches = fileName.match(/^.*\/([a-z0-9]+)\.[a-z]+\.json$/)
     if (apiHashMatches) {
@@ -57,7 +61,6 @@ function fixDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
         }
     }
     for (const fileName of fileNames) {
-        console.log(fileName)
         deleteFilesByHash(fileName)
     }
 }
@@ -89,7 +92,7 @@ async function generateValidation(apiHash) {
             const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
             const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'
             const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${inputFile} --output ${outputFile}`
-            console.log('Run:',`${executable} ${options}`)
+            console.log('Run:', `${executable} ${options}`)
             exec(`${executable} ${options}`, { timeout: VALIDATION_TIMEOUT }, (error, stdout, stderr) => {
                 if (stderr) {
                     return reject(stderr)
@@ -167,6 +170,8 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
                 createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), {
                     hash: apiHash,
                     fileName: relativeFileName,
+                    status: 'VALIDATED',
+                    updateTime: dateNow(),
                 })
 
                 if (validationPromises.length > MAX_PARALLEL_VALIDATIONS) {
