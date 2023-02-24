@@ -17,6 +17,7 @@ const API_SUFFIX = '.api.json'
 const VALIDATION_SUFFIX = '.validation.json'
 const MAX_VERSION_DIGITS = 5
 const MAX_PARALLEL_VALIDATIONS = 10
+const VALIDATION_TIMEOUT = 20000
 
 const argv = yargs(hideBin(process.argv)).argv
 let appConfig = {}
@@ -37,9 +38,11 @@ async function generateValidation(apiHash) {
             const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
             const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'
             const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${inputFile} --output ${outputFile}`
-            exec(`${executable} ${options}`, (error, stdout, stderr) => {
+            exec(`${executable} ${options}`, { timeout: VALIDATION_TIMEOUT }, (error, stdout, stderr) => {
                 if (stderr) {
                     return reject(stderr)
+                } if (error && error.killed && error.signal === 'SIGTERM') {
+                    return reject('Execution timeout reached while validating: ' + apiHash)
                 } else {
                     return resolve(null)
                 }
@@ -99,7 +102,12 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
                 fileName: relativeFileName,
             }
             if (validationPromises.length > MAX_PARALLEL_VALIDATIONS) {
-                await Promise.all(validationPromises)
+                const results = await Promise.allSettled(validationPromises)
+                for (const item of results) {
+                    if (item.status === 'rejected') {
+                        console.warn('!', item.reason)
+                    }
+                }
                 validationPromises = []
             }
         } catch (e) {
