@@ -57,9 +57,11 @@ function isSmallerVersion(v1, v2) {
     function versionToNumber(v) {
         let total = 0;
         let i = 0;
-        for (const split of v.split('.').reverse()) {
-            total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
-            i++;
+        if (v) {
+            for (const split of v.split('.').reverse()) {
+                total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
+                i++;
+            }
         }
         return total;
     }
