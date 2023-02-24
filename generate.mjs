@@ -17,7 +17,7 @@ const API_SUFFIX = '.api.json'
 const VALIDATION_SUFFIX = '.validation.json'
 const MAX_VERSION_DIGITS = 5
 const MAX_PARALLEL_VALIDATIONS = 10
-const VALIDATION_TIMEOUT = 0
+const VALIDATION_TIMEOUT = 300000
 
 const argv = yargs(hideBin(process.argv)).argv
 let appConfig = {}
