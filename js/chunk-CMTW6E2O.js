@@ -1,2 +1,0 @@
-// Project: https://github.com/marc0l92/api-tools
-import{h as a}from"./chunk-TYOSPZTC.js";a();function m(t,i){for(let r in i)for(let e in i[r])for(let n in i[r][e].versions)if(i[r][e].versions[n].hash===t)return{packageName:r,apiName:e,versionName:n,apiSummary:i[r][e]};return null}function u(t,i){function r(e){let n=0,s=0;for(let o of e.split(".").reverse())n+=parseInt(o)*Math.pow(10,s*5),s++;return n}return r(i[0])-r(t[0])}export{m as a,u as b};
