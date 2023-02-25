@@ -1,8 +1,8 @@
 <script lang="ts">
     import { getBasePath } from 'common/globals';
-    import { onDestroy, onMount } from 'svelte';
+    import { onMount } from 'svelte';
     import { sortVersions, type ApiSummary, type ApiVersion } from '../common/apiIndex';
-    import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
+    import { browserOptions } from './browserOptions';
 
     const VERSION_LIMIT = 5;
     const basePath = getBasePath();
@@ -13,7 +13,6 @@
     let lastVersion: ApiVersion = null;
     let isExpanded = false;
 
-
     function onFavoriteToggle() {
         console.log(JSON.stringify($browserOptions));
         if (!$browserOptions.favorites[packageName]) {
@@ -23,11 +22,7 @@
     }
 
     onMount(() => {
-        browserOptionsMount();
         lastVersion = apiSummary.versions[apiSummary.lastVersion];
-    });
-    onDestroy(() => {
-        browserOptionsDestroy();
     });
 </script>
 

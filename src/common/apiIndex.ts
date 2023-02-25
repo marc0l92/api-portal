@@ -23,6 +23,8 @@ export interface FullApiSummary {
 export interface ApiVersion {
     fileName: string;
     hash: string;
+    status: string;
+    updateTime: string;
 }
 
 export function getApiByHash(hash: string, apiIndex: ApiIndex): FullApiSummary {

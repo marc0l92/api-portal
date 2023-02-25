@@ -1,11 +1,11 @@
 <script lang="ts">
   import Errors from 'components/errors.svelte';
   import Footer from 'components/footer.svelte';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import Navbar from '../components/navbar.svelte';
   import type { ApiIndex } from '../common/apiIndex';
   import ApiSummary from './apiSummary.svelte';
-  import { browserOptions } from './browserOptions';
+  import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
   import SearchBar from './searchBar.svelte';
 
   const API_INDEX_PATH = './apis/apiIndex.json';
@@ -21,13 +21,32 @@
     return x[0] === y[0] ? 0 : x[0] < y[0] ? -1 : 1;
   }
 
+  function cleanFavourite() {
+    for (const packageName in $browserOptions.favorites) {
+      for (const apiName in $browserOptions.favorites[packageName]) {
+        if (!$browserOptions.favorites[packageName][apiName] || !apiIndex[packageName] || !apiIndex[packageName][apiName]) {
+          delete $browserOptions.favorites[packageName][apiName];
+        }
+      }
+      if (Object.keys($browserOptions.favorites[packageName]).length === 0) {
+        delete $browserOptions.favorites[packageName];
+      }
+    }
+    $browserOptions.favorites = $browserOptions.favorites;
+  }
+
   onMount(async () => {
+    browserOptionsMount();
     const response = await fetch(API_INDEX_PATH);
     if (response.ok) {
       apiIndex = (await response.json()) as ApiIndex;
+      cleanFavourite();
     } else {
       errors = [...errors, 'Error while fetching api index: ' + response.status];
     }
+  });
+  onDestroy(() => {
+    browserOptionsDestroy();
   });
 </script>
 
