@@ -43,17 +43,17 @@ function deleteFilesByHash(fileName) {
 function fixDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
-            for (const versionName in apiIndex[packageName][apiName].versions) {
-                const hash = apiIndex[packageName][apiName].versions[versionName].hash
+            for (const versionName in apiIndex[packageName][apiName]) {
+                const hash = apiIndex[packageName][apiName][versionName].hash
                 const position = fileNames.indexOf(`${OUTPUT_FOLDER}/${hash}.api.json`)
                 if (position === -1) {
                     console.warn('File not found on disk:', `${OUTPUT_FOLDER}/${hash}.api.json`)
-                    delete apiIndex[packageName][apiName].versions[versionName]
+                    delete apiIndex[packageName][apiName][versionName]
                 } else {
                     fileNames.splice(position, 1)
                 }
             }
-            if (Object.keys(apiIndex[packageName][apiName].versions).length === 0) {
+            if (Object.keys(apiIndex[packageName][apiName]).length === 0) {
                 delete apiIndex[packageName][apiName]
             }
         }
@@ -114,8 +114,8 @@ function hasApiVersion(apiIndex, packageName, apiName, apiVersion, apiHash) {
     return apiIndex[packageName]
         && apiIndex[packageName][apiName]
         && apiIndex[packageName][apiName]
-        && apiIndex[packageName][apiName].versions[apiVersion]
-        && apiIndex[packageName][apiName].versions[apiVersion].hash === apiHash
+        && apiIndex[packageName][apiName][apiVersion]
+        && apiIndex[packageName][apiName][apiVersion].hash === apiHash
 }
 
 function createApiVersion(apiIndex, packageName, apiName, apiVersion, versionObject) {
@@ -123,12 +123,9 @@ function createApiVersion(apiIndex, packageName, apiName, apiVersion, versionObj
         apiIndex[packageName] = {}
     }
     if (!apiIndex[packageName][apiName]) {
-        apiIndex[packageName][apiName] = { lastVersion: null, versions: {} }
+        apiIndex[packageName][apiName] = {}
     }
-    if (!apiIndex[packageName][apiName].lastVersion || isSmallerVersion(apiIndex[packageName][apiName].lastVersion, apiVersion)) {
-        apiIndex[packageName][apiName].lastVersion = apiVersion
-    }
-    apiIndex[packageName][apiName].versions[apiVersion] = versionObject
+    apiIndex[packageName][apiName][apiVersion] = versionObject
 }
 
 function isSmallerVersion(v1, v2) {
@@ -143,7 +140,21 @@ function isSmallerVersion(v1, v2) {
         }
         return total;
     }
-    return versionToNumber(v1) < versionToNumber(v2)
+    return versionToNumber(v2) - versionToNumber(v1)
+}
+
+function sortApiIndex(apiIndex) {
+    const sortedApiIndex = {}
+    for (const packageName of Object.keys(apiIndex).sort()) {
+        sortedApiIndex[packageName] = {}
+        for (const apiName of Object.keys(apiIndex[packageName]).sort()) {
+            sortedApiIndex[packageName][apiName] = {}
+            for (const versionName of Object.keys(apiIndex[packageName][apiName]).sort(isSmallerVersion)) {
+                sortedApiIndex[packageName][apiName][versionName] = apiIndex[packageName][apiName][versionName]
+            }
+        }
+    }
+    return sortedApiIndex
 }
 
 glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
@@ -156,7 +167,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     let validationPromises = []
     for (const fileName of fileNames) {
         try {
-            console.log('+', fileName)
+            console.log('>', fileName)
             const apiDoc = yaml.load(await fs.readFile(fileName))
             const apiHash = hash(apiDoc)
             const relativeFileName = fileName.replace(INPUT_FOLDER, '')
@@ -164,6 +175,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
             const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
             if (!hasApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), apiHash)) {
+                console.log('+', fileName)
                 await generateApi(apiDoc, apiHash)
                 validationPromises.push(generateValidation(apiHash).catch(reason => {
                     console.warn('!', reason)
@@ -186,5 +198,5 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
             console.error('Error:', e.message || e)
         }
     }
-    fs.outputJson(INDEX_FILE_PATH, apiIndex)
+    fs.outputJson(INDEX_FILE_PATH, sortApiIndex(apiIndex))
 })

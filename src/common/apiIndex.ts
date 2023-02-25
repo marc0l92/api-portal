@@ -7,10 +7,7 @@ export interface ApiIndex {
 }
 
 export interface ApiSummary {
-    lastVersion: string;
-    versions: {
-        [version: string]: ApiVersion
-    };
+    [version: string]: ApiVersion
 }
 
 export interface FullApiSummary {
@@ -30,8 +27,8 @@ export interface ApiVersion {
 export function getApiByHash(hash: string, apiIndex: ApiIndex): FullApiSummary {
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
-            for (const versionName in apiIndex[packageName][apiName].versions) {
-                if (apiIndex[packageName][apiName].versions[versionName].hash === hash) {
+            for (const versionName in apiIndex[packageName][apiName]) {
+                if (apiIndex[packageName][apiName][versionName].hash === hash) {
                     return {
                         packageName, apiName, versionName,
                         apiSummary: apiIndex[packageName][apiName]
@@ -43,15 +40,15 @@ export function getApiByHash(hash: string, apiIndex: ApiIndex): FullApiSummary {
     return null
 }
 
-export function sortVersions(v1: [string, ApiVersion], v2: [string, ApiVersion]) {
-    function versionToNumber(v: string): number {
-        let total = 0;
-        let i = 0;
-        for (const split of v.split('.').reverse()) {
-            total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
-            i++;
-        }
-        return total;
-    }
-    return versionToNumber(v2[0]) - versionToNumber(v1[0]);
-}
+// export function sortVersions(v1: [string, ApiVersion], v2: [string, ApiVersion]) {
+//     function versionToNumber(v: string): number {
+//         let total = 0;
+//         let i = 0;
+//         for (const split of v.split('.').reverse()) {
+//             total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
+//             i++;
+//         }
+//         return total;
+//     }
+//     return versionToNumber(v2[0]) - versionToNumber(v1[0]);
+// }

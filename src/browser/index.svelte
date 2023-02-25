@@ -17,10 +17,6 @@
     favoriteCount = Object.values($browserOptions.favorites).filter((pi) => Object.values(pi).filter((fi) => fi).length).length;
   }
 
-  function sortByKey(x: [string, any], y: [string, any]) {
-    return x[0] === y[0] ? 0 : x[0] < y[0] ? -1 : 1;
-  }
-
   function cleanFavourite() {
     for (const packageName in $browserOptions.favorites) {
       for (const apiName in $browserOptions.favorites[packageName]) {
@@ -75,10 +71,10 @@
         {/each}
       </div>
     {/if}
-    {#each Object.entries(apiIndex).sort(sortByKey) as [packageName, packageItem]}
+    {#each Object.entries(apiIndex) as [packageName, packageItem]}
       <h4 class="subtitle is-4">{packageName}</h4>
       <div class="columns is-multiline">
-        {#each Object.entries(packageItem).sort(sortByKey) as [apiName, apiItem]}
+        {#each Object.entries(packageItem) as [apiName, apiItem]}
           <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
             <ApiSummary {packageName} name={apiName} apiSummary={apiItem} />
           </div>

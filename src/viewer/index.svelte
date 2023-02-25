@@ -16,7 +16,7 @@
   import Errors from 'components/errors.svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
   import LazyLoad from 'components/lazyLoad.svelte';
-  import { getApiByHash as getFullApiSummaryByHash, sortVersions, type ApiIndex, type FullApiSummary } from 'common/apiIndex';
+  import { getApiByHash as getFullApiSummaryByHash, type ApiIndex, type FullApiSummary } from 'common/apiIndex';
   import { getBasePath } from 'common/globals';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
   import type { ApiValidation } from './validation';
@@ -133,7 +133,7 @@
               </div>
               <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content">
-                  {#each Object.entries(apiSummary.apiSummary.versions).sort(sortVersions) as [versionName, versionItem]}
+                  {#each Object.entries(apiSummary.apiSummary) as [versionName, versionItem]}
                     <a href="{basePath}/viewer.html?api={versionItem.hash}" class="dropdown-item">
                       {versionName}
                     </a>

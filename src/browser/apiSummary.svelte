@@ -1,7 +1,7 @@
 <script lang="ts">
     import { getBasePath } from 'common/globals';
     import { onMount } from 'svelte';
-    import { sortVersions, type ApiSummary, type ApiVersion } from '../common/apiIndex';
+    import type { ApiSummary, ApiVersion } from '../common/apiIndex';
     import { browserOptions } from './browserOptions';
 
     const VERSION_LIMIT = 5;
@@ -22,7 +22,7 @@
     }
 
     onMount(() => {
-        lastVersion = apiSummary.versions[apiSummary.lastVersion];
+        lastVersion = apiSummary[0];
     });
 </script>
 
@@ -43,9 +43,7 @@
                 <p class="subtitle is-6">{lastVersion.fileName}</p>
                 <div class="columns is-multiline">
                     <div class="column">
-                        {#each Object.entries(apiSummary.versions)
-                            .sort(sortVersions)
-                            .slice(0, isExpanded ? undefined : 5) as [versionName, versionSummary]}
+                        {#each Object.entries(apiSummary.versions).slice(0, isExpanded ? undefined : 5) as [versionName, versionSummary]}
                             <a class="tag ml-1 mb-1" href="{basePath}/viewer.html?api={versionSummary.hash}">
                                 {versionName}
                             </a>
