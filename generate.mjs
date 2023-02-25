@@ -47,6 +47,7 @@ function fixDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
                 const hash = apiIndex[packageName][apiName].versions[versionName].hash
                 const position = fileNames.indexOf(`${OUTPUT_FOLDER}/${hash}.api.json`)
                 if (position === -1) {
+                    console.warn('File not found on disk:', `${OUTPUT_FOLDER}/${hash}.api.json`)
                     delete apiIndex[packageName][apiName].versions[versionName]
                 } else {
                     fileNames.splice(position, 1)
@@ -61,6 +62,7 @@ function fixDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
         }
     }
     for (const fileName of fileNames) {
+        console.warn('File not found in the index:', fileName)
         deleteFilesByHash(fileName)
     }
 }
