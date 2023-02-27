@@ -4,8 +4,8 @@
   import SelectServices from '../../components/selectServices.svelte';
   import DownloadSpreadsheets from './downloadSpreadsheets.svelte';
   import Errors from 'components/errors.svelte';
-  import { apiFactory } from 'common/apiFactory';
-  import type { Api, ApiService } from 'common/api';
+  import { apiFactory } from 'common/api/apiFactory';
+  import type { Api, ApiService } from 'common/api/api';
   import Footer from 'components/footer.svelte';
 
   let api: Api = null;

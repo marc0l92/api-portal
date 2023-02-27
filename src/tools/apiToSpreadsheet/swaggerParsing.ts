@@ -1,7 +1,7 @@
 import { ModelPropertyCardinality } from "./interfaces"
 import type { ModelProperty, ModelPropertiesMap } from "./interfaces"
-import type { ApiParameterDoc, ApiService } from "common/api"
-import { mergeAllOfDefinitions, ModelType, type ApiModelDoc } from "common/apiModel"
+import type { ApiParameterDoc, ApiService } from "common/api/api"
+import { mergeAllOfDefinitions, ModelType, type ApiModelDoc } from "common/api/apiModel"
 
 const LOCATION_BODY = 'Body'
 

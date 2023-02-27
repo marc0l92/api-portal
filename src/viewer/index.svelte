@@ -1,9 +1,9 @@
 <script lang="ts">
   import yaml from 'js-yaml';
-  import type { Api, ApiReleaseNotes } from 'common/api';
+  import type { Api, ApiReleaseNotes } from 'common/api/api';
   import Footer from 'components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
-  import { apiFactory } from 'common/apiFactory';
+  import { apiFactory } from 'common/api/apiFactory';
   import Tabs from './tabs.svelte';
   import ApiTab from './apiTab.svelte';
   import RawTab from './rawTab.svelte';
@@ -16,7 +16,7 @@
   import Errors from 'components/errors.svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
   import LazyLoad from 'components/lazyLoad.svelte';
-  import { getApiByHash as getFullApiSummaryByHash, type ApiIndex, type FullApiSummary } from 'common/apiIndex';
+  import { getApiByHash as getFullApiSummaryByHash, type ApiIndex, type FullApiSummary } from 'common/api/apiIndex';
   import { getBasePath } from 'common/globals';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
   import type { ApiValidation } from './validation';
@@ -35,6 +35,7 @@
   let releaseNotes: ApiReleaseNotes = null;
   let errors: string[] = [];
   let isVersionDropdownExpanded = false;
+  let isFileNameDropdownExpanded = false;
 
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
     selectedTab = event.detail.selectedTab;
@@ -72,7 +73,7 @@
       if (response.ok) {
         validationData = yaml.load(await response.text()) as ApiValidation[];
       } else {
-        errors = [...errors, 'Error: ' + response.status];
+        // errors = [...errors, 'Error: ' + response.status];
       }
     } catch (e) {
       console.error(e);
@@ -104,6 +105,10 @@
     } else {
       errors = [...errors, 'No api selected'];
     }
+    // document.addEventListener('click', () => {
+    //   isVersionDropdownExpanded = false;
+    //   isFileNameDropdownExpanded = false;
+    // });
   });
   onDestroy(() => {
     viewerOptionsDestroy();
@@ -134,13 +139,42 @@
               <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content">
                   {#each Object.entries(apiSummary.apiSummary) as [versionName, versionItem]}
-                    <a href="{basePath}/viewer.html?api={versionItem.hash}" class="dropdown-item">
-                      {versionName}
+                    <a href="{basePath}/viewer.html?api={Object.values(versionItem)[0].hash}" class="dropdown-item">
+                      {#if versionName === apiSummary.versionName}
+                        <strong>{versionName}</strong>
+                      {:else}
+                        {versionName}
+                      {/if}
                     </a>
                   {/each}
                 </div>
               </div>
             </div>
+            {#if Object.keys(apiSummary.apiSummary[apiSummary.versionName]).length !== 1}
+              <div class="dropdown is-right {isFileNameDropdownExpanded ? 'is-active' : ''}">
+                <div class="dropdown-trigger">
+                  <button class="button" on:click={() => (isFileNameDropdownExpanded = !isFileNameDropdownExpanded)}>
+                    <span class="short-text">{apiSummary.fileName}</span>
+                    <span class="icon is-small">
+                      <i class="fas fa-angle-down" aria-hidden="true" />
+                    </span>
+                  </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                  <div class="dropdown-content">
+                    {#each Object.entries(apiSummary.apiSummary[apiSummary.versionName]) as [fileName, apiItem]}
+                      <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item">
+                        {#if fileName === apiSummary.fileName}
+                          <strong>{fileName}</strong>
+                        {:else}
+                          {fileName}
+                        {/if}
+                      </a>
+                    {/each}
+                  </div>
+                </div>
+              </div>
+            {/if}
           </div>
         </div>
       </div>
@@ -180,4 +214,9 @@
 <Footer />
 
 <style>
+  .short-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 15em;
+  }
 </style>

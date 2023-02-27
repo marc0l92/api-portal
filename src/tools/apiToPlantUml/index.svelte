@@ -2,8 +2,8 @@
   import Navbar from '../../components/navbar.svelte';
   import InputApi from '../../components/inputApi.svelte';
   import Errors from 'components/errors.svelte';
-  import type { Api, ApiService } from 'common/api';
-  import { apiFactory } from 'common/apiFactory';
+  import type { Api, ApiService } from 'common/api/api';
+  import { apiFactory } from 'common/api/apiFactory';
   import SelectServices from 'components/selectServices.svelte';
   import Footer from 'components/footer.svelte';
   import Diagrams from './diagrams.svelte';

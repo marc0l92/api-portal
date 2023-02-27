@@ -1,7 +1,6 @@
 <script lang="ts">
     import { getBasePath } from 'common/globals';
-    import { onMount } from 'svelte';
-    import type { ApiSummary, ApiVersion } from '../common/apiIndex';
+    import type { ApiSummary } from '../common/apiIndex';
     import { browserOptions } from './browserOptions';
 
     const VERSION_LIMIT = 5;
@@ -10,7 +9,8 @@
     export let packageName: string = null;
     export let name: string = null;
     export let apiSummary: ApiSummary = null;
-    let lastVersion: ApiVersion = null;
+    let lastApiVersion = '';
+    let lastApiHash = '';
     let isExpanded = false;
 
     function onFavoriteToggle() {
@@ -21,16 +21,17 @@
         $browserOptions.favorites[packageName][name] = !$browserOptions.favorites[packageName][name];
     }
 
-    onMount(() => {
-        lastVersion = apiSummary[0];
-    });
+    $: if (apiSummary) {
+        lastApiVersion = Object.keys(apiSummary)[0];
+        lastApiHash = Object.values(apiSummary[lastApiVersion])[0].hash;
+    }
 </script>
 
-{#if lastVersion}
+{#if apiSummary}
     <div class="card">
         <header class="card-header">
-            <a href="{basePath}/viewer.html?api={lastVersion.hash}">
-                <p class="card-header-title">{name} - {apiSummary.lastVersion}</p>
+            <a href="{basePath}/viewer.html?api={lastApiHash}">
+                <p class="card-header-title">{name} - {lastApiVersion}</p>
             </a>
             <button class="card-header-icon" on:click={onFavoriteToggle}>
                 <span class="icon">
@@ -40,15 +41,15 @@
         </header>
         <div class="card-content">
             <div class="content">
-                <p class="subtitle is-6">{lastVersion.fileName}</p>
+                <!-- <p class="subtitle is-6">{lastVersion.fileName}</p> -->
                 <div class="columns is-multiline">
                     <div class="column">
-                        {#each Object.entries(apiSummary.versions).slice(0, isExpanded ? undefined : 5) as [versionName, versionSummary]}
-                            <a class="tag ml-1 mb-1" href="{basePath}/viewer.html?api={versionSummary.hash}">
+                        {#each Object.entries(apiSummary).slice(0, isExpanded ? undefined : 5) as [versionName, versionSummary]}
+                            <a class="tag ml-1 mb-1" href="{basePath}/viewer.html?api={Object.values(versionSummary)[0].hash}">
                                 {versionName}
                             </a>
                         {/each}
-                        {#if Object.keys(apiSummary.versions).length > VERSION_LIMIT}
+                        {#if Object.keys(apiSummary).length > VERSION_LIMIT}
                             <button class="button is-white is-small is-tag-size" on:click={() => (isExpanded = !isExpanded)}>
                                 <i class="fas fa-angle-{isExpanded ? 'left' : 'right'}" />
                             </button>

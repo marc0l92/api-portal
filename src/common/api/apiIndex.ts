@@ -7,31 +7,33 @@ export interface ApiIndex {
 }
 
 export interface ApiSummary {
-    [version: string]: ApiVersion
+    [version: string]: {
+        [fileName: string]: {
+            hash: string;
+            status: string;
+            updateTime: string;
+        }
+    }
 }
 
 export interface FullApiSummary {
     packageName: string
     apiName: string
     versionName: string
+    fileName: string
     apiSummary: ApiSummary
-}
-
-export interface ApiVersion {
-    fileName: string;
-    hash: string;
-    status: string;
-    updateTime: string;
 }
 
 export function getApiByHash(hash: string, apiIndex: ApiIndex): FullApiSummary {
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
             for (const versionName in apiIndex[packageName][apiName]) {
-                if (apiIndex[packageName][apiName][versionName].hash === hash) {
-                    return {
-                        packageName, apiName, versionName,
-                        apiSummary: apiIndex[packageName][apiName]
+                for (const fileName in apiIndex[packageName][apiName][versionName]) {
+                    if (apiIndex[packageName][apiName][versionName][fileName].hash === hash) {
+                        return {
+                            packageName, apiName, versionName, fileName,
+                            apiSummary: apiIndex[packageName][apiName]
+                        }
                     }
                 }
             }

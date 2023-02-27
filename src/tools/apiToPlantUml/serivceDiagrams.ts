@@ -1,5 +1,5 @@
-import type { ApiParameterDoc, ApiService } from "common/api"
-import { mergeAllOfDefinitions, type ApiModelDoc, type ApiModelDocMap } from "common/apiModel"
+import type { ApiParameterDoc, ApiService } from "common/api/api"
+import { mergeAllOfDefinitions, type ApiModelDoc } from "common/api/apiModel"
 import DiagramBuilder from "./diagramBuilder"
 import type { DiagramBuilderOptions } from "./diagramBuilderOptions"
 
