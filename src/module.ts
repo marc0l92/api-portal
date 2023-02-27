@@ -2,10 +2,10 @@ import type { DiagramBuilderOptions } from "tools/apiToPlantUml/diagramBuilderOp
 import { parseServiceDiagrams, type DiagramData } from "tools/apiToPlantUml/serivceDiagrams"
 import { generateServiceWorkbook } from "tools/apiToSpreadsheet/swaggerParsing"
 import { modelPropertiesToTables, tablesMapToXLSX } from "tools/apiToSpreadsheet/xlsxUtils"
-import type { Api } from "common/api"
-import { apiFactory } from "common/apiFactory"
+import type { Api } from "common/api/api"
+import { apiFactory } from "common/api/apiFactory"
 import { toBlob } from "common/filesUtils"
-import * as RefParser from "common/refParser"
+import * as RefParser from "common/api/refParser"
 
 export const resolveReferences = RefParser.resolveReferences
 
