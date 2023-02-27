@@ -1,7 +1,7 @@
 import path from 'path'
 import glob from 'glob'
 import yaml from 'js-yaml'
-import hash from 'object-hash'
+import objectHash from 'object-hash'
 import { exit } from 'process'
 import fs from 'fs-extra'
 import apiTools from './dist/api-tools.js'
@@ -194,13 +194,13 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
         try {
             console.log('>', fileName)
             const apiDoc = yaml.load(await fs.readFile(fileName))
-            const apiHash = hash(apiDoc)
+            const apiHash = objectHash(apiDoc)
             const relativeFileName = fileName.replace(INPUT_FOLDER, '')
             const packageName = path.dirname(relativeFileName)
             const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
-            if (!(hash in indexHashes)) {
-                indexHashes[hash] = true
+            if (!(apiHash in indexHashes)) {
+                indexHashes[apiHash] = true
                 createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, {
                     hash: apiHash,
                     status: 'VALIDATED',
