@@ -189,7 +189,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
 
                 if (hasApiVersion(oldApiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, apiHash)) {
                     createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName,
-                        apiIndex[packageName][api.getName()][api.getVersion()][relativeFileName])
+                        oldApiIndex[packageName][api.getName()][api.getVersion()][relativeFileName])
                 } else {
                     createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, {
                         hash: apiHash,
