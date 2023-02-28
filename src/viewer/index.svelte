@@ -59,11 +59,13 @@
       api = null;
       errors = [...errors, 'Error while fetching the api'];
     }
-    try {
-      await api.resolveReferences();
-    } catch (e) {
-      console.error(e);
-      errors = [...errors, 'Error while parsing api: ' + e.message];
+    if (api) {
+      try {
+        await api.resolveReferences();
+      } catch (e) {
+        console.error(e);
+        errors = [...errors, 'Error while parsing api: ' + e.message];
+      }
     }
   }
 
