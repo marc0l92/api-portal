@@ -88,21 +88,6 @@ function loadAndValidateApiIndex() {
     })
 }
 
-function getIndexHashes(apiIndex) {
-    const indexHashes = {}
-    for (const packageName in apiIndex) {
-        for (const apiName in apiIndex[packageName]) {
-            for (const versionName in apiIndex[packageName][apiName]) {
-                for (const fileName in apiIndex[packageName][apiName][versionName]) {
-                    const hash = apiIndex[packageName][apiName][versionName][fileName].hash
-                    indexHashes[hash] = true
-                }
-            }
-        }
-    }
-    return indexHashes
-}
-
 async function generateApi(apiDoc, apiHash) {
     await fs.outputJson(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, apiDoc)
 }
@@ -187,8 +172,8 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     }
 
     const oldApiIndex = await loadAndValidateApiIndex()
-    const indexHashes = getIndexHashes()
     const apiIndex = {}
+    const apiIndexHashes = {}
     let validationPromises = []
     for (const fileName of fileNames) {
         try {
@@ -199,15 +184,19 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
             const packageName = path.dirname(relativeFileName)
             const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
-            if (!(apiHash in indexHashes)) {
-                indexHashes[apiHash] = true
-                createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, {
-                    hash: apiHash,
-                    status: 'VALIDATED',
-                    updateTime: dateNow(),
-                })
+            if (!(apiHash in apiIndexHashes)) {
+                apiIndexHashes[apiHash] = true
 
-                if (!hasApiVersion(oldApiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, apiHash)) {
+                if (hasApiVersion(oldApiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, apiHash)) {
+                    createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName,
+                        apiIndex[packageName][api.getName()][api.getVersion()][relativeFileName])
+                } else {
+                    createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, {
+                        hash: apiHash,
+                        status: 'VALIDATED',
+                        updateTime: dateNow(),
+                    })
+
                     await generateApi(apiDoc, apiHash)
                     validationPromises.push(generateValidation(apiHash).catch(reason => {
                         console.warn('!', reason)
