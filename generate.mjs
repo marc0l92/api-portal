@@ -158,7 +158,9 @@ function sortApiIndex(apiIndex) {
         for (const apiName of Object.keys(apiIndex[packageName]).sort()) {
             sortedApiIndex[packageName][apiName] = {}
             for (const versionName of Object.keys(apiIndex[packageName][apiName]).sort(isSmallerVersion)) {
-                sortedApiIndex[packageName][apiName][versionName] = apiIndex[packageName][apiName][versionName]
+                for (const fileName of Object.keys(apiIndex[packageName][apiName][versionName]).sort()) {
+                    sortedApiIndex[packageName][apiName][versionName][fileName] = apiIndex[packageName][apiName][versionName][fileName]
+                }
             }
         }
     }
@@ -180,7 +182,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
             console.log('>', fileName)
             const apiDoc = yaml.load(await fs.readFile(fileName))
             const apiHash = objectHash(apiDoc)
-            const relativeFileName = fileName.replace(INPUT_FOLDER, '')
+            const relativeFileName = fileName.replace(INPUT_FOLDER, '').replace(/\.(json|ya?ml)$/, '')
             const packageName = path.dirname(relativeFileName)
             const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
