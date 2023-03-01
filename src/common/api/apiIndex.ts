@@ -1,4 +1,4 @@
-const MAX_VERSION_DIGITS = 5;
+// const MAX_VERSION_DIGITS = 5;
 
 export interface ApiIndex {
     [packageName: string]: {
@@ -8,12 +8,14 @@ export interface ApiIndex {
 
 export interface ApiSummary {
     [version: string]: {
-        [fileName: string]: {
-            hash: string;
-            status: string;
-            updateTime: string;
-        }
+        [fileName: string]: ApiIndexItem
     }
+}
+
+export interface ApiIndexItem {
+    hash: string;
+    status: string;
+    updateTime: string;
 }
 
 export interface FullApiSummary {
