@@ -10,8 +10,8 @@ import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import process from 'process'
 
-const INPUT_FOLDER = './inputApi/'
-const OUTPUT_FOLDER = './public/apis'
+const INPUT_FOLDER = 'inputApi/'
+const OUTPUT_FOLDER = 'public/apis'
 const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/apiIndex.json`
 const API_SUFFIX = '.api.json'
 const VALIDATION_SUFFIX = '.validation.json'
@@ -72,20 +72,14 @@ function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
     }
 }
 
-function loadAndValidateApiIndex() {
-    return new Promise((resolve, reject) => {
-        let apiIndex = {}
-        if (fs.existsSync(INDEX_FILE_PATH)) {
-            apiIndex = fs.readJsonSync(INDEX_FILE_PATH)
-        }
-        glob(`${OUTPUT_FOLDER}**/*.api.json`, async (error, fileNames) => {
-            if (error) {
-                reject(error)
-            }
-            deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames)
-            return resolve(apiIndex)
-        })
-    })
+async function loadAndValidateApiIndex() {
+    let apiIndex = {}
+    if (fs.existsSync(INDEX_FILE_PATH)) {
+        apiIndex = fs.readJsonSync(INDEX_FILE_PATH)
+    }
+    const fileNames = (await glob.glob(`${OUTPUT_FOLDER}**/*.api.json`)).map(x => x.replace(/\\/g, '/'))
+    deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames)
+    return apiIndex
 }
 
 async function generateApi(apiDoc, apiHash) {
@@ -168,12 +162,7 @@ function sortApiIndex(apiIndex) {
     return sortedApiIndex
 }
 
-glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
-    if (error) {
-        console.error(error)
-        exit(1)
-    }
-
+glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`).then(async (fileNames) => {
     const oldApiIndex = await loadAndValidateApiIndex()
     const apiIndex = {}
     const apiIndexHashes = {}
@@ -219,4 +208,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, async (error, fileNames) => {
     await fs.outputJson(INDEX_FILE_PATH, sortApiIndex(apiIndex))
     await Promise.allSettled(validationPromises)
     loadAndValidateApiIndex() // Delete files that are not part of the new index
+}).catch(error => {
+    console.error(error)
+    exit(1)
 })
