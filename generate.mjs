@@ -158,6 +158,7 @@ function sortApiIndex(apiIndex) {
         for (const apiName of Object.keys(apiIndex[packageName]).sort()) {
             sortedApiIndex[packageName][apiName] = {}
             for (const versionName of Object.keys(apiIndex[packageName][apiName]).sort(isSmallerVersion)) {
+                sortedApiIndex[packageName][apiName][versionName] = {}
                 for (const fileName of Object.keys(apiIndex[packageName][apiName][versionName]).sort()) {
                     sortedApiIndex[packageName][apiName][versionName][fileName] = apiIndex[packageName][apiName][versionName][fileName]
                 }
