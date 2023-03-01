@@ -11,7 +11,7 @@ export interface ApiSwaggerDoc {
     paths: {
         [path: string]: {
             parameters?: ApiParameterDoc[]
-            [method: string]: ApiSwaggerServiceDoc | ApiParameterDoc[]
+            [method: string]: ApiSwaggerServiceDoc | ApiParameterDoc[] | undefined
         }
     }
     definitions?: ApiModelDocMap

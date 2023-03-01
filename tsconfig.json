@@ -17,12 +17,19 @@
         "moduleResolution": "node",
         "noImplicitAny": true,
         "target": "ES6",
-        "types": ["svelte", "node", "jest"],
+        "types": [
+            "svelte",
+            "node",
+            "jest"
+        ],
         "strict": false,
-        "forceConsistentCasingInFileNames":true
+        "forceConsistentCasingInFileNames": true
     },
     "include": [
         "src/**/*.ts"
     ],
-    "exclude": ["node_modules/**", "public/**"]
+    "exclude": [
+        "node_modules/**",
+        "public/**"
+    ]
 }

@@ -26,7 +26,6 @@ const VALIDATION_TIMEOUT = 300000
 
 const argv = yargs(hideBin(process.argv)).argv
 let appConfig = {}
-console.log(argv)
 if (argv.configFile) {
     appConfig = yaml.load(fs.readFileSync(argv.configFile))
     console.log('Config loaded:', appConfig)

@@ -13,7 +13,7 @@ export interface ApiOpenApiDoc {
     paths: {
         [path: string]: {
             parameters?: ApiParameterDoc[]
-            [method: string]: ApiOpenApiServiceDoc | ApiParameterDoc[]
+            [method: string]: ApiOpenApiServiceDoc | ApiParameterDoc[] | undefined
         }
     }
     components?: {
