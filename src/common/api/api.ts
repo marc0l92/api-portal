@@ -4,9 +4,9 @@ import { resolveReferences } from "./refParser"
 export interface ApiGenericDoc {
     swagger?: string
     openapi?: string
-    ['x-status']: string
-    ['x-tags']: string[]
-    ['x-pull-request']: string
+    ['x-status']?: string
+    ['x-tags']?: string[]
+    ['x-pull-request']?: string
 }
 
 export interface ApiParameterDoc {

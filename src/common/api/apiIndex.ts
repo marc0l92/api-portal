@@ -11,9 +11,11 @@ export interface ApiSummary {
 }
 
 export interface ApiIndexItem {
-    hash: string;
-    status: string;
-    updateTime: string;
+    hash: string
+    status: string
+    tags: string[]
+    pullRequest: string
+    updateTime: string
 }
 
 export interface ApiSummaryFlat {
@@ -22,6 +24,8 @@ export interface ApiSummaryFlat {
     versionName: string
     fileName: string
     status: string
+    tags: string[]
+    pullRequest: string
     updateTime: string
     hash: string
     apiSummary: ApiSummary
@@ -36,6 +40,8 @@ export function getApiByHash(hash: string, apiIndex: ApiIndex): ApiSummaryFlat {
                         return {
                             packageName, apiName, versionName, fileName,
                             status: apiIndex[packageName][apiName][versionName][fileName].status,
+                            tags: apiIndex[packageName][apiName][versionName][fileName].tags,
+                            pullRequest: apiIndex[packageName][apiName][versionName][fileName].pullRequest,
                             updateTime: apiIndex[packageName][apiName][versionName][fileName].updateTime,
                             hash: apiIndex[packageName][apiName][versionName][fileName].hash,
                             apiSummary: apiIndex[packageName][apiName],

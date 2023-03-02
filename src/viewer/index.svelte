@@ -127,6 +127,9 @@
           <div class="column">
             <h1 class="title">{apiSummary.apiName}</h1>
             <h3 class="subtitle">{apiSummary.packageName}</h3>
+            {#if apiSummary.pullRequest}
+              <a href="{apiSummary.pullRequest}">Pull request</a>
+            {/if}
           </div>
           <div class="column is-narrow">
             <div class="dropdown is-right {isVersionDropdownExpanded ? 'is-active' : ''}">
@@ -221,13 +224,13 @@
     overflow: hidden;
     max-width: 15em;
   }
-  .dropdown-item.VALIDATED{
+  .dropdown-item.VALIDATED {
     color: green;
   }
-  .dropdown-item.NOT_VALIDATED{
+  .dropdown-item.NOT_VALIDATED {
     color: yellow;
   }
-  .dropdown-item.DRAFT{
+  .dropdown-item.DRAFT {
     color: red;
   }
 </style>
