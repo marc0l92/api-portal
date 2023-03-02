@@ -145,10 +145,11 @@ async function generateValidation(apiHash) {
  * @returns {boolean}
  */
 function hasApiVersion(apiIndex, packageName, apiName, apiVersion, fileName, apiHash) {
-    return apiIndex[packageName]
-        && apiIndex[packageName][apiName]
+    return apiIndex
+        && apiIndex[packageName]
         && apiIndex[packageName][apiName]
         && apiIndex[packageName][apiName][apiVersion]
+        && apiIndex[packageName][apiName][apiVersion][fileName]
         && apiIndex[packageName][apiName][apiVersion][fileName].hash === apiHash
 }
 
