@@ -248,7 +248,9 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`).then(async (fileNames) => {
                 } else {
                     createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, {
                         hash: apiHash,
-                        status: 'VALIDATED',
+                        status: api.getStatus(),
+                        tags: api.getTags(),
+                        pullRequest: api.getPullRequest(),
                         updateTime: dateNow(),
                     })
 

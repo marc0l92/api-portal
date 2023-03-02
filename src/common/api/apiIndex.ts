@@ -1,5 +1,3 @@
-// const MAX_VERSION_DIGITS = 5;
-
 export interface ApiIndex {
     [packageName: string]: {
         [apiName: string]: ApiSummary
@@ -18,15 +16,18 @@ export interface ApiIndexItem {
     updateTime: string;
 }
 
-export interface FullApiSummary {
+export interface ApiSummaryFlat {
     packageName: string
     apiName: string
     versionName: string
     fileName: string
+    status: string
+    updateTime: string
+    hash: string
     apiSummary: ApiSummary
 }
 
-export function getApiByHash(hash: string, apiIndex: ApiIndex): FullApiSummary {
+export function getApiByHash(hash: string, apiIndex: ApiIndex): ApiSummaryFlat {
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
             for (const versionName in apiIndex[packageName][apiName]) {
@@ -34,7 +35,10 @@ export function getApiByHash(hash: string, apiIndex: ApiIndex): FullApiSummary {
                     if (apiIndex[packageName][apiName][versionName][fileName].hash === hash) {
                         return {
                             packageName, apiName, versionName, fileName,
-                            apiSummary: apiIndex[packageName][apiName]
+                            status: apiIndex[packageName][apiName][versionName][fileName].status,
+                            updateTime: apiIndex[packageName][apiName][versionName][fileName].updateTime,
+                            hash: apiIndex[packageName][apiName][versionName][fileName].hash,
+                            apiSummary: apiIndex[packageName][apiName],
                         }
                     }
                 }
@@ -43,16 +47,3 @@ export function getApiByHash(hash: string, apiIndex: ApiIndex): FullApiSummary {
     }
     return null
 }
-
-// export function sortVersions(v1: [string, ApiVersion], v2: [string, ApiVersion]) {
-//     function versionToNumber(v: string): number {
-//         let total = 0;
-//         let i = 0;
-//         for (const split of v.split('.').reverse()) {
-//             total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
-//             i++;
-//         }
-//         return total;
-//     }
-//     return versionToNumber(v2[0]) - versionToNumber(v1[0]);
-// }

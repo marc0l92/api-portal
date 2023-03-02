@@ -16,7 +16,7 @@
   import Errors from 'components/errors.svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
   import LazyLoad from 'components/lazyLoad.svelte';
-  import { getApiByHash as getFullApiSummaryByHash, type ApiIndex, type FullApiSummary } from 'common/api/apiIndex';
+  import { getApiByHash as getApiSummaryFlatByHash, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
   import { getBasePath } from 'common/globals';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
   import type { ApiValidation } from './validation';
@@ -25,7 +25,7 @@
   const API_INDEX_PATH = './apis/apiIndex.json';
   const basePath = getBasePath();
 
-  let apiSummary: FullApiSummary = null;
+  let apiSummary: ApiSummaryFlat = null;
   let selectedTab: string = 'api';
   let apiHash: string = null;
   let apiText: string = null;
@@ -88,7 +88,7 @@
     const response = await fetch(API_INDEX_PATH);
     if (response.ok) {
       const apiIndex = (await response.json()) as ApiIndex;
-      apiSummary = getFullApiSummaryByHash(apiHash, apiIndex);
+      apiSummary = getApiSummaryFlatByHash(apiHash, apiIndex);
     } else {
       errors = [...errors, 'Error while fetching api index: ' + response.status];
     }
@@ -165,7 +165,7 @@
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                   <div class="dropdown-content">
                     {#each Object.entries(apiSummary.apiSummary[apiSummary.versionName]) as [fileName, apiItem]}
-                      <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item">
+                      <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item {apiItem.status}">
                         {#if fileName === apiSummary.fileName}
                           <strong>{fileName}</strong>
                         {:else}
@@ -220,5 +220,14 @@
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 15em;
+  }
+  .dropdown-item.VALIDATED{
+    color: green;
+  }
+  .dropdown-item.NOT_VALIDATED{
+    color: yellow;
+  }
+  .dropdown-item.DRAFT{
+    color: red;
   }
 </style>

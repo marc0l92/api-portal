@@ -4,6 +4,9 @@ import { resolveReferences } from "./refParser"
 export interface ApiGenericDoc {
     swagger?: string
     openapi?: string
+    ['x-status']: string
+    ['x-tags']: string[]
+    ['x-pull-request']: string
 }
 
 export interface ApiParameterDoc {
@@ -39,6 +42,15 @@ export abstract class Api {
     }
     async resolveReferences(): Promise<void> {
         this.apiDoc = await resolveReferences(this.apiDoc)
+    }
+    getStatus(): string {
+        return this.apiDoc['x-status']
+    }
+    getTags(): string[] {
+        return this.apiDoc['x-tags']
+    }
+    getPullRequest(): string {
+        return this.apiDoc['x-pull-request']
     }
     abstract getReleaseNotes(): ApiReleaseNotes
     abstract getName(): string
