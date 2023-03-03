@@ -128,7 +128,7 @@
             <h1 class="title">{apiSummary.apiName}</h1>
             <h3 class="subtitle">{apiSummary.packageName}</h3>
             {#if apiSummary.pullRequest}
-              <a href="{apiSummary.pullRequest}">Pull request</a>
+              <a href={apiSummary.pullRequest}>Pull request</a>
             {/if}
           </div>
           <div class="column is-narrow">
@@ -167,14 +167,20 @@
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                   <div class="dropdown-content">
-                    {#each Object.entries(apiSummary.apiSummary[apiSummary.versionName]) as [fileName, apiItem]}
-                      <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item {apiItem.status}">
-                        {#if fileName === apiSummary.fileName}
-                          <strong>{fileName}</strong>
-                        {:else}
-                          {fileName}
-                        {/if}
-                      </a>
+                    {#each ['VALIDATED', 'NOT_VALIDATED', 'DRAFT'] as status}
+                      <div class="api-status-section">
+                        {#each Object.entries(apiSummary.apiSummary[apiSummary.versionName]) as [fileName, apiItem]}
+                          {#if apiItem.status === status}
+                            <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item {apiItem.status}">
+                              {#if fileName === apiSummary.fileName}
+                                <strong>{fileName}</strong>
+                              {:else}
+                                {fileName}
+                              {/if}
+                            </a>
+                          {/if}
+                        {/each}
+                      </div>
                     {/each}
                   </div>
                 </div>
@@ -224,13 +230,15 @@
     overflow: hidden;
     max-width: 15em;
   }
-  .dropdown-item.VALIDATED {
-    color: green;
-  }
   .dropdown-item.NOT_VALIDATED {
-    color: yellow;
+    color: #ffe08a;
   }
   .dropdown-item.DRAFT {
-    color: red;
+    color: #f14668;
+  }
+  .api-status-section:has(a) + .api-status-section:has(a) {
+    border-top: 1px solid #eee;
+    padding-top: 0.5em;
+    margin-top: 0.5em;
   }
 </style>
