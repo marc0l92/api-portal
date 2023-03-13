@@ -21,7 +21,7 @@
     "plantuml-encoder": "^1.4.0",
     "pluralize": "^8.0.0",
     "swagger-ui": "^4.15.5",
-    "swagger-ui-flat-model-plugin": "^0.1.4",
+    "swagger-ui-flat-model-plugin": "^0.2.2",
     "util": "^0.12.5",
     "xlsx": "^0.18.5"
   },

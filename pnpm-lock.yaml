@@ -25,7 +25,7 @@ specifiers:
   svelte-preprocess: ^5.0.1
   svelte-preprocess-sass: ^2.0.1
   swagger-ui: ^4.15.5
-  swagger-ui-flat-model-plugin: ^0.1.4
+  swagger-ui-flat-model-plugin: ^0.2.2
   ts-jest: ^29.0.5
   tslib: ^2.4.1
   typescript: ^4.9.4
@@ -39,7 +39,7 @@ dependencies:
   plantuml-encoder: 1.4.0
   pluralize: 8.0.0
   swagger-ui: 4.15.5
-  swagger-ui-flat-model-plugin: 0.1.4
+  swagger-ui-flat-model-plugin: 0.2.2
   util: 0.12.5
   xlsx: 0.18.5
 
@@ -4858,8 +4858,8 @@ packages:
       - encoding
     dev: false
 
-  /swagger-ui-flat-model-plugin/0.1.4:
-    resolution: {integrity: sha512-LqLDJ1KGLX0AKIvBjbpONrTru3R4L5WoIZ6lDbiMK3ck2MYG9p7YWTNFtvHf9JOBsKM60OSJ3RH+KU1lDuH1mg==}
+  /swagger-ui-flat-model-plugin/0.2.2:
+    resolution: {integrity: sha512-/SfUd2/hu05o0Sr8FfLrrgqmD/r4Dajo/JwVdWYMYRL+QfTgG7BvrEv6rl6Setipj9Nrk8LCWZcxQQpayFLAkQ==}
     dependencies:
       '@braintree/sanitize-url': 6.0.2
       object-hash: 3.0.0
