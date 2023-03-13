@@ -92,6 +92,7 @@ const moduleOptions = {
 // Copy modules css
 fs.copyFileSync('./node_modules/swagger-ui/dist/swagger-ui.css', './public/css/swagger-ui.css')
 fs.copyFileSync('./node_modules/swagger-ui/dist/swagger-ui.css.map', './public/css/swagger-ui.css.map')
+fs.copyFileSync('./node_modules/swagger-ui-flat-model-plugin/dist/swaggerUiFlatModelPlugin.css', './public/css/swaggerUiFlatModelPlugin.css')
 
 if (prod) {
   esbuild.build(webOptions).catch(() => process.exit(1))

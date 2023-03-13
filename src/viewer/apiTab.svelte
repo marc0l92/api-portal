@@ -1,6 +1,7 @@
 <script lang="ts">
     import { afterUpdate } from 'svelte';
     import SwaggerUI from 'swagger-ui';
+    import * as SwaggerUiFlatModelPlugin from 'swagger-ui-flat-model-plugin';
 
     export let apiDoc: any = null;
 
@@ -15,6 +16,7 @@
                 onComplete: () => {
                     return resolve(null);
                 },
+                plugins: [window.swaggerUiFlatModelPlugin],
             });
         });
     }

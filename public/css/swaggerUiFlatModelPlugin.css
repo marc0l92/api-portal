@@ -1,0 +1,39 @@
+.swagger-ui .tab li:not(:last-child)::after {
+    background: rgba(0, 0, 0, .2);
+    content: "";
+    height: 100%;
+    position: absolute;
+    right: 6px;
+    top: 0;
+    width: 1px;
+}
+
+.swagger-ui .tab li:not(:last-child) {
+    padding-left: 0;
+    padding-right: 12px;
+    position: relative;
+}
+
+.swagger-ui .schema-flat>.model:not(:last-child) {
+    border-bottom: 1px solid #bbb;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+}
+
+.swagger-ui .properties-list>span:not(:last-child)::after {
+    margin: 0 0.5em;
+    content: "|";
+}
+
+.swagger-ui .hoverable-table tbody tr:not(.is-selected):hover {
+    background-color: rgba(255, 255, 255, .3);
+}
+
+.swagger-ui .description .renderedMarkdown p {
+    margin: 0.5em auto;
+}
+
+.swagger-ui .model .description .renderedMarkdown {
+    border-left: solid 3px #999;
+    padding-left: 0.5em;
+}

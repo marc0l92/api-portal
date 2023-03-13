@@ -25,6 +25,7 @@ specifiers:
   svelte-preprocess: ^5.0.1
   svelte-preprocess-sass: ^2.0.1
   swagger-ui: ^4.15.5
+  swagger-ui-flat-model-plugin: ^0.1.4
   ts-jest: ^29.0.5
   tslib: ^2.4.1
   typescript: ^4.9.4
@@ -38,6 +39,7 @@ dependencies:
   plantuml-encoder: 1.4.0
   pluralize: 8.0.0
   swagger-ui: 4.15.5
+  swagger-ui-flat-model-plugin: 0.1.4
   util: 0.12.5
   xlsx: 0.18.5
 
@@ -431,6 +433,10 @@ packages:
 
   /@braintree/sanitize-url/6.0.0:
     resolution: {integrity: sha512-mgmE7XBYY/21erpzhexk4Cj1cyTQ9LzvnTxtzM17BJ7ERMNE6W72mQRo0I1Ud8eFJ+RVVIcBNhLFZ3GX4XFz5w==}
+    dev: false
+
+  /@braintree/sanitize-url/6.0.2:
+    resolution: {integrity: sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==}
     dev: false
 
   /@esbuild-plugins/node-modules-polyfill/0.2.2_esbuild@0.17.4:
@@ -3774,7 +3780,6 @@ packages:
   /object-hash/3.0.0:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
     engines: {node: '>= 6'}
-    dev: true
 
   /object-inspect/1.12.3:
     resolution: {integrity: sha512-geUvdk7c+eizMNUDkRpW1wJwgfOiOeHbxBR/hLXK1aT6zmVSO0jsQcs7fj6MGw89jC/cjGfLcNOrtMYtGqm81g==}
@@ -4153,6 +4158,16 @@ packages:
       scheduler: 0.20.2
     dev: false
 
+  /react-dom/18.2.0_react@18.2.0:
+    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
+    peerDependencies:
+      react: ^18.2.0
+    dependencies:
+      loose-envify: 1.4.0
+      react: 18.2.0
+      scheduler: 0.23.0
+    dev: false
+
   /react-immutable-proptypes/2.2.0_immutable@3.8.2:
     resolution: {integrity: sha512-Vf4gBsePlwdGvSZoLSBfd4HAP93HDauMY4fDjXhreg/vg6F3Fj/MXDNyTbltPC/xZKmZc+cjLu3598DdYK6sgQ==}
     peerDependencies:
@@ -4235,6 +4250,13 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
+    dev: false
+
+  /react/18.2.0:
+    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      loose-envify: 1.4.0
     dev: false
 
   /readable-stream/1.1.14:
@@ -4458,6 +4480,12 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
+    dev: false
+
+  /scheduler/0.23.0:
+    resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
+    dependencies:
+      loose-envify: 1.4.0
     dev: false
 
   /semver/5.7.1:
@@ -4828,6 +4856,19 @@ packages:
       url: 0.11.0
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /swagger-ui-flat-model-plugin/0.1.4:
+    resolution: {integrity: sha512-LqLDJ1KGLX0AKIvBjbpONrTru3R4L5WoIZ6lDbiMK3ck2MYG9p7YWTNFtvHf9JOBsKM60OSJ3RH+KU1lDuH1mg==}
+    dependencies:
+      '@braintree/sanitize-url': 6.0.2
+      object-hash: 3.0.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      swagger-ui: 4.15.5
+    transitivePeerDependencies:
+      - encoding
+      - react-native
     dev: false
 
   /swagger-ui/4.15.5:
