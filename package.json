@@ -2,7 +2,7 @@
   "name": "api-tools",
   "description": "Set of tools to perform API transformation and analysis",
   "version": "1.0.0",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "author": "marc0l92",
   "keywords": [
     "Swagger",
