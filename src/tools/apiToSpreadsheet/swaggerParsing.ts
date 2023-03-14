@@ -42,7 +42,7 @@ function getAuthorizedValues(model: ApiModelDoc): string {
 
 function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, path: string = '', level: number = 0): ModelProperty[] {
     let flatMap: ModelProperty[] = []
-    // console.log('generateModelFlatMap:', { model })
+    // console.log('generateModelFlatMap:', { model, path, level })
 
     const flatItem: ModelProperty = {
         Location: LOCATION_BODY,
@@ -79,7 +79,7 @@ function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, pat
             )
         }
     }
-    if ('additionalProperties' in model) {
+    if ('additionalProperties' in model && typeof model.additionalProperties === 'object') {
         flatMap = flatMap.concat(
             generateModelFlatMap(
                 model.additionalProperties,
