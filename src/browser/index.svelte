@@ -7,12 +7,14 @@
   import ApiSummary from './apiSummary.svelte';
   import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
   import SearchBar from './searchBar.svelte';
+  import { filterApiIndex } from 'common/search';
 
   const API_INDEX_PATH = './apis/apiIndex.json';
 
   let apiIndex: ApiIndex = null;
   let errors: string[] = [];
   let favoriteCount = 0;
+  let searchText = '';
   $: {
     favoriteCount = Object.values($browserOptions.favorites).filter((pi) => Object.values(pi).filter((fi) => fi).length).length;
   }
@@ -29,6 +31,10 @@
       }
     }
     $browserOptions.favorites = $browserOptions.favorites;
+  }
+
+  function onSearchTextChange(event: CustomEvent<{ searchText: string }>) {
+    searchText = event.detail.searchText;
   }
 
   onMount(async () => {
@@ -54,10 +60,10 @@
     </div>
   </section>
 
-  <SearchBar />
+  <SearchBar on:searchTextChange={onSearchTextChange} />
   <Errors messages={errors} />
   {#if apiIndex}
-    {#if favoriteCount > 0}
+    {#if favoriteCount > 0 && !searchText}
       <h4 class="subtitle is-4"><i class="fas fa-star" /> Favorites</h4>
       <div class="columns is-multiline">
         {#each Object.entries($browserOptions.favorites) as [packageName, packageItem]}
@@ -71,7 +77,7 @@
         {/each}
       </div>
     {/if}
-    {#each Object.entries(apiIndex) as [packageName, packageItem]}
+    {#each Object.entries(filterApiIndex(apiIndex, searchText)) as [packageName, packageItem]}
       <h4 class="subtitle is-4">{packageName}</h4>
       <div class="columns is-multiline">
         {#each Object.entries(packageItem) as [apiName, apiItem]}

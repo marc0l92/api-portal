@@ -41,7 +41,7 @@
         </ul>
     </div>
     <div class="table-container">
-        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth has-sticky-header">
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
             {#if workbook[selectedSheet].length > 0}
                 <thead>
                     <tr>

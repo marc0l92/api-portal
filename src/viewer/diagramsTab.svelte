@@ -1,7 +1,7 @@
 <script lang="ts">
     import { diagramBuilderOptions } from 'tools/apiToPlantUml/diagramBuilderOptions';
-    import { parseServiceDiagrams, type DiagramData } from 'tools/apiToPlantUml/serivceDiagrams';
-    import type { Api, ApiService } from 'common/api';
+    import { parseServiceDiagrams, type DiagramData } from 'tools/apiToPlantUml/serviceDiagrams';
+    import type { Api, ApiService } from 'common/api//api';
     import SelectServices from 'components/selectServices.svelte';
 
     export let api: Api = null;

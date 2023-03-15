@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { ApiService } from 'common/api';
     import { diagramBuilderOptions, type DiagramBuilderOptions } from './diagramBuilderOptions';
-    import { parseServiceDiagrams, type DiagramData } from './serivceDiagrams';
+    import { parseServiceDiagrams, type DiagramData } from './serviceDiagrams';
 
     export let service: ApiService = null;
     let diagrams: DiagramData[] = [];

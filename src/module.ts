@@ -1,5 +1,5 @@
 import type { DiagramBuilderOptions } from "tools/apiToPlantUml/diagramBuilderOptions"
-import { parseServiceDiagrams, type DiagramData } from "tools/apiToPlantUml/serivceDiagrams"
+import { parseServiceDiagrams, type DiagramData } from "tools/apiToPlantUml/serviceDiagrams"
 import { generateServiceWorkbook } from "tools/apiToSpreadsheet/swaggerParsing"
 import { modelPropertiesToTables, tablesMapToXLSX } from "tools/apiToSpreadsheet/xlsxUtils"
 import type { Api } from "common/api/api"

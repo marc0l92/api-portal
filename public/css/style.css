@@ -61,10 +61,3 @@ strong {
 #swaggerUiRoot .swagger-ui .wrapper {
     max-width: none;
 }
-
-.table.has-sticky-header thead th {
-    position: sticky;
-    top: 0;
-    z-index: 6;
-    background: #fff;
-}

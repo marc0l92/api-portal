@@ -1,8 +1,8 @@
 <script lang="ts">
     import JSZip from 'jszip';
-    import type { ApiService } from 'common/api';
+    import type { ApiService } from 'common/api/api';
     import { diagramBuilderOptions } from './diagramBuilderOptions';
-    import { parseServiceDiagrams, type DiagramData } from './serivceDiagrams';
+    import { parseServiceDiagrams, type DiagramData } from './serviceDiagrams';
     import { generateAndDownloadZip, sanitizeFilename } from 'common/filesUtils';
 
     export let apiName: string = '';
