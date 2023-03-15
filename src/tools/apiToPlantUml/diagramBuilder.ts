@@ -1,7 +1,7 @@
 import type { ApiParameterDoc } from 'common/api/api'
 import { ModelType, type ApiModelDoc } from 'common/api/apiModel'
 import * as PlantumlEncoder from 'plantuml-encoder'
-import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, type DiagramBuilderOptions } from './diagramBuilderOptions'
+import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, DiagramBuilderFormat, type DiagramBuilderOptions } from './diagramBuilderOptions'
 
 
 interface ApiModelDocMap {
@@ -41,9 +41,9 @@ export default class DiagramBuilder {
         return this.diagramText + '@enduml'
     }
 
-    getDiagramImageUri(): string {
+    getDiagramImageUri(format: DiagramBuilderFormat = this.options.format): string {
         const encodedDiagram = PlantumlEncoder.encode(this.getDiagramText())
-        return this.options.serverUrl + '/' + this.options.format + '/' + encodedDiagram
+        return this.options.serverUrl + '/' + format + '/' + encodedDiagram
     }
 
     // Builder

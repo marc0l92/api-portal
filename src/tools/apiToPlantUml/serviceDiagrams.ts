@@ -1,12 +1,13 @@
 import type { ApiParameterDoc, ApiService } from "common/api/api"
 import { mergeAllOfDefinitions, type ApiModelDoc } from "common/api/apiModel"
 import DiagramBuilder from "./diagramBuilder"
-import type { DiagramBuilderOptions } from "./diagramBuilderOptions"
+import { DiagramBuilderFormat, type DiagramBuilderOptions } from "./diagramBuilderOptions"
 
 export interface DiagramData {
     name: string
     uml: string
     image: string
+    umlEditor: string
 }
 
 function getDiagramData(model: ApiModelDoc, parameters: ApiParameterDoc[], title: string, options: DiagramBuilderOptions): DiagramData {
@@ -22,6 +23,7 @@ function getDiagramData(model: ApiModelDoc, parameters: ApiParameterDoc[], title
         name: title,
         uml: diagramBuilder.getDiagramText(),
         image: diagramBuilder.getDiagramImageUri(),
+        umlEditor: diagramBuilder.getDiagramImageUri(DiagramBuilderFormat.UML),
     }
 }
 

@@ -23,7 +23,14 @@
 
 <SelectServices servicesSelectSize={1} {services} on:serviceSelect={onServiceSelect} />
 {#each diagrams as diagram}
-    <p><strong>{diagram.name}</strong></p>
+    <p>
+        <strong>{diagram.name}</strong>
+        <a href={diagram.umlEditor} target="_blank" rel="noreferrer" title="Open UML editor">
+            <span class="icon is-small">
+                <i class="fas fa-pen-to-square" />
+            </span>
+        </a>
+    </p>
     <figure>
         <a href={diagram.image} target="_blank" rel="noreferrer">
             <img src={diagram.image} alt={diagram.name} />

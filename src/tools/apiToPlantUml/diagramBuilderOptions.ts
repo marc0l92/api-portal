@@ -2,9 +2,16 @@ import { getDiagramsDefaultServer } from "common/globals"
 import { getOptions, storeOptions } from "common/localStorage"
 import { writable, type Unsubscriber } from "svelte/store"
 
+export enum DiagramBuilderFormat {
+    SVG = 'svg',
+    PNG = 'png',
+    UML = 'uml',
+    TXT = 'txt',
+}
+
 export interface DiagramBuilderOptions {
     serverUrl?: string
-    format?: string
+    format?: DiagramBuilderFormat
     diagramHeader?: string
     colors?: boolean
     parameters?: boolean
@@ -15,7 +22,7 @@ const LOCAL_STORAGE_KEY = 'diagramsBuilderOptions';
 export const DEFAULT_DIAGRAM_BUILDER_OPTIONS: DiagramBuilderOptions = {
     serverUrl: getDiagramsDefaultServer(),
     diagramHeader: '',
-    format: 'svg',
+    format: DiagramBuilderFormat.PNG,
     colors: true,
     parameters: true,
 }

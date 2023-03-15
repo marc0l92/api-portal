@@ -1,7 +1,7 @@
 <script lang="ts">
     import JSZip from 'jszip';
     import type { ApiService } from 'common/api/api';
-    import { diagramBuilderOptions } from './diagramBuilderOptions';
+    import { DiagramBuilderFormat, diagramBuilderOptions } from './diagramBuilderOptions';
     import { parseServiceDiagrams, type DiagramData } from './serviceDiagrams';
     import { generateAndDownloadZip, sanitizeFilename } from 'common/filesUtils';
 
@@ -11,7 +11,7 @@
     let isProcessing = false;
     let processingIndex = -1;
 
-    async function addDiagramsDataToZip(zip: JSZip, diagramsData: DiagramData[], format: string) {
+    async function addDiagramsDataToZip(zip: JSZip, diagramsData: DiagramData[], format: DiagramBuilderFormat) {
         for (const diagramData of diagramsData) {
             zip.file(sanitizeFilename(`${diagramData.name}.plantuml`), diagramData.uml);
             const response = await fetch(diagramData.image);

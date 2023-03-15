@@ -1,6 +1,6 @@
 <script lang="ts">
     import { isChangeDiagramServerAllowed } from 'common/globals';
-    import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, diagramBuilderOptions } from './diagramBuilderOptions';
+    import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, DiagramBuilderFormat, diagramBuilderOptions } from './diagramBuilderOptions';
 </script>
 
 <div class="mt-4">
@@ -17,9 +17,9 @@
         <div class="control">
             <div class="select">
                 <select bind:value={$diagramBuilderOptions.format}>
-                    <option value="svg">svg</option>
-                    <option value="png">png</option>
-                    <!-- <option value="txt">txt</option> -->
+                    <option value={DiagramBuilderFormat.SVG}>svg</option>
+                    <option value={DiagramBuilderFormat.PNG}>png</option>
+                    <!-- <option value={DiagramBuilderFormat.TXT}>txt</option> -->
                 </select>
             </div>
         </div>
