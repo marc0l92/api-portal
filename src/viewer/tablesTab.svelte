@@ -41,26 +41,27 @@
         </ul>
     </div>
     <div class="table-container">
-        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-            {#each workbook[selectedSheet] as fields, index}
-                {#if index === 0}
-                    <thead>
-                        <tr>
-                            {#each fields as field}
-                                <th>{field}</th>
-                            {/each}
-                        </tr>
-                    </thead>
-                {:else}
-                    <tbody>
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth has-sticky-header">
+            {#if workbook[selectedSheet].length > 0}
+                <thead>
+                    <tr>
+                        {#each workbook[selectedSheet][0] as field}
+                            <th>{field}</th>
+                        {/each}
+                    </tr>
+                </thead>
+            {/if}
+            <tbody>
+                {#each workbook[selectedSheet] as fields, index}
+                    {#if index !== 0}
                         <tr>
                             {#each fields as field}
                                 <td>{field}</td>
                             {/each}
                         </tr>
-                    </tbody>
-                {/if}
-            {/each}
+                    {/if}
+                {/each}
+            </tbody>
         </table>
     </div>
 {/if}
