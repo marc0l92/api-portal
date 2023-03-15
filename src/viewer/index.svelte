@@ -107,10 +107,10 @@
     } else {
       errors = [...errors, 'No api selected'];
     }
-    // document.addEventListener('click', () => {
-    //   isVersionDropdownExpanded = false;
-    //   isFileNameDropdownExpanded = false;
-    // });
+    document.addEventListener('click', () => {
+      isVersionDropdownExpanded = false;
+      isFileNameDropdownExpanded = false;
+    });
   });
   onDestroy(() => {
     viewerOptionsDestroy();
@@ -134,7 +134,7 @@
           <div class="column is-narrow">
             <div class="dropdown is-right {isVersionDropdownExpanded ? 'is-active' : ''}">
               <div class="dropdown-trigger">
-                <button class="button" on:click={() => (isVersionDropdownExpanded = !isVersionDropdownExpanded)}>
+                <button class="button" on:click|stopPropagation={() => (isVersionDropdownExpanded = !isVersionDropdownExpanded)}>
                   <span>{apiSummary.versionName}</span>
                   <span class="icon is-small">
                     <i class="fas fa-angle-down" aria-hidden="true" />
@@ -158,7 +158,7 @@
             {#if Object.keys(apiSummary.apiSummary[apiSummary.versionName]).length !== 1}
               <div class="dropdown is-right {isFileNameDropdownExpanded ? 'is-active' : ''}">
                 <div class="dropdown-trigger">
-                  <button class="button" on:click={() => (isFileNameDropdownExpanded = !isFileNameDropdownExpanded)}>
+                  <button class="button" on:click|stopPropagation={() => (isFileNameDropdownExpanded = !isFileNameDropdownExpanded)}>
                     <span class="short-text">{apiSummary.fileName}</span>
                     <span class="icon is-small">
                       <i class="fas fa-angle-down" aria-hidden="true" />

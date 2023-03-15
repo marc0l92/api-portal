@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
     import { getValidationBadgeCss, type ApiValidation } from './validation';
     import { viewerOptions } from './viewerOptions';
@@ -21,6 +21,11 @@
         validationErrorsCount = validationData.length;
         validationErrorsCss = getValidationBadgeCss(validationData);
     }
+    onMount(async () => {
+        document.addEventListener('click', () => {
+            showMenu = false;
+        });
+    });
 </script>
 
 <div class="tabs-with-options">
@@ -69,7 +74,7 @@
             </li>
         </ul>
     </div>
-    <div class="dropdown is-right {showMenu ? 'is-active' : ''}" on:click={() => (showMenu = !showMenu)} on:keypress={() => (showMenu = !showMenu)}>
+    <div class="dropdown is-right {showMenu ? 'is-active' : ''}" on:click|stopPropagation={() => (showMenu = !showMenu)} on:keypress={() => (showMenu = !showMenu)}>
         <div class="dropdown-trigger">
             <button>
                 <i class="fas fa-ellipsis-vertical" />
