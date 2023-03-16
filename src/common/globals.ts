@@ -1,8 +1,14 @@
+import type { BuildConfig, HomeLink } from "build/buildConfig"
+
 declare const IS_TEST: boolean
-declare const APP_CONFIG: any
+declare const APP_CONFIG: BuildConfig
 
 const isTest = (): boolean => {
     return IS_TEST
+}
+
+export const getAppName = (): string => {
+    return APP_CONFIG.name || 'Api Tools'
 }
 
 export const getBasePath = (): string => {
@@ -21,6 +27,13 @@ export const isChangeDiagramServerAllowed = (): boolean => {
         return !!APP_CONFIG.diagrams.allowServerChange
     }
     return true
+}
+
+export const getHomeLinks = (): HomeLink[] => {
+    if (APP_CONFIG.home && APP_CONFIG.home.links) {
+        return APP_CONFIG.home.links
+    }
+    return []
 }
 
 export const setupHotReload = () => {

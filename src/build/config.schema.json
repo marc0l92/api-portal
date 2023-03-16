@@ -9,8 +9,16 @@
                     "description": "Subtitle of the item in the home page",
                     "type": "string"
                 },
+                "icon": {
+                    "description": "Font-awesome icon of the item in the home page",
+                    "type": "string"
+                },
                 "link": {
                     "description": "Link of the item in the home page",
+                    "type": "string"
+                },
+                "subtitle": {
+                    "description": "Subtitle of the item in the home page",
                     "type": "string"
                 },
                 "title": {
@@ -18,6 +26,9 @@
                     "type": "string"
                 }
             },
+            "required": [
+                "title"
+            ],
             "type": "object"
         }
     },

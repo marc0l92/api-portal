@@ -14,7 +14,7 @@
     "generate": "node generate.mjs",
     "test": "jest --silent=false",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-    "config-schema":"typescript-json-schema src/build/BuildConfig.ts BuildConfig > src/build/config.schema.json"
+    "config-schema": "typescript-json-schema --required src/build/BuildConfig.ts BuildConfig > src/build/config.schema.json"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",

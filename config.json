@@ -14,12 +14,14 @@
       {
         "title": "Repository",
         "description": "GitHub repository with the project code",
-        "link": "https://github.com/marc0l92/api-tools"
+        "link": "https://github.com/marc0l92/api-tools",
+        "icon": "far fa-file-lines"
       },
       {
         "title": "Project Plan",
         "description": "GitHub Project with the backlog of items for this project",
-        "link": "https://github.com/users/marc0l92/projects/4/views/7"
+        "link": "https://github.com/users/marc0l92/projects/4/views/7",
+        "icon": "far fa-file-lines"
       }
     ]
   }

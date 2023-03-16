@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getBasePath } from 'common/globals';
+  import { getAppName, getBasePath } from 'common/globals';
 
   export let activePage = 'restApiToText';
   const basePath = getBasePath();
@@ -8,7 +8,7 @@
 
 <nav class="navbar">
   <div class="navbar-brand">
-    <a class="navbar-item" href={basePath}><strong>API Server</strong></a>
+    <a class="navbar-item" href={basePath}><strong>{getAppName()}</strong></a>
 
     <button
       class="navbar-burger {showMenu ? 'is-active' : ''}"
