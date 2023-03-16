@@ -10,10 +10,10 @@
     "API"
   ],
   "scripts": {
-    "dev": "node esbuild.config.mjs",
-    "generate": "node generate.mjs",
+    "dev": "node src/build/esbuild.config.mjs",
+    "generate": "node src/build/generate.mjs",
     "test": "jest --silent=false",
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "build": "tsc -noEmit -skipLibCheck && node src/build/esbuild.config.mjs production",
     "config-schema": "typescript-json-schema --required src/build/BuildConfig.ts BuildConfig > src/build/config.schema.json"
   },
   "dependencies": {
