@@ -1,0 +1,26 @@
+{
+  "$schema": "src\\build\\config.schema.json",
+  "name": "Api Tools",
+  "basePath": "/api-tools",
+  "diagrams": {
+    "defaultServer": "https://www.plantuml.com/plantuml",
+    "allowServerChange": true
+  },
+  "validation": {
+    "spectralRulesFile": ".spectral.yaml"
+  },
+  "home": {
+    "links": [
+      {
+        "title": "Repository",
+        "description": "GitHub repository with the project code",
+        "link": "https://github.com/marc0l92/api-tools"
+      },
+      {
+        "title": "Project Plan",
+        "description": "GitHub Project with the backlog of items for this project",
+        "link": "https://github.com/users/marc0l92/projects/4/views/7"
+      }
+    ]
+  }
+}
