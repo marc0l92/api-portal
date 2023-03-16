@@ -4,9 +4,12 @@ import { resolveReferences } from "./refParser"
 export interface ApiGenericDoc {
     swagger?: string
     openapi?: string
-    ['x-status']?: string
-    ['x-tags']?: string[]
-    ['x-pull-request']?: string
+    ['x-metadata']?: {
+        status?: string
+        tags?: string[]
+        branch?: string
+        pullRequest?: string
+    }
 }
 
 export interface ApiParameterDoc {
@@ -17,6 +20,10 @@ export interface ApiParameterDoc {
     schema?: ApiModelDoc
     description?: string
     example?: any
+}
+
+export interface ApiMetadata {
+    [metadataName: string]: string
 }
 
 export interface ApiParameterDocMap {
@@ -44,13 +51,20 @@ export abstract class Api {
         this.apiDoc = await resolveReferences(this.apiDoc)
     }
     getStatus(): string {
-        return this.apiDoc['x-status']
+        return this.apiDoc['x-metadata'].status
     }
-    getTags(): string[] {
-        return this.apiDoc['x-tags']
-    }
-    getPullRequest(): string {
-        return this.apiDoc['x-pull-request']
+    getMetadata(): ApiMetadata {
+        const apiMetadata: any = this.apiDoc['x-metadata']
+        const metadata: ApiMetadata = {}
+
+        for (const name in apiMetadata) {
+            if (typeof apiMetadata[name] === 'string') {
+                metadata[name] = apiMetadata[name] as string
+            } else {
+                metadata[name] = JSON.stringify(apiMetadata[name])
+            }
+        }
+        return metadata
     }
     abstract getReleaseNotes(): ApiReleaseNotes
     abstract getName(): string

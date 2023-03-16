@@ -1,3 +1,5 @@
+import type { ApiMetadata } from "./api"
+
 export interface ApiIndex {
     [packageName: string]: {
         [apiName: string]: ApiSummary
@@ -13,8 +15,7 @@ export interface ApiSummary {
 export interface ApiIndexItem {
     hash: string
     status: string
-    tags: string[]
-    pullRequest: string
+    metadata: ApiMetadata
     updateTime: string
 }
 
@@ -24,8 +25,7 @@ export interface ApiSummaryFlat {
     versionName: string
     fileName: string
     status: string
-    tags: string[]
-    pullRequest: string
+    metadata: ApiMetadata
     updateTime: string
     hash: string
     apiSummary: ApiSummary
@@ -40,8 +40,7 @@ export function getApiByHash(hash: string, apiIndex: ApiIndex): ApiSummaryFlat {
                         return {
                             packageName, apiName, versionName, fileName,
                             status: apiIndex[packageName][apiName][versionName][fileName].status,
-                            tags: apiIndex[packageName][apiName][versionName][fileName].tags,
-                            pullRequest: apiIndex[packageName][apiName][versionName][fileName].pullRequest,
+                            metadata: apiIndex[packageName][apiName][versionName][fileName].metadata,
                             updateTime: apiIndex[packageName][apiName][versionName][fileName].updateTime,
                             hash: apiIndex[packageName][apiName][versionName][fileName].hash,
                             apiSummary: apiIndex[packageName][apiName],

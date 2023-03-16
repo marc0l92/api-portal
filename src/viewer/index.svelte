@@ -127,9 +127,6 @@
           <div class="column">
             <h1 class="title">{apiSummary.apiName}</h1>
             <h3 class="subtitle">{apiSummary.packageName}</h3>
-            {#if apiSummary.pullRequest}
-              <a href={apiSummary.pullRequest}>Pull request</a>
-            {/if}
           </div>
           <div class="column is-narrow">
             <div class="dropdown is-right {isVersionDropdownExpanded ? 'is-active' : ''}">
@@ -168,19 +165,25 @@
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                   <div class="dropdown-content">
                     {#each ['VALIDATED', 'NOT_VALIDATED', 'DRAFT'] as status}
-                      <div class="api-status-section">
-                        {#each Object.entries(apiSummary.apiSummary[apiSummary.versionName]) as [fileName, apiItem]}
-                          {#if apiItem.status === status}
-                            <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item {apiItem.status}">
-                              {#if fileName === apiSummary.fileName}
-                                <strong>{fileName}</strong>
-                              {:else}
-                                {fileName}
-                              {/if}
-                            </a>
-                          {/if}
-                        {/each}
+                      <div class="api-status-section {status}">
+                        <p class="menu-label dropdown-item">{status}</p>
+                        <ul class="menu-list">
+                          {#each Object.entries(apiSummary.apiSummary[apiSummary.versionName]) as [fileName, apiItem]}
+                            {#if apiItem.status === status}
+                              <li>
+                                <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item {apiItem.status}">
+                                  {#if fileName === apiSummary.fileName}
+                                    <strong>{fileName}</strong>
+                                  {:else}
+                                    {fileName}
+                                  {/if}
+                                </a>
+                              </li>
+                            {/if}
+                          {/each}
+                        </ul>
                       </div>
+                      <hr class="dropdown-divider" />
                     {/each}
                   </div>
                 </div>
@@ -230,15 +233,23 @@
     overflow: hidden;
     max-width: 15em;
   }
-  .dropdown-item.NOT_VALIDATED {
-    color: #ffe08a;
+  .api-status-section {
+    border-left-width: 3px;
+    border-left-style: solid;
   }
-  .dropdown-item.DRAFT {
-    color: #f14668;
+  .api-status-section.VALIDATED {
+    border-left-color: #48c78e;
   }
-  .api-status-section:has(a) + .api-status-section:has(a) {
-    border-top: 1px solid #eee;
-    padding-top: 0.5em;
-    margin-top: 0.5em;
+  .api-status-section.NOT_VALIDATED {
+    border-left-color: #ffe08a;
+  }
+  .api-status-section.DRAFT {
+    border-left-color: #f14668;
+  }
+  .api-status-section:not(:has(ul > li)) + .dropdown-divider {
+    display: none;
+  }
+  .api-status-section:not(:has(ul > li)) {
+    display: none;
   }
 </style>
