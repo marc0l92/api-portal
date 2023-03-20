@@ -60,3 +60,5 @@ export const apiToTables = async (apiObject: any) => {
     }
     return tablesData
 }
+
+export default { resolveReferences, parseApi, apiToPlantUmlDiagrams, apiToSpreadsheet, apiToTables }
