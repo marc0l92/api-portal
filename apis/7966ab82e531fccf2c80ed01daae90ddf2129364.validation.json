@@ -1,0 +1,248 @@
+[
+	{
+		"code": "openapi-tags",
+		"path": [],
+		"message": "OpenAPI object must have non-empty \"tags\" array.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 0
+			},
+			"end": {
+				"line": 0,
+				"character": 2516
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "info-contact",
+		"path": [
+			"info"
+		],
+		"message": "Info object must have \"contact\" object.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 26
+			},
+			"end": {
+				"line": 0,
+				"character": 146
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "info-license",
+		"path": [
+			"info"
+		],
+		"message": "Info object must have \"license\" object.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 26
+			},
+			"end": {
+				"line": 0,
+				"character": 146
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "license-url",
+		"path": [
+			"info"
+		],
+		"message": "License object must include \"url\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 26
+			},
+			"end": {
+				"line": 0,
+				"character": 146
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "operation-operationId",
+		"path": [
+			"paths",
+			"/api/partners/ELD/ELDProvider",
+			"get"
+		],
+		"message": "Operation must have \"operationId\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 519
+			},
+			"end": {
+				"line": 0,
+				"character": 941
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "operation-tag-defined",
+		"path": [
+			"paths",
+			"/api/partners/ELD/ELDProvider",
+			"get",
+			"tags",
+			"0"
+		],
+		"message": "Operation tags must be defined in global tags.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 528
+			},
+			"end": {
+				"line": 0,
+				"character": 555
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "operation-operationId",
+		"path": [
+			"paths",
+			"/api/partners/ELD/ELDIntegration/{CarrierMC}",
+			"get"
+		],
+		"message": "Operation must have \"operationId\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 1000
+			},
+			"end": {
+				"line": 0,
+				"character": 1585
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "operation-tag-defined",
+		"path": [
+			"paths",
+			"/api/partners/ELD/ELDIntegration/{CarrierMC}",
+			"get",
+			"tags",
+			"0"
+		],
+		"message": "Operation tags must be defined in global tags.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 1009
+			},
+			"end": {
+				"line": 0,
+				"character": 1039
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"responses",
+			"ELDProviderResponse"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 1728
+			},
+			"end": {
+				"line": 0,
+				"character": 1979
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"responses",
+			"ELDIntegrationResponse"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 2010
+			},
+			"end": {
+				"line": 0,
+				"character": 2259
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"responses",
+			"UnauthorizedError"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 2285
+			},
+			"end": {
+				"line": 0,
+				"character": 2336
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"schemas",
+			"ELDProvider"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 2364
+			},
+			"end": {
+				"line": 0,
+				"character": 2516
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/7966ab82e531fccf2c80ed01daae90ddf2129364.api.json"
+	}
+]
