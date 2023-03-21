@@ -51,7 +51,10 @@ export abstract class Api {
         this.apiDoc = await resolveReferences(this.apiDoc)
     }
     getStatus(): string {
-        return this.apiDoc['x-metadata'].status
+        if (this.apiDoc['x-metadata'] && this.apiDoc['x-metadata'].status) {
+            return this.apiDoc['x-metadata'].status
+        }
+        return 'VALIDATED'
     }
     getMetadata(): ApiMetadata {
         const apiMetadata: any = this.apiDoc['x-metadata']
