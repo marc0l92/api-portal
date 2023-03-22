@@ -21,6 +21,7 @@
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
   import type { ApiValidation } from './validation';
   import Metadata from './metadata.svelte';
+  import { getApiStatusName } from 'common/api/apiStatus';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const API_INDEX_PATH = './apis/apiIndex.json';
@@ -165,14 +166,14 @@
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                   <div class="dropdown-content">
-                    {#each ['VALIDATED', 'NOT_VALIDATED', 'DRAFT'] as status}
-                      <div class="api-status-section {status}">
-                        <p class="menu-label dropdown-item">{status}</p>
+                    {#each [0, 1, 2] as status}
+                      <div class="api-status-section status-{status}">
+                        <p class="menu-label dropdown-item">{getApiStatusName(status)}</p>
                         <ul class="menu-list">
                           {#each Object.entries(apiSummary.apiSummary[apiSummary.versionName]) as [fileName, apiItem]}
                             {#if apiItem.status === status}
                               <li>
-                                <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item {apiItem.status}">
+                                <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item status-{apiItem.status}">
                                   {#if fileName === apiSummary.fileName}
                                     <strong>{fileName}</strong>
                                   {:else}
@@ -193,7 +194,7 @@
           </div>
         </div>
       </div>
-      <Metadata metadata={apiSummary.metadata}/>
+      <Metadata metadata={apiSummary.metadata} />
     </section>
   {:else}
     <section class="hero is-small">
@@ -239,13 +240,13 @@
     border-left-width: 3px;
     border-left-style: solid;
   }
-  .api-status-section.VALIDATED {
+  .api-status-section.status-0 {
     border-left-color: #48c78e;
   }
-  .api-status-section.NOT_VALIDATED {
+  .api-status-section.status-1 {
     border-left-color: #ffe08a;
   }
-  .api-status-section.DRAFT {
+  .api-status-section.status-2 {
     border-left-color: #f14668;
   }
   .api-status-section:not(:has(ul > li)) + .dropdown-divider {

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getBasePath } from 'common/globals';
-    import type { ApiSummary } from '../common/api/apiIndex';
+    import type { ApiIndexItem, ApiSummary } from '../common/api/apiIndex';
     import { browserOptions } from './browserOptions';
 
     const VERSION_LIMIT = 5;
@@ -9,7 +9,6 @@
     export let packageName: string = null;
     export let name: string = null;
     export let apiSummary: ApiSummary = null;
-    let lastApiVersion = '';
     let lastApiHash = '';
     let isExpanded = false;
 
@@ -22,16 +21,23 @@
     }
 
     $: if (apiSummary) {
-        lastApiVersion = Object.keys(apiSummary)[0];
+        const lastApiVersion = Object.keys(apiSummary)[0];
         lastApiHash = Object.values(apiSummary[lastApiVersion])[0].hash;
+    }
+
+    function getWorstState(versionSummary: { [fileName: string]: ApiIndexItem }) {
+        const maxStatus = Object.values(versionSummary)
+            .map((x) => x.status)
+            .reduce((prev, curr) => Math.max(prev, curr));
+        return `status-${maxStatus}`;
     }
 </script>
 
 {#if apiSummary}
     <div class="card">
         <header class="card-header">
-            <a href="{basePath}/viewer.html?api={lastApiHash}">
-                <p class="card-header-title">{name} - {lastApiVersion}</p>
+            <a class="card-header-body" href="{basePath}/viewer.html?api={lastApiHash}">
+                <p class="card-header-title">{name}</p>
             </a>
             <button class="card-header-icon" on:click={onFavoriteToggle}>
                 <span class="icon">
@@ -44,7 +50,7 @@
                 <div class="columns is-multiline">
                     <div class="column">
                         {#each Object.entries(apiSummary).slice(0, isExpanded ? undefined : 5) as [versionName, versionSummary]}
-                            <a class="tag ml-1 mb-1 {Object.values(versionSummary)[0].status}" href="{basePath}/viewer.html?api={Object.values(versionSummary)[0].hash}">
+                            <a class="tag ml-1 mb-1 {getWorstState(versionSummary)}" href="{basePath}/viewer.html?api={Object.values(versionSummary)[0].hash}">
                                 {versionName}
                             </a>
                         {/each}
@@ -61,6 +67,9 @@
 {/if}
 
 <style>
+    .card-header-body {
+        flex-grow: 1;
+    }
     .card-header-title {
         word-break: break-all;
     }
@@ -72,5 +81,13 @@
         vertical-align: baseline;
         padding-left: 0.75em;
         padding-right: 0.75em;
+    }
+    .tag.status-1 {
+        background-color: #ffe08a;
+        color: white;
+    }
+    .tag.status-2 {
+        background-color: #f14668;
+        color: white;
     }
 </style>

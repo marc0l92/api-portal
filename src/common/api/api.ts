@@ -5,7 +5,7 @@ export interface ApiGenericDoc {
     swagger?: string
     openapi?: string
     ['x-metadata']?: {
-        status?: string
+        status?: number
         tags?: string[]
         branch?: string
         pullRequest?: string
@@ -50,11 +50,11 @@ export abstract class Api {
     async resolveReferences(): Promise<void> {
         this.apiDoc = await resolveReferences(this.apiDoc)
     }
-    getStatus(): string {
+    getStatus(): number {
         if (this.apiDoc['x-metadata'] && this.apiDoc['x-metadata'].status) {
             return this.apiDoc['x-metadata'].status
         }
-        return 'VALIDATED'
+        return 0
     }
     getMetadata(): ApiMetadata {
         const apiMetadata: any = this.apiDoc['x-metadata']

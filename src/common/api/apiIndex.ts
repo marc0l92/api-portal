@@ -14,7 +14,7 @@ export interface ApiSummary {
 
 export interface ApiIndexItem {
     hash: string
-    status: string
+    status: number
     metadata: ApiMetadata
     updateTime: string
 }
@@ -24,7 +24,7 @@ export interface ApiSummaryFlat {
     apiName: string
     versionName: string
     fileName: string
-    status: string
+    status: number
     metadata: ApiMetadata
     updateTime: string
     hash: string
