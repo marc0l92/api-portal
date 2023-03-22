@@ -43,9 +43,9 @@
             {#each validationData as validationItem}
                 {#if !selectedErrorCode || selectedErrorCode === validationItem.code}
                     <div class="notification {severityNames[validationItem.severity].css}">
-                        <p>Code: {validationItem.code}</p>
-                        <p>Message: {validationItem.message}</p>
-                        <p>Path: /{validationItem.path.join('/')}</p>
+                        <span><strong>Code</strong>: {validationItem.code}</span><br />
+                        <span><strong>Message</strong>: {validationItem.message}</span><br />
+                        <span><strong>Path</strong>: /{validationItem.path.join('/')}</span>
                     </div>
                 {/if}
             {/each}
