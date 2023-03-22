@@ -193,8 +193,8 @@
             {/if}
           </div>
         </div>
+        <Metadata metadata={apiSummary.metadata} />
       </div>
-      <Metadata metadata={apiSummary.metadata} />
     </section>
   {:else}
     <section class="hero is-small">
