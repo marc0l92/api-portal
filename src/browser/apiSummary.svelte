@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getBasePath } from 'common/globals';
-    import type { ApiSummary } from '../common/apiIndex';
+    import type { ApiSummary } from '../common/api/apiIndex';
     import { browserOptions } from './browserOptions';
 
     const VERSION_LIMIT = 5;
@@ -41,11 +41,10 @@
         </header>
         <div class="card-content">
             <div class="content">
-                <!-- <p class="subtitle is-6">{lastVersion.fileName}</p> -->
                 <div class="columns is-multiline">
                     <div class="column">
                         {#each Object.entries(apiSummary).slice(0, isExpanded ? undefined : 5) as [versionName, versionSummary]}
-                            <a class="tag ml-1 mb-1" href="{basePath}/viewer.html?api={Object.values(versionSummary)[0].hash}">
+                            <a class="tag ml-1 mb-1 {Object.values(versionSummary)[0].status}" href="{basePath}/viewer.html?api={Object.values(versionSummary)[0].hash}">
                                 {versionName}
                             </a>
                         {/each}

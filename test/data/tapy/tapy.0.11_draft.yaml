@@ -1,3 +1,9 @@
+x-metadata:
+  status: DRAFT
+  pullRequest: https://github.com/
+  author: Mario ROSSI
+  team: Team1
+  client: Client1
 info:
   title: tapy Dokumentation
   description: "NEW NEW NEW NEW NEW Alle X Sekunden wird jeder Endpunkt vom Cadu-Server angefragt. Bei einer Antwort des tapy-Servers mit nextRequest=true enthält die nächste Anfrage des Cadu-Servers die angeforderten Daten"

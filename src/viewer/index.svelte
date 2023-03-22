@@ -20,6 +20,7 @@
   import { getBasePath } from 'common/globals';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
   import type { ApiValidation } from './validation';
+  import Metadata from './metadata.svelte';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const API_INDEX_PATH = './apis/apiIndex.json';
@@ -192,6 +193,7 @@
           </div>
         </div>
       </div>
+      <Metadata metadata={apiSummary.metadata}/>
     </section>
   {:else}
     <section class="hero is-small">
