@@ -1,0 +1,541 @@
+[
+	{
+		"code": "oas3-api-servers",
+		"path": [],
+		"message": "OpenAPI \"servers\" must be present and non-empty array.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 0
+			},
+			"end": {
+				"line": 0,
+				"character": 15476
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "info-contact",
+		"path": [
+			"info"
+		],
+		"message": "Info object must have \"contact\" object.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 8
+			},
+			"end": {
+				"line": 0,
+				"character": 278
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "info-license",
+		"path": [
+			"info"
+		],
+		"message": "Info object must have \"license\" object.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 8
+			},
+			"end": {
+				"line": 0,
+				"character": 278
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "license-url",
+		"path": [
+			"info"
+		],
+		"message": "License object must include \"url\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 8
+			},
+			"end": {
+				"line": 0,
+				"character": 278
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "openapi-tags-alphabetical",
+		"path": [
+			"tags"
+		],
+		"message": "OpenAPI object must have alphabetical \"tags\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 287
+			},
+			"end": {
+				"line": 0,
+				"character": 722
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-description",
+		"path": [
+			"paths",
+			"/info",
+			"post"
+		],
+		"message": "Operation \"description\" must be present and non-empty string.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 750
+			},
+			"end": {
+				"line": 0,
+				"character": 3349
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-operationId",
+		"path": [
+			"paths",
+			"/info",
+			"post"
+		],
+		"message": "Operation must have \"operationId\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 750
+			},
+			"end": {
+				"line": 0,
+				"character": 3349
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-valid-media-example",
+		"path": [
+			"paths",
+			"/info",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"example",
+			"infoId"
+		],
+		"message": "\"infoId\" property type must be string",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 1267
+			},
+			"end": {
+				"line": 0,
+				"character": 1273
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-operationId",
+		"path": [
+			"paths",
+			"/tables/get",
+			"post"
+		],
+		"message": "Operation must have \"operationId\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 3384
+			},
+			"end": {
+				"line": 0,
+				"character": 4357
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-operationId",
+		"path": [
+			"paths",
+			"/table/get",
+			"post"
+		],
+		"message": "Operation must have \"operationId\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 4385
+			},
+			"end": {
+				"line": 0,
+				"character": 6097
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-description",
+		"path": [
+			"paths",
+			"/locked/post",
+			"post"
+		],
+		"message": "Operation \"description\" must be present and non-empty string.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 6127
+			},
+			"end": {
+				"line": 0,
+				"character": 7214
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-operationId",
+		"path": [
+			"paths",
+			"/locked/post",
+			"post"
+		],
+		"message": "Operation must have \"operationId\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 6127
+			},
+			"end": {
+				"line": 0,
+				"character": 7214
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-description",
+		"path": [
+			"paths",
+			"/payment/post",
+			"post"
+		],
+		"message": "Operation \"description\" must be present and non-empty string.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 7245
+			},
+			"end": {
+				"line": 0,
+				"character": 8341
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-operationId",
+		"path": [
+			"paths",
+			"/payment/post",
+			"post"
+		],
+		"message": "Operation must have \"operationId\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 7245
+			},
+			"end": {
+				"line": 0,
+				"character": 8341
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "operation-operationId",
+		"path": [
+			"paths",
+			"/invoice/get",
+			"post"
+		],
+		"message": "Operation must have \"operationId\".",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 8371
+			},
+			"end": {
+				"line": 0,
+				"character": 9691
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-valid-media-example",
+		"path": [
+			"paths",
+			"/invoice/get",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"examples",
+			"hospitalityReceiptFalse",
+			"value",
+			"requestId"
+		],
+		"message": "\"requestId\" property type must be integer",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 9173
+			},
+			"end": {
+				"line": 0,
+				"character": 9181
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-valid-media-example",
+		"path": [
+			"paths",
+			"/invoice/get",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"examples",
+			"hospitalityReceiptTrue",
+			"value",
+			"requestId"
+		],
+		"message": "\"requestId\" property type must be integer",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 9365
+			},
+			"end": {
+				"line": 0,
+				"character": 9373
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-valid-media-example",
+		"path": [
+			"paths",
+			"/invoice/get",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"examples",
+			"invoiceNotFound",
+			"value",
+			"requestId"
+		],
+		"message": "\"requestId\" property type must be integer",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 9549
+			},
+			"end": {
+				"line": 0,
+				"character": 9557
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"schemas",
+			"nextRequestObj"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 9808
+			},
+			"end": {
+				"line": 0,
+				"character": 10246
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"schemas",
+			"nextRequestObjLocked"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 10271
+			},
+			"end": {
+				"line": 0,
+				"character": 10937
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"schemas",
+			"nextRequestObjPayment"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 10963
+			},
+			"end": {
+				"line": 0,
+				"character": 12130
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"schemas",
+			"ackObj"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 12141
+			},
+			"end": {
+				"line": 0,
+				"character": 12726
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"schemas",
+			"item"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 12735
+			},
+			"end": {
+				"line": 0,
+				"character": 13636
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"schemas",
+			"tableState"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 13651
+			},
+			"end": {
+				"line": 0,
+				"character": 15178
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	},
+	{
+		"code": "oas3-unused-component",
+		"path": [
+			"components",
+			"schemas",
+			"allTables"
+		],
+		"message": "Potentially unused component has been detected.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 0,
+				"character": 15192
+			},
+			"end": {
+				"line": 0,
+				"character": 15455
+			}
+		},
+		"source": "/home/runner/work/api-tools/api-tools/public/apis/0c698585171abfc906e554537f7fdf1c2d1a1783.api.json"
+	}
+]
