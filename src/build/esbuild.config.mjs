@@ -8,17 +8,17 @@ import fs from 'fs-extra'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import yaml from 'js-yaml'
-import type { ArgvConfig } from './argvConfig'
 
-const argv = yargs(hideBin(process.argv)).argv as any as ArgvConfig
+const argv = yargs(hideBin(process.argv)).argv
 const prod = argv._.indexOf('production') >= 0
 let appConfig = {}
 if (argv.configFile) {
-  appConfig = yaml.load(fs.readFileSync(argv.configFile).toString())
+  appConfig = yaml.load(fs.readFileSync(argv.configFile))
   console.log('Config loaded:', appConfig)
 }
 
-const webOptions: esbuild.BuildOptions = {
+/** @type {esbuild.BuildOptions} */
+const webOptions = {
   banner: {
     js: '// Project: https://github.com/marc0l92/api-tools',
   },
@@ -62,7 +62,8 @@ const webOptions: esbuild.BuildOptions = {
   ],
 }
 
-const moduleOptions: esbuild.BuildOptions = {
+/** @type {esbuild.BuildOptions} */
+const moduleOptions = {
   banner: {
     js: '// Project: https://github.com/marc0l92/api-tools',
   },
@@ -73,7 +74,7 @@ const moduleOptions: esbuild.BuildOptions = {
   bundle: true,
   external: [...builtins],
   mainFields: ["module", "main"],
-  format: 'esm',
+  format: 'cjs',
   logLevel: 'info',
   sourcemap: prod ? false : 'inline',
   treeShaking: true,
@@ -98,12 +99,10 @@ if (prod) {
   esbuild.build(moduleOptions).catch(() => process.exit(1))
 } else {
   // Web
-  esbuild.context(webOptions).then((ctx) => {
-    ctx.watch().catch(() => process.exit(1))
-    ctx.serve({ servedir: 'public', port: 9000 }).catch(() => process.exit(1))
-  })
+  const webCtx = await esbuild.context(webOptions)
+  webCtx.watch().catch(() => process.exit(1))
+  webCtx.serve({ servedir: 'public', port: 9000 }).catch(() => process.exit(1))
   // Module
-  esbuild.context(moduleOptions).then((ctx) => {
-    ctx.watch().catch(() => process.exit(1))
-  })
+  const moduleCtx = await esbuild.context(moduleOptions)
+  moduleCtx.watch().catch(() => process.exit(1))
 }
