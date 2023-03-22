@@ -114,7 +114,7 @@ async function generateApi(apiDoc, apiHash) {
  */
 async function generateValidation(apiHash) {
     return new Promise((resolve, reject) => {
-        if (appConfig && appConfig.validation && appConfig.validation.spectralRulesFile) {
+        if (appConfig && appConfig.validation && appConfig.validation.spectralRulesFile && appConfig.validation.enable) {
             const inputFile = `${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`
             const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
             const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'

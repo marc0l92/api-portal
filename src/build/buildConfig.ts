@@ -45,6 +45,10 @@ export interface BuildConfig {
      */
     validation?: {
         /**
+         * If the spectral validation needs to be enabled
+         */
+        enable: boolean
+        /**
          * Path to the file containing the list of Spectral rules
          */
         spectralRulesFile?: string

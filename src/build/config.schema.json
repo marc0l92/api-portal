@@ -81,11 +81,18 @@
             "additionalProperties": false,
             "description": "API spectral validation settings",
             "properties": {
+                "enable": {
+                    "description": "If the spectral validation needs to be enabled",
+                    "type": "boolean"
+                },
                 "spectralRulesFile": {
                     "description": "Path to the file containing the list of Spectral rules",
                     "type": "string"
                 }
             },
+            "required": [
+                "enable"
+            ],
             "type": "object"
         }
     },
