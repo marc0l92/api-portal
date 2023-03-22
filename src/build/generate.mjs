@@ -20,8 +20,8 @@ const MAX_PARALLEL_VALIDATIONS = 10
 const VALIDATION_TIMEOUT = 300000
 
 /**
- * @typedef {import('./src/common/api/apiIndex').ApiIndex} ApiIndex
- * @typedef {import('./src/common/api/apiIndex').ApiIndexItem} ApiIndexItem
+ * @typedef {import('../common/api/apiIndex').ApiIndex} ApiIndex
+ * @typedef {import('../common/api/apiIndex').ApiIndexItem} ApiIndexItem
  */
 
 const argv = yargs(hideBin(process.argv)).argv
@@ -199,6 +199,15 @@ function isSmallerVersion(v1, v2) {
 }
 
 /**
+ * @param {string} f1
+ * @param {string} f2
+ * @returns {number}
+ */
+function isSmallerFileName(f1, f2) {
+    return f1.length - f2.length
+}
+
+/**
  * @param {ApiIndex} apiIndex
  * @returns {ApiIndex}
  */
@@ -211,7 +220,7 @@ function sortApiIndex(apiIndex) {
             sortedApiIndex[packageName][apiName] = {}
             for (const versionName of Object.keys(apiIndex[packageName][apiName]).sort(isSmallerVersion)) {
                 sortedApiIndex[packageName][apiName][versionName] = {}
-                for (const fileName of Object.keys(apiIndex[packageName][apiName][versionName]).sort()) {
+                for (const fileName of Object.keys(apiIndex[packageName][apiName][versionName]).sort(isSmallerFileName)) {
                     sortedApiIndex[packageName][apiName][versionName][fileName] = apiIndex[packageName][apiName][versionName][fileName]
                 }
             }

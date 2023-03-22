@@ -2,7 +2,6 @@
   import Footer from 'components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
   import { getAppName, getHomeLinks } from '../common/globals';
-  console.log(getHomeLinks());
 </script>
 
 <Navbar activePage="home" />
