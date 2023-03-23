@@ -16,7 +16,7 @@ export function filterApiServices(api: Api, servicesFilter: ApiServiceFilterItem
                 if (service.getMethod() in apiDocCopy.paths[service.getPath()]) {
                     delete apiDocCopy.paths[service.getPath()][service.getMethod()]
                 }
-                if (Object.keys(apiDocCopy.paths[service.getPath()]).length === 0) {
+                if (Object.keys(apiDocCopy.paths[service.getPath()]).filter(method => method !== 'parameters').length === 0) {
                     delete apiDocCopy.paths[service.getPath()]
                 }
             }

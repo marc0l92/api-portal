@@ -20,8 +20,6 @@
       const apiObject = event.detail.apiObject;
       if (apiObject) {
         api = apiFactory(apiObject);
-        api.setModelsTitle();
-        await api.resolveReferences();
         servicesFilter = api.getServices().map((s) => ({ data: s, keep: true }));
         if (servicesFilter.length === 0) {
           errors = [...errors, 'Warning: No services found'];
@@ -31,10 +29,6 @@
       errors = [...errors, 'Error: ' + e.message];
     }
   }
-
-  // function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
-  //   selectedService = services[event.detail.selectedServiceIndex];
-  // }
 </script>
 
 <Navbar activePage="apiServicesExtraction" />

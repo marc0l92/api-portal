@@ -10,7 +10,7 @@
     async function downloadApi() {
         isProcessing = true;
         const filteredApi = filterApiServices(api, servicesFilter);
-        downloadFile(`${filteredApi.getName()}.json`, objToBlob(filteredApi));
+        downloadFile(`${api.getName()}.json`, objToBlob(filteredApi));
         isProcessing = false;
     }
 </script>
