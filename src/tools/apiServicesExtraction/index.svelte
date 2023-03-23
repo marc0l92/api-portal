@@ -36,7 +36,7 @@
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">Api Services Extraction</h1>
-      <p class="subtitle">Remove some of the services from an OpenApi file</p>
+      <p class="subtitle">Remove some of the services from an api document</p>
     </div>
   </section>
   <InputApi on:apiChange={onApiChange} />
