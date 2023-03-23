@@ -2,26 +2,28 @@
   import Navbar from '../../components/navbar.svelte';
   import InputApi from '../../components/inputApi.svelte';
   import Errors from 'components/errors.svelte';
-  import type { Api, ApiService } from 'common/api/api';
+  import type { Api } from 'common/api/api';
   import { apiFactory } from 'common/api/apiFactory';
   import Footer from 'components/footer.svelte';
+  import DownloadBar from './downloadBar.svelte';
+  import type { ApiServiceFilterItem } from './apiFilter';
 
   let api: Api = null;
-  let services: { data: ApiService; keep: boolean }[] = [];
+  let servicesFilter: ApiServiceFilterItem[] = [];
   let errors: string[] = [];
 
   async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
     try {
       api = null;
-      services = [];
+      servicesFilter = [];
       errors = [];
       const apiObject = event.detail.apiObject;
       if (apiObject) {
         api = apiFactory(apiObject);
         api.setModelsTitle();
         await api.resolveReferences();
-        services = api.getServices().map((s) => ({ data: s, keep: true }));
-        if (services.length === 0) {
+        servicesFilter = api.getServices().map((s) => ({ data: s, keep: true }));
+        if (servicesFilter.length === 0) {
           errors = [...errors, 'Warning: No services found'];
         }
       }
@@ -44,10 +46,11 @@
     </div>
   </section>
   <InputApi on:apiChange={onApiChange} />
-  {#if services.length > 0}
+  {#if servicesFilter.length > 0}
     <div class="box">
+      <p class="subtitle"><strong>Services to keep</strong></p>
       <ul class="menu-list">
-        {#each services as service}
+        {#each servicesFilter as service}
           <li>
             <label class="checkbox">
               <input type="checkbox" bind:checked={service.keep} />
@@ -59,6 +62,9 @@
     </div>
   {/if}
   <Errors messages={errors} />
+  {#if api && servicesFilter.length > 0}
+    <DownloadBar api={api} servicesFilter={servicesFilter} />
+  {/if}
 </div>
 <Footer />
 

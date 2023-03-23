@@ -1,5 +1,4 @@
 import type JSZip from "jszip"
-// import { saveAs } from 'file-saver'
 
 export const readInputFile = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -23,12 +22,15 @@ export async function generateAndDownloadZip(fileName: string, zip: JSZip) {
     downloadFile(`${fileName}.zip`, zipBlob)
 }
 
-export function toBlob(data: Buffer) {
+export function bufferToBlob(data: Buffer) {
     return new Blob([data], { type: 'application/octet-stream' })
 }
 
+export function objToBlob(data: any) {
+    return new Blob([JSON.stringify(data)], { type: 'application/json' })
+}
+
 export function downloadFile(fileName: string, content: Blob) {
-    // saveAs(content, sanitizeFilename(fileName))
     const url = window.URL || window.webkitURL
     const link = url.createObjectURL(content)
     const a = document.createElement("a")

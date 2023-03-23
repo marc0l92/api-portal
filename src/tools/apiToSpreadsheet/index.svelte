@@ -2,7 +2,7 @@
   import Navbar from '../../components/navbar.svelte';
   import InputApi from '../../components/inputApi.svelte';
   import SelectServices from '../../components/selectServices.svelte';
-  import DownloadSpreadsheets from './downloadSpreadsheets.svelte';
+  import DownloadBar from './downloadBar.svelte';
   import Errors from 'components/errors.svelte';
   import { apiFactory } from 'common/api/apiFactory';
   import type { Api, ApiService } from 'common/api/api';
@@ -54,7 +54,7 @@
   {/if}
   <Errors messages={errors} />
   {#if selectedService}
-    <DownloadSpreadsheets {selectedService} {services} apiName={api.getName()} />
+    <DownloadBar {selectedService} {services} apiName={api.getName()} />
   {/if}
 </div>
 <Footer />

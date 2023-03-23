@@ -10,7 +10,7 @@
   import DiagramsOption from './diagramsOption.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from './diagramBuilderOptions';
-  import DownloadDiagrams from './downloadDiagrams.svelte';
+  import DownloadBar from './downloadBar.svelte';
 
   let api: Api = null;
   let services: ApiService[] = [];
@@ -73,7 +73,7 @@
         <DiagramsOption />
       </details>
     </div>
-    <DownloadDiagrams apiName={api.getName()} {selectedService} {services} />
+    <DownloadBar apiName={api.getName()} {selectedService} {services} />
   {/if}
 </div>
 <Footer />

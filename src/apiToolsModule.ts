@@ -4,7 +4,7 @@ import { generateServiceWorkbook } from "tools/apiToSpreadsheet/swaggerParsing"
 import { modelPropertiesToTables, tablesMapToXLSX } from "tools/apiToSpreadsheet/xlsxUtils"
 import type { Api } from "common/api/api"
 import { apiFactory } from "common/api/apiFactory"
-import { toBlob } from "common/filesUtils"
+import { bufferToBlob } from "common/filesUtils"
 import * as RefParser from "common/api/refParser"
 
 export const resolveReferences = RefParser.resolveReferences
@@ -41,7 +41,7 @@ export const apiToSpreadsheet = async (apiObject: any) => {
         const workbook = modelPropertiesToTables(itemMap);
         spreadsheetsData.push({
             name: service.getName(),
-            data: toBlob(tablesMapToXLSX(workbook)),
+            data: bufferToBlob(tablesMapToXLSX(workbook)),
         })
     }
     return spreadsheetsData

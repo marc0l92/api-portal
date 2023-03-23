@@ -69,6 +69,9 @@ export abstract class Api {
         }
         return metadata
     }
+    toJson(): any {
+        return this.apiDoc
+    }
     abstract getReleaseNotes(): ApiReleaseNotes
     abstract getName(): string
     abstract getVersion(): string

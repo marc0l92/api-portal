@@ -1,7 +1,7 @@
 <script lang="ts">
     import JSZip from 'jszip';
-    import type { ApiService } from 'common/api';
-    import { downloadFile, generateAndDownloadZip, sanitizeFilename, toBlob } from 'common/filesUtils';
+    import type { ApiService } from 'common/api/api';
+    import { downloadFile, generateAndDownloadZip, sanitizeFilename, bufferToBlob } from 'common/filesUtils';
     import { generateServiceWorkbook } from './swaggerParsing';
     import { modelPropertiesToTables, tablesMapToXLSX } from './xlsxUtils';
 
@@ -22,7 +22,7 @@
         processingIndex = -1;
         if (selectedService) {
             const fileContent = serviceToSpreadsheet(selectedService);
-            downloadFile(`${selectedService.getName()}.ods`, toBlob(fileContent));
+            downloadFile(`${selectedService.getName()}.ods`, bufferToBlob(fileContent));
         }
         isProcessing = false;
     }
