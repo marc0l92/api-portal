@@ -61,10 +61,6 @@
 <Footer />
 
 <style>
-  .hero.is-small .hero-body {
-    padding-left: 0;
-    padding-right: 0;
-  }
   button.box.button.is-active {
     background-color: var(--color-accent);
     color: #fff;

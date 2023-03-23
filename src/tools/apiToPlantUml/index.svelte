@@ -79,8 +79,4 @@
 <Footer />
 
 <style>
-  .hero.is-small .hero-body {
-    padding-left: 0;
-    padding-right: 0;
-  }
 </style>

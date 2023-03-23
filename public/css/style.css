@@ -60,6 +60,11 @@ strong {
     word-break: break-all;
 }
 
+.hero.is-small .hero-body {
+    padding-left: 0;
+    padding-right: 0;
+}
+
 /* Swagger UI */
 
 #swaggerUiRoot .swagger-ui .info .title small pre {

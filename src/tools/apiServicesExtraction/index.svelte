@@ -7,22 +7,20 @@
   import Footer from 'components/footer.svelte';
 
   let api: Api = null;
-  let services: ApiService[] = [];
-  let selectedService: ApiService = null;
+  let services: { data: ApiService; keep: boolean }[] = [];
   let errors: string[] = [];
 
   async function onApiChange(event: CustomEvent<{ apiObject: any }>) {
     try {
       api = null;
       services = [];
-      selectedService = null;
       errors = [];
       const apiObject = event.detail.apiObject;
       if (apiObject) {
         api = apiFactory(apiObject);
         api.setModelsTitle();
         await api.resolveReferences();
-        services = api.getServices();
+        services = api.getServices().map((s) => ({ data: s, keep: true }));
         if (services.length === 0) {
           errors = [...errors, 'Warning: No services found'];
         }
@@ -47,15 +45,32 @@
   </section>
   <InputApi on:apiChange={onApiChange} />
   {#if services.length > 0}
-    <div class="box" />
+    <div class="box">
+      <ul class="menu-list">
+        {#each services as service}
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" bind:checked={service.keep} />
+              {service.data.getName()}
+            </label>
+          </li>
+        {/each}
+      </ul>
+    </div>
   {/if}
   <Errors messages={errors} />
 </div>
 <Footer />
 
 <style>
-  .hero.is-small .hero-body {
-    padding-left: 0;
-    padding-right: 0;
+  .menu-list label:hover {
+    background-color: #f5f5f5;
+    color: #363636;
+  }
+  .menu-list label {
+    border-radius: 2px;
+    color: #4a4a4a;
+    display: block;
+    padding: 0.5em 0.75em;
   }
 </style>
