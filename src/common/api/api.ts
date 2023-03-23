@@ -1,6 +1,11 @@
 import type { ApiModelDoc, ApiModelDocMap } from "./apiModel"
 import { resolveReferences } from "./refParser"
 
+export enum ApiType {
+    Swagger2 = 2,
+    OpenAPI3 = 3,
+}
+
 export interface ApiGenericDoc {
     swagger?: string
     openapi?: string
@@ -77,6 +82,8 @@ export abstract class Api {
     abstract getVersion(): string
     abstract getServices(): ApiService[]
     abstract getModels(): ApiModelDocMap
+    abstract deleteService(service: ApiService): void
+    abstract getType(): ApiType
 }
 
 export abstract class ApiService {
@@ -89,8 +96,14 @@ export abstract class ApiService {
     setPath(path: string) {
         this.path = path
     }
+    getPath() {
+        return this.path
+    }
     setMethod(method: string) {
         this.method = method
+    }
+    getMethod() {
+        return this.method
     }
 
     addGlobalParameters(globalParameters: ApiParameterDoc[]): void {

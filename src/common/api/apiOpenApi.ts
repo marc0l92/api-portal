@@ -1,4 +1,4 @@
-import { Api, ApiService, type ApiParameterDoc, type ApiReleaseNotes } from "./api"
+import { Api, ApiService, ApiType, type ApiParameterDoc, type ApiReleaseNotes } from "./api"
 import type { ApiModelDocMap } from "./apiModel"
 
 const PATH_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
@@ -40,6 +40,16 @@ export class ApiOpenApi extends Api {
         return this.apiDoc as ApiOpenApiDoc
     }
 
+    deleteService(service: ApiService): void {
+        if (service.getPath() in this.getApi().paths) {
+            if (service.getMethod() in this.getApi().paths[service.getPath()]) {
+                delete this.getApi().paths[service.getPath()][service.getMethod()]
+            }
+            if (Object.keys(this.getApi().paths[service.getPath()]).length === 0) {
+                delete this.getApi().paths[service.getPath()]
+            }
+        }
+    }
 
     getName(): string {
         if (this.getApi().info && this.getApi().info.title) {
@@ -84,6 +94,10 @@ export class ApiOpenApi extends Api {
             return this.getApi().info["x-release-note"]
         }
         return null
+    }
+
+    getType(): ApiType {
+        return ApiType.OpenAPI3
     }
 }
 

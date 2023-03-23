@@ -1,4 +1,4 @@
-import { Api, ApiService, type ApiParameterDoc, type ApiReleaseNotes } from "./api"
+import { Api, ApiService, ApiType, type ApiParameterDoc, type ApiReleaseNotes } from "./api"
 import type { ApiModelDocMap } from "./apiModel"
 
 export interface ApiSwaggerDoc {
@@ -28,6 +28,17 @@ interface ApiSwaggerServiceDoc {
 export class ApiSwagger extends Api {
     private getApi(): ApiSwaggerDoc {
         return this.apiDoc as ApiSwaggerDoc
+    }
+
+    deleteService(service: ApiService): void {
+        if (service.getPath() in this.getApi().paths) {
+            if (service.getMethod() in this.getApi().paths[service.getPath()]) {
+                delete this.getApi().paths[service.getPath()][service.getMethod()]
+            }
+            if (Object.keys(this.getApi().paths[service.getPath()]).length === 0) {
+                delete this.getApi().paths[service.getPath()]
+            }
+        }
     }
 
     getName(): string {
@@ -73,6 +84,10 @@ export class ApiSwagger extends Api {
             return this.getApi().info["x-release-note"]
         }
         return null
+    }
+
+    getType(): ApiType {
+        return ApiType.Swagger2
     }
 }
 
