@@ -28,6 +28,7 @@ strong {
 .box {
     background-color: var(--color-background-accent);
 }
+
 .box.flat-top {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -36,9 +37,11 @@ strong {
 .tabs.is-boxed.is-floating li.is-active {
     box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
 }
-.tabs.is-boxed.is-floating li.is-active > a {
+
+.tabs.is-boxed.is-floating li.is-active>a {
     border: 0;
 }
+
 .tabs.is-boxed.is-floating ul {
     border-bottom-width: 0;
 }
@@ -46,15 +49,20 @@ strong {
 .notification.is-small {
     padding: 0.5em;
 }
+
 .notification.is-small pre {
     background: none;
     color: #fff;
     padding: 0;
 }
 
+.is-word-break {
+    word-break: break-all;
+}
+
 /* Swagger UI */
 
-#swaggerUiRoot .swagger-ui .info .title small pre{
+#swaggerUiRoot .swagger-ui .info .title small pre {
     background-color: transparent;
 }
 
