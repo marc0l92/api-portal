@@ -193,7 +193,7 @@
             {/if}
           </div>
         </div>
-        <Metadata metadata={apiSummary.metadata} />
+        <Metadata metadata={apiSummary.metadata} updateTime={apiSummary.updateTime} />
       </div>
     </section>
   {:else}

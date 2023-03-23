@@ -2,7 +2,11 @@
     import type { ApiMetadata } from 'common/api/api';
     import { getApiStatusName } from 'common/api/apiStatus';
 
+    const DEFAULT_TAG_COLOR = 'is-info is-light';
+
     export let metadata: ApiMetadata = {};
+    export let updateTime: string;
+
     function getTagColor(metadataName: string, metadataValue: string) {
         if (metadataName === 'status') {
             switch (metadataValue) {
@@ -14,7 +18,7 @@
                     return 'is-danger';
             }
         }
-        return 'is-info is-light';
+        return DEFAULT_TAG_COLOR;
     }
     function isUrl(str: string) {
         try {
@@ -42,6 +46,12 @@
                 </span>
             </span>
         {/each}
+        {#if updateTime}
+            <span class="tags has-addons">
+                <span class="tag is-dark is-capitalized">UpdateTime</span>
+                <span class="tag {DEFAULT_TAG_COLOR}">{updateTime}</span>
+            </span>
+        {/if}
     </div>
 </div>
 
