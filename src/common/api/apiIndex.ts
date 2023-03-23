@@ -1,4 +1,4 @@
-import type { ApiMetadata } from "./api"
+import type { Api, ApiMetadata } from "./api"
 
 export interface ApiIndex {
     [packageName: string]: {
@@ -31,7 +31,7 @@ export interface ApiSummaryFlat {
     apiSummary: ApiSummary
 }
 
-export function getApiByHash(hash: string, apiIndex: ApiIndex): ApiSummaryFlat {
+export function getApiSummaryFlatByHash(hash: string, apiIndex: ApiIndex): ApiSummaryFlat {
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
             for (const versionName in apiIndex[packageName][apiName]) {
@@ -51,4 +51,27 @@ export function getApiByHash(hash: string, apiIndex: ApiIndex): ApiSummaryFlat {
         }
     }
     return null
+}
+
+export function getApiSummaryFlatFromApi(api: Api): ApiSummaryFlat {
+    const apiSummary: ApiSummary = {}
+    apiSummary[api.getVersion()] = {
+        '$InputApi': {
+            hash: '',
+            status: api.getStatus(),
+            metadata: api.getMetadata(),
+            updateTime: '',
+        }
+    }
+    return {
+        packageName: '',
+        apiName: api.getName(),
+        versionName: api.getVersion(),
+        fileName: '$InputApi',
+        status: api.getStatus(),
+        metadata: api.getMetadata(),
+        updateTime: '',
+        hash: '',
+        apiSummary: apiSummary,
+    }
 }

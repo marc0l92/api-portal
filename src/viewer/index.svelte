@@ -16,12 +16,13 @@
   import Errors from 'components/errors.svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
   import LazyLoad from 'components/lazyLoad.svelte';
-  import { getApiByHash as getApiSummaryFlatByHash, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
+  import { getApiSummaryFlatByHash, getApiSummaryFlatFromApi, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
   import { getBasePath } from 'common/globals';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
   import type { ApiValidation } from './validation';
   import Metadata from './metadata.svelte';
   import { getApiStatusName } from 'common/api/apiStatus';
+  import InputApi from 'components/inputApi.svelte';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const API_INDEX_PATH = './apis/apiIndex.json';
@@ -38,6 +39,7 @@
   let errors: string[] = [];
   let isVersionDropdownExpanded = false;
   let isFileNameDropdownExpanded = false;
+  let showApiInput = true;
 
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
     selectedTab = event.detail.selectedTab;
@@ -96,18 +98,43 @@
     }
   }
 
+  async function onInputApiChange(event: CustomEvent<{ apiObject: any }>) {
+    try {
+      api = null;
+      apiSummary = null;
+      errors = [];
+      apiDoc = event.detail.apiObject;
+      if (apiDoc) {
+        apiText = JSON.stringify(apiDoc);
+        api = apiFactory(apiDoc);
+        api.setModelsTitle();
+        releaseNotes = api.getReleaseNotes();
+        apiSummary = getApiSummaryFlatFromApi(api);
+      }
+    } catch (e) {
+      errors = [...errors, 'Error: ' + e.message];
+    }
+    if (api) {
+      try {
+        await api.resolveReferences();
+      } catch (e) {
+        console.error(e);
+        errors = [...errors, 'Error while parsing api: ' + e.message];
+      }
+    }
+  }
+
   onMount(async () => {
     viewerOptionsMount();
     diagramBuilderOptionsMount();
     selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'api';
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('api')) {
+      showApiInput = false;
       apiHash = urlParams.get('api');
       fetchApi();
       fetchValidation();
       fetchApiSummary();
-    } else {
-      errors = [...errors, 'No api selected'];
     }
     document.addEventListener('click', () => {
       isVersionDropdownExpanded = false;
@@ -122,6 +149,15 @@
 
 <Navbar activePage="viewer" />
 <div class="container {$viewerOptions.fluidLayout ? 'is-fluid' : ''}">
+  {#if showApiInput}
+    <section class="hero is-small">
+      <div class="hero-body">
+        <h1 class="title">Api Viewer</h1>
+        <p class="subtitle">Test the rendering of api inside this server</p>
+      </div>
+    </section>
+    <InputApi on:apiChange={onInputApiChange} />
+  {/if}
   {#if apiSummary}
     <section class="hero is-small">
       <div class="hero-body">
@@ -196,7 +232,7 @@
         <Metadata metadata={apiSummary.metadata} updateTime={apiSummary.updateTime} />
       </div>
     </section>
-  {:else}
+  {:else if !showApiInput}
     <section class="hero is-small">
       <div class="hero-body">
         <h1 class="title">Loading...</h1>
