@@ -18,6 +18,11 @@ export interface ApiOpenApiDoc {
     }
     components?: {
         schemas?: ApiModelDocMap
+        parameters?: { [name: string]: any }
+        headers?: { [name: string]: any }
+        callbacks?: { [name: string]: any }
+        requestBodies?: { [name: string]: any }
+        responses?: { [name: string]: any }
     }
 }
 
@@ -38,17 +43,6 @@ export interface ApiOpenApiParameterDoc {
 export class ApiOpenApi extends Api {
     private getApi(): ApiOpenApiDoc {
         return this.apiDoc as ApiOpenApiDoc
-    }
-
-    deleteService(service: ApiService): void {
-        if (service.getPath() in this.getApi().paths) {
-            if (service.getMethod() in this.getApi().paths[service.getPath()]) {
-                delete this.getApi().paths[service.getPath()][service.getMethod()]
-            }
-            if (Object.keys(this.getApi().paths[service.getPath()]).length === 0) {
-                delete this.getApi().paths[service.getPath()]
-            }
-        }
     }
 
     getName(): string {

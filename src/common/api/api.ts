@@ -82,7 +82,6 @@ export abstract class Api {
     abstract getVersion(): string
     abstract getServices(): ApiService[]
     abstract getModels(): ApiModelDocMap
-    abstract deleteService(service: ApiService): void
     abstract getType(): ApiType
 }
 

@@ -15,6 +15,12 @@ export interface ApiSwaggerDoc {
         }
     }
     definitions?: ApiModelDocMap
+    responses?: {
+        [name: string]: ApiParameterDoc
+    }
+    parameters?: {
+        [name: string]: ApiParameterDoc
+    }
 }
 
 interface ApiSwaggerServiceDoc {
@@ -28,17 +34,6 @@ interface ApiSwaggerServiceDoc {
 export class ApiSwagger extends Api {
     private getApi(): ApiSwaggerDoc {
         return this.apiDoc as ApiSwaggerDoc
-    }
-
-    deleteService(service: ApiService): void {
-        if (service.getPath() in this.getApi().paths) {
-            if (service.getMethod() in this.getApi().paths[service.getPath()]) {
-                delete this.getApi().paths[service.getPath()][service.getMethod()]
-            }
-            if (Object.keys(this.getApi().paths[service.getPath()]).length === 0) {
-                delete this.getApi().paths[service.getPath()]
-            }
-        }
     }
 
     getName(): string {

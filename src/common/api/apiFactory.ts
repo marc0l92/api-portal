@@ -2,7 +2,7 @@ import { ApiType, type Api, type ApiGenericDoc } from "./api"
 import { ApiOpenApi } from "./apiOpenApi"
 import { ApiSwagger } from "./apiSwagger"
 
-const getApiDocumentationVersion = (api: ApiGenericDoc): ApiType => {
+export const getApiDocumentationVersion = (api: ApiGenericDoc): ApiType => {
     if (api.swagger === '2.0') {
         return ApiType.Swagger2
     }
@@ -20,9 +20,4 @@ export const apiFactory = (apiDoc: ApiGenericDoc): Api => {
             return new ApiOpenApi(apiDoc)
     }
     throw new Error('Api not recognized')
-}
-
-export const apiCopy = (apiToCopy: Api): Api => {
-    const apiDocCopy = JSON.parse(JSON.stringify(apiToCopy.toJson()))
-    return apiFactory(apiDocCopy)
 }
