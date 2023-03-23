@@ -1,8 +1,8 @@
 <script lang="ts">
     import { getValidationSummary, severityNames, type ApiValidation, type ValidationSummary } from './validation';
 
-    const INITIAL_LIMIT = 5;
-    const LIMIT_INCREMENT = 3;
+    const INITIAL_LIMIT = 30;
+    const LIMIT_INCREMENT = 15;
 
     export let validationData: ApiValidation[] = [];
     export let validationSummary: ValidationSummary = {};
@@ -52,10 +52,10 @@
         </div>
         <div class="column">
             {#each validationDataFiltered.slice(0, validationItemsLimit) as validationItem}
-                <div class="notification {severityNames[validationItem.severity].css}">
-                    <span><strong>Code</strong>: {validationItem.code}</span><br />
-                    <span><strong>Message</strong>: {validationItem.message}</span><br />
-                    <span><strong>Path</strong>: /{validationItem.path.join('/')}</span>
+                <div class="notification is-word-break {severityNames[validationItem.severity].css}">
+                    <p><strong>Code</strong>: {validationItem.code}</p>
+                    <p><strong>Message</strong>: {validationItem.message}</p>
+                    <p><strong>Path</strong>: /{validationItem.path.join('/')}</p>
                 </div>
             {/each}
             {#if validationItemsLimit < validationDataFiltered.length}

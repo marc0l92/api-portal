@@ -30,7 +30,7 @@
     <div class="column metadata-row">
         {#each Object.entries(metadata) as [name, value]}
             <span class="tags has-addons">
-                <span class="tag is-dark tag-name">{name}</span>
+                <span class="tag is-dark is-capitalized">{name}</span>
                 <span class="tag {getTagColor(name, value)}">
                     {#if isUrl(value)}
                         <a href={value}>{value}</a>
@@ -57,8 +57,5 @@
     }
     .metadata-row .tags:not(:last-child) {
         margin-right: 0.5em;
-    }
-    .tag.tag-name {
-        text-transform: capitalize;
     }
 </style>
