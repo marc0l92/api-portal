@@ -18,7 +18,7 @@ export interface ApiModelDoc {
         [name: string]: ApiModelDoc
     }
     allOf?: ApiModelDoc[]
-    additionalProperties?: ApiModelDoc
+    additionalProperties?: ApiModelDoc | boolean
     $ref?: string
 }
 
@@ -61,7 +61,7 @@ export const mergeAllOfDefinitions = (model: ApiModelDoc, path: string = ''): Ap
                     if ('required' in childModel) {
                         mergedModel.required = mergedModel.required.concat(childModel.required)
                     }
-                    if ('additionalProperties' in childModel) {
+                    if ('additionalProperties' in childModel && typeof childModel.additionalProperties === 'object') {
                         Object.assign(mergedModel.additionalProperties, childModel.additionalProperties)
                     }
                     if ('minProperties' in childModel) {
@@ -97,7 +97,7 @@ export const mergeAllOfDefinitions = (model: ApiModelDoc, path: string = ''): Ap
         }
     } else if ('items' in model) {
         model.items = mergeAllOfDefinitions(model.items, path + '[]')
-    } else if ('additionalProperties' in model) {
+    } else if ('additionalProperties' in model && typeof model.additionalProperties === 'object') {
         model.additionalProperties = mergeAllOfDefinitions(model.additionalProperties)
     }
     return model

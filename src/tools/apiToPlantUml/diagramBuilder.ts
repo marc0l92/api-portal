@@ -134,7 +134,7 @@ export default class DiagramBuilder {
             const mandatory = 'required' in objDef && objDef.required.indexOf(propName) !== -1
             usedDefinitions = Object.assign(usedDefinitions, this.buildProperty(propName, objDef.properties[propName], mandatory))
         }
-        if ('additionalProperties' in objDef) {
+        if ('additionalProperties' in objDef && typeof objDef.additionalProperties === 'object') {
             usedDefinitions = Object.assign(usedDefinitions, this.buildProperty('{*}', objDef.additionalProperties))
         }
         this.diagramText += `}\n`
