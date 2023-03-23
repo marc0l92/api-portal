@@ -109,6 +109,13 @@ async function generateApi(apiDoc, apiHash) {
 }
 
 /**
+ * @param {string} filename
+ */
+async function minifyJsonFile(filename) {
+    await fs.writeJSON(filename, await fs.readJSON(filename))
+}
+
+/**
  * @param {string} apiHash
  * @returns {Promise<any>}
  */
@@ -120,12 +127,13 @@ async function generateValidation(apiHash) {
             const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'
             const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${inputFile} --output ${outputFile}`
             console.log('Run:', `${executable} ${options}`)
-            exec(`${executable} ${options}`, { timeout: VALIDATION_TIMEOUT }, (error, stdout, stderr) => {
+            exec(`${executable} ${options}`, { timeout: VALIDATION_TIMEOUT }, async (error, stdout, stderr) => {
                 if (stderr) {
                     return reject(stderr)
                 } if (error && error.killed && error.signal === 'SIGTERM') {
                     return reject('Execution timeout reached while validating: ' + apiHash)
                 } else {
+                    await minifyJsonFile(outputFile)
                     return resolve(null)
                 }
             })
