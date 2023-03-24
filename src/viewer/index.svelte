@@ -11,14 +11,13 @@
   import DiagramsTab from './diagramsTab.svelte';
   import ValidationTab from './validationTab.svelte';
   import TablesTab from './tablesTab.svelte';
-  import { viewerOptions, viewerOptionsDestroy, viewerOptionsMount } from './viewerOptions';
-  import { onDestroy, onMount } from 'svelte';
+  import { viewerOptions } from './viewerOptions';
+  import { onMount } from 'svelte';
   import Errors from 'components/errors.svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
   import LazyLoad from 'components/lazyLoad.svelte';
   import { getApiSummaryFlatByHash, getApiSummaryFlatFromApi, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
   import { getBasePath } from 'common/globals';
-  import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
   import type { ApiValidation } from './validation';
   import Metadata from './metadata.svelte';
   import { getApiStatusName } from 'common/api/apiStatus';
@@ -125,8 +124,6 @@
   }
 
   onMount(async () => {
-    viewerOptionsMount();
-    diagramBuilderOptionsMount();
     selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'api';
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('api')) {
@@ -142,10 +139,6 @@
       isVersionDropdownExpanded = false;
       isFileNameDropdownExpanded = false;
     });
-  });
-  onDestroy(() => {
-    viewerOptionsDestroy();
-    diagramBuilderOptionsDestroy();
   });
 </script>
 

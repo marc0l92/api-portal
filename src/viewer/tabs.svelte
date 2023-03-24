@@ -1,16 +1,12 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount } from 'svelte';
-    import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
+    import { createEventDispatcher } from 'svelte';
     import { getValidationBadgeCss, type ApiValidation } from './validation';
-    import { viewerOptions } from './viewerOptions';
 
     export let selectedTab = 'api';
     export let hasReleaseNotes = true;
     export let validationData: ApiValidation[] = [];
     let validationErrorsCount = 0;
     let validationErrorsCss = '';
-    let showMenu = false;
-    let showDiagramsOptionsModal = false;
 
     const dispatch = createEventDispatcher();
     async function changeTab(newTab: string) {
@@ -21,11 +17,6 @@
         validationErrorsCount = validationData.length;
         validationErrorsCss = getValidationBadgeCss(validationData);
     }
-    onMount(async () => {
-        document.addEventListener('click', () => {
-            showMenu = false;
-        });
-    });
 </script>
 
 <div class="tabs-with-options">
@@ -74,36 +65,6 @@
             </li>
         </ul>
     </div>
-    <div class="dropdown is-right {showMenu ? 'is-active' : ''}" on:click|stopPropagation={() => (showMenu = !showMenu)} on:keypress={() => (showMenu = !showMenu)}>
-        <div class="dropdown-trigger">
-            <button>
-                <i class="fas fa-ellipsis-vertical" />
-            </button>
-        </div>
-        <div class="dropdown-menu">
-            <div class="dropdown-content">
-                <a href={'#'} class="dropdown-item" on:click={() => ($viewerOptions.fluidLayout = !$viewerOptions.fluidLayout)}>
-                    <span>Fluid container</span><i class="far {$viewerOptions.fluidLayout ? 'fa-square-check' : 'fa-square'}" />
-                </a>
-                <a href={'#'} class="dropdown-item" on:click={() => (showDiagramsOptionsModal = true)}>
-                    <span>Diagrams options</span>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal {showDiagramsOptionsModal ? 'is-active' : ''}">
-    <div class="modal-background" on:click={() => (showDiagramsOptionsModal = false)} on:keypress={() => (showDiagramsOptionsModal = false)} />
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Diagrams Options</p>
-            <button class="delete" aria-label="close" on:click={() => (showDiagramsOptionsModal = false)} />
-        </header>
-        <section class="modal-card-body">
-            <DiagramsOption />
-        </section>
-    </div>
 </div>
 
 <style>
@@ -117,44 +78,17 @@
         flex-grow: 1;
         margin-bottom: 0;
     }
-
     .dropdown-trigger {
         align-items: center;
         display: flex;
         justify-content: center;
         vertical-align: top;
     }
-    .dropdown-trigger button {
-        padding: 0em 0.7em;
-        height: 100%;
-        border: none;
-        background-color: transparent;
-    }
-    .dropdown-trigger button:hover,
-    .dropdown.is-active .dropdown-trigger button {
-        background-color: #f5f5f5;
-        border-bottom-color: #dbdbdb;
-        border-radius: 4px 4px 0 0;
-    }
-    /* .dropdown-trigger a {
-        padding: 0.5em 1em;
-    }
-    .dropdown-trigger a:hover,
-    .dropdown.is-active .dropdown-trigger a {
-        background-color: #f5f5f5;
-        border-bottom-color: #dbdbdb;
-        border-radius: 4px 4px 0 0;
-    } */
-
     .dropdown-item {
         display: flex;
         align-items: center;
         padding: 0.375rem 1rem;
     }
-    .dropdown-item span {
-        flex-grow: 1;
-    }
-
     .tag.is-small {
         margin-left: 0.5em;
         padding: 0 0.5em;

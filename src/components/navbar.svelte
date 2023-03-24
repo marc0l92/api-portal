@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getAppName, getBasePath } from 'common/globals';
+  import Options from './options.svelte';
 
   export let activePage = 'restApiToText';
   const basePath = getBasePath();
@@ -41,6 +42,9 @@
     </div>
 
     <div class="navbar-end">
+      <div class="navbar-item">
+        <Options />
+      </div>
       <div class="navbar-item">
         <div class="buttons">
           <a class="button is-primary" href="https://github.com/marc0l92/api-tools/issues/new/choose" target="_blank" rel="noreferrer"><strong>Feedbacks</strong></a>
