@@ -11,7 +11,7 @@
   import DiagramsTab from './diagramsTab.svelte';
   import ValidationTab from './validationTab.svelte';
   import TablesTab from './tablesTab.svelte';
-  import { viewerOptions } from './viewerOptions';
+  import { globalOptions } from '../common/globalOptions';
   import { onMount } from 'svelte';
   import Errors from 'components/errors.svelte';
   import { getOptions, storeOptions } from 'common/localStorage';
@@ -143,7 +143,7 @@
 </script>
 
 <Navbar activePage="viewer" />
-<div class="container {$viewerOptions.fluidLayout ? 'is-fluid' : ''}">
+<div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
   {#if showApiInput}
     <section class="hero is-small">
       <div class="hero-body">

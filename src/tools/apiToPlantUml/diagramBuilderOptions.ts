@@ -31,11 +31,13 @@ export const diagramBuilderOptions = writable(Object.assign({}, DEFAULT_DIAGRAM_
 
 let unsubscribe: Unsubscriber = null
 export const diagramBuilderOptionsMount = () => {
-    diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS));
-    unsubscribe = diagramBuilderOptions.subscribe((newValue: DiagramBuilderOptions) => {
-        storeOptions(LOCAL_STORAGE_KEY, newValue);
-    });
+    if (!unsubscribe) {
+        diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS));
+        unsubscribe = diagramBuilderOptions.subscribe((newValue: DiagramBuilderOptions) => {
+            storeOptions(LOCAL_STORAGE_KEY, newValue);
+        });
+    }
 }
 export const diagramBuilderOptionsDestroy = () => {
-    unsubscribe();
+    if (unsubscribe) unsubscribe();
 }

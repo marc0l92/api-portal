@@ -2,37 +2,39 @@
     import { onDestroy, onMount } from 'svelte';
     import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
     import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
-    import { viewerOptions, viewerOptionsDestroy, viewerOptionsMount } from 'viewer/viewerOptions';
+    import { globalOptions, globalOptionsDestroy, globalOptionsMount } from 'common/globalOptions';
 
     let showMenu = false;
     let showDiagramsOptionsModal = false;
 
     onMount(async () => {
         diagramBuilderOptionsMount();
-        viewerOptionsMount();
+        globalOptionsMount();
         document.addEventListener('click', () => {
             showMenu = false;
         });
     });
     onDestroy(() => {
         diagramBuilderOptionsDestroy();
-        viewerOptionsDestroy();
+        globalOptionsDestroy();
     });
 </script>
 
 <div class="dropdown is-right {showMenu ? 'is-active' : ''}" on:click|stopPropagation={() => (showMenu = !showMenu)} on:keypress={() => (showMenu = !showMenu)}>
     <div class="dropdown-trigger">
-        <button>
-            <i class="fas fa-ellipsis-vertical" />
-        </button>
+        <button class="button is-white"><i class="fa-solid fa-gear" /></button>
     </div>
     <div class="dropdown-menu">
         <div class="dropdown-content">
-            <a href={'#'} class="dropdown-item" on:click={() => ($viewerOptions.fluidLayout = !$viewerOptions.fluidLayout)}>
-                <span>Fluid container</span><i class="far {$viewerOptions.fluidLayout ? 'fa-square-check' : 'fa-square'}" />
+            <a href={'#'} class="dropdown-item" on:click={() => ($globalOptions.fluidLayout = !$globalOptions.fluidLayout)}>
+                <span>{$globalOptions.fluidLayout ? 'Compress container' : 'Expand container'}</span>
+                <i class="fas {$globalOptions.fluidLayout ? 'fa-compress' : 'fa-expand'}" />
             </a>
             <a href={'#'} class="dropdown-item" on:click={() => (showDiagramsOptionsModal = true)}>
-                <span>Diagrams options</span>
+                <span>Diagrams options</span><i class="fa-solid fa-diagram-project" />
+            </a>
+            <a href="https://github.com/marc0l92/api-tools/issues/new/choose" class="dropdown-item" target="_blank" rel="noreferrer">
+                <span>Report issue</span><i class="fa-solid fa-bug" />
             </a>
         </div>
     </div>
@@ -52,19 +54,12 @@
 </div>
 
 <style>
-    .dropdown-trigger button {
-        padding: 0em 0.7em;
-        height: 100%;
-        border: none;
-        background-color: transparent;
+    a.dropdown-item {
+        display: flex;
+        align-items: center;
+        padding-right: 1rem;
     }
-    .dropdown-trigger button:hover,
-    .dropdown.is-active .dropdown-trigger button {
-        background-color: #f5f5f5;
-        border-bottom-color: #dbdbdb;
-        border-radius: 4px 4px 0 0;
-    }
-    .dropdown-item span {
+    a.dropdown-item span {
         flex-grow: 1;
     }
 </style>

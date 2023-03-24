@@ -7,6 +7,7 @@
   import { apiFactory } from 'common/api/apiFactory';
   import type { Api, ApiService } from 'common/api/api';
   import Footer from 'components/footer.svelte';
+  import { globalOptions } from 'common/globalOptions';
 
   let api: Api = null;
   let services: ApiService[] = [];
@@ -39,7 +40,7 @@
 </script>
 
 <Navbar activePage="apiToSpreadsheet" />
-<div class="container">
+<div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">Api to Spreadsheet</h1>

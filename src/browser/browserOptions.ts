@@ -18,11 +18,13 @@ export const browserOptions = writable(Object.assign({}, DEFAULT_OPTIONS))
 
 let unsubscribe: Unsubscriber = null
 export const browserOptionsMount = () => {
-    browserOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS));
-    unsubscribe = browserOptions.subscribe((newValue: BrowserOptions) => {
-        storeOptions(LOCAL_STORAGE_KEY, newValue);
-    });
+    if (!unsubscribe) {
+        browserOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS));
+        unsubscribe = browserOptions.subscribe((newValue: BrowserOptions) => {
+            storeOptions(LOCAL_STORAGE_KEY, newValue);
+        });
+    }
 }
 export const browserOptionsDestroy = () => {
-    unsubscribe();
+    if (unsubscribe) unsubscribe();
 }

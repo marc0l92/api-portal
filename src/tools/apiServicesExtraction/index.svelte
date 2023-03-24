@@ -7,6 +7,7 @@
   import Footer from 'components/footer.svelte';
   import DownloadBar from './downloadBar.svelte';
   import type { ApiServiceFilterItem } from './apiFilter';
+  import { globalOptions } from 'common/globalOptions';
 
   let api: Api = null;
   let servicesFilter: ApiServiceFilterItem[] = [];
@@ -32,7 +33,7 @@
 </script>
 
 <Navbar activePage="apiServicesExtraction" />
-<div class="container">
+<div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">Api Services Extraction</h1>
@@ -57,7 +58,7 @@
   {/if}
   <Errors messages={errors} />
   {#if api && servicesFilter.length > 0}
-    <DownloadBar api={api} servicesFilter={servicesFilter} />
+    <DownloadBar {api} {servicesFilter} />
   {/if}
 </div>
 <Footer />

@@ -2,10 +2,11 @@
   import Footer from 'components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
   import { getAppName, getHomeLinks } from '../common/globals';
+  import { globalOptions } from 'common/globalOptions';
 </script>
 
 <Navbar activePage="home" />
-<div class="container">
+<div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">{getAppName()}</h1>

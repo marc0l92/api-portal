@@ -11,6 +11,7 @@
   import { onDestroy, onMount } from 'svelte';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from './diagramBuilderOptions';
   import DownloadBar from './downloadBar.svelte';
+  import { globalOptions } from 'common/globalOptions';
 
   let api: Api = null;
   let services: ApiService[] = [];
@@ -51,7 +52,7 @@
 </script>
 
 <Navbar activePage="apiToPlantUml" />
-<div class="container">
+<div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">Api to PlantUML</h1>

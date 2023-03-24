@@ -8,6 +8,7 @@
   import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
   import SearchBar from './searchBar.svelte';
   import { filterApiIndex } from 'common/search';
+  import { globalOptions } from 'common/globalOptions';
 
   const API_INDEX_PATH = './apis/apiIndex.json';
 
@@ -53,7 +54,7 @@
 </script>
 
 <Navbar activePage="browser" />
-<div class="container">
+<div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">Api Browser</h1>

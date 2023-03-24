@@ -6,6 +6,7 @@
   import Help from './help.svelte';
   import { ApiMethods, apiTokensToString, apiToTokens, refreshApiTokens, rotateTokenType, type RestApiToTextResults } from './restApiToText';
   import Footer from 'components/footer.svelte';
+  import { globalOptions } from 'common/globalOptions';
 
   let apiTokens: RestApiToTextResults = { errors: [], tokens: [] };
   let apiText: string = '';
@@ -34,7 +35,7 @@
 </script>
 
 <Navbar activePage="restApiToText" />
-<div class="container">
+<div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">REST Api to Text</h1>
