@@ -37,7 +37,7 @@
   let errors: string[] = [];
   let isVersionDropdownExpanded = false;
   let isFileNameDropdownExpanded = false;
-  let showApiInput = true;
+  let showApiInput = false;
 
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
     selectedTab = event.detail.selectedTab;
@@ -126,13 +126,15 @@
     selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'api';
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('api')) {
-      showApiInput = false;
       apiHash = urlParams.get('api');
       fetchApi();
       fetchValidation();
       fetchApiSummary();
-    } else if (selectedTab === 'validation') {
-      selectedTab = 'api';
+    } else {
+      showApiInput = true;
+      if (selectedTab === 'validation') {
+        selectedTab = 'api';
+      }
     }
     document.addEventListener('click', () => {
       isVersionDropdownExpanded = false;
