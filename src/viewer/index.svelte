@@ -78,8 +78,8 @@
       const response = await fetch(`./apis/${apiHash}.validation.json`);
       if (response.ok) {
         validationData = yaml.load(await response.text()) as ApiValidation[];
-      } else {
-        // errors = [...errors, 'Error: ' + response.status];
+      } else if (selectedTab === 'validation') {
+        selectedTab = 'api';
       }
     } catch (e) {
       console.error(e);
@@ -135,6 +135,8 @@
       fetchApi();
       fetchValidation();
       fetchApiSummary();
+    } else if (selectedTab === 'validation') {
+      selectedTab = 'api';
     }
     document.addEventListener('click', () => {
       isVersionDropdownExpanded = false;
