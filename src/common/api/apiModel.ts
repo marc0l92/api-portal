@@ -20,8 +20,8 @@ export interface ApiModelDoc {
     allOf?: ApiModelDoc[]
     additionalProperties?: ApiModelDoc | boolean
     $ref?: string
-    readOnly: boolean
-    writeOnly: boolean
+    readOnly?: boolean
+    writeOnly?: boolean
 }
 
 export enum ModelType {

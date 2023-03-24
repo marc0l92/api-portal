@@ -17,14 +17,13 @@
   import { getOptions, storeOptions } from 'common/localStorage';
   import LazyLoad from 'components/lazyLoad.svelte';
   import { getApiSummaryFlatByHash, getApiSummaryFlatFromApi, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
-  import { getBasePath } from 'common/globals';
+  import { API_INDEX_PATH, getBasePath } from 'common/globals';
   import type { ApiValidation } from './validation';
   import Metadata from './metadata.svelte';
   import { getApiStatusName } from 'common/api/apiStatus';
   import InputApi from 'components/inputApi.svelte';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
-  const API_INDEX_PATH = './apis/apiIndex.json';
   const basePath = getBasePath();
 
   let apiSummary: ApiSummaryFlat = null;

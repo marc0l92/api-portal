@@ -9,8 +9,7 @@
   import SearchBar from './searchBar.svelte';
   import { filterApiIndex } from 'common/search';
   import { globalOptions } from 'common/globalOptions';
-
-  const API_INDEX_PATH = './apis/apiIndex.json';
+  import { API_INDEX_PATH } from 'common/globals';
 
   let apiIndex: ApiIndex = null;
   let errors: string[] = [];

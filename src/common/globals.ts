@@ -3,6 +3,8 @@ import type { BuildConfig, HomeLink } from "build/buildConfig"
 declare const IS_TEST: boolean
 declare const APP_CONFIG: BuildConfig
 
+export const API_INDEX_PATH = './apis/apiIndex.json';
+
 const isTest = (): boolean => {
     return IS_TEST
 }
