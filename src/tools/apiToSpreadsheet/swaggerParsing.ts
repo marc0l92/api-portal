@@ -1,9 +1,19 @@
-import { ModelPropertyCardinality } from "./interfaces"
+import { ApiReqRes, ModelPropertyCardinality } from "./interfaces"
 import type { ModelProperty, ModelPropertiesMap } from "./interfaces"
 import type { ApiParameterDoc, ApiService } from "common/api/api"
 import { mergeAllOfDefinitions, ModelType, type ApiModelDoc } from "common/api/apiModel"
 
 const LOCATION_BODY = 'Body'
+
+function respectReadWriteOnlyPolicy(model: ApiModelDoc, reqRes: ApiReqRes): boolean {
+    if (reqRes === ApiReqRes.REQUEST && model.readOnly) {
+        return false
+    }
+    if (reqRes === ApiReqRes.RESPONSE && model.writeOnly) {
+        return false
+    }
+    return true
+}
 
 function getAuthorizedValues(model: ApiModelDoc): string {
     if (!model) {
@@ -40,7 +50,7 @@ function getAuthorizedValues(model: ApiModelDoc): string {
     return rules.join('; ')
 }
 
-function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, path: string = '', level: number = 0): ModelProperty[] {
+function generateModelFlatMap(model: ApiModelDoc, reqRes: ApiReqRes, required: boolean = false, path: string = '', level: number = 0): ModelProperty[] {
     let flatMap: ModelProperty[] = []
     // console.log('generateModelFlatMap:', { model, path, level })
 
@@ -60,6 +70,7 @@ function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, pat
         flatMap = flatMap.concat(
             generateModelFlatMap(
                 model.items,
+                reqRes,
                 false,
                 path + '[]',
                 level + 1
@@ -69,25 +80,31 @@ function generateModelFlatMap(model: ApiModelDoc, required: boolean = false, pat
         const requiredProperties = new Set(model.required)
         for (const propertyName of Object.keys(model.properties).sort()) {
             const property = model.properties[propertyName]
+            if (respectReadWriteOnlyPolicy(property, reqRes)) {
+                flatMap = flatMap.concat(
+                    generateModelFlatMap(
+                        property,
+                        reqRes,
+                        requiredProperties.has(propertyName),
+                        path + '/' + propertyName,
+                        level + 1
+                    )
+                )
+            }
+        }
+    }
+    if ('additionalProperties' in model && typeof model.additionalProperties === 'object') {
+        if (respectReadWriteOnlyPolicy(model.additionalProperties, reqRes)) {
             flatMap = flatMap.concat(
                 generateModelFlatMap(
-                    property,
-                    requiredProperties.has(propertyName),
-                    path + '/' + propertyName,
+                    model.additionalProperties,
+                    reqRes,
+                    false,
+                    path + '/<*>',
                     level + 1
                 )
             )
         }
-    }
-    if ('additionalProperties' in model && typeof model.additionalProperties === 'object') {
-        flatMap = flatMap.concat(
-            generateModelFlatMap(
-                model.additionalProperties,
-                false,
-                path + '/<*>',
-                level + 1
-            )
-        )
     }
     return flatMap
 }
@@ -119,7 +136,7 @@ export const generateServiceWorkbook = (service: ApiService): ModelPropertiesMap
     // console.log('Request:', { request })
     if (request && request.schema) {
         request.schema = mergeAllOfDefinitions(request.schema)
-        workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, !!request.required))
+        workbook.Request = workbook.Request.concat(generateModelFlatMap(request.schema, ApiReqRes.REQUEST, !!request.required))
     }
     if (workbook.Request.length === 0) {
         delete workbook.Request
@@ -133,7 +150,7 @@ export const generateServiceWorkbook = (service: ApiService): ModelPropertiesMap
         response.schema = mergeAllOfDefinitions(response.schema)
         // console.log({ statusCode, response })
         if (response && response.schema) {
-            workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, !!response.required)
+            workbook[`Response-${statusCode}`] = generateModelFlatMap(response.schema, ApiReqRes.RESPONSE, !!response.required)
         }
     }
     return workbook

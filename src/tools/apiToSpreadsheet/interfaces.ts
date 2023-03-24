@@ -21,3 +21,8 @@ export interface ModelPropertiesMap {
 export interface TablesMap {
     [sheetName: string]: string[][]
 }
+
+export enum ApiReqRes {
+    REQUEST = 1,
+    RESPONSE = 2,
+}
