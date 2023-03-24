@@ -27,6 +27,7 @@
       <a class="navbar-item {activePage === 'home' ? 'is-active' : ''}" href="{basePath}/index.html">Home</a>
       <a class="navbar-item {activePage === 'browser' ? 'is-active' : ''}" href="{basePath}/browser.html">Browser</a>
       <a class="navbar-item {activePage === 'viewer' ? 'is-active' : ''}" href="{basePath}/viewer.html">Viewer</a>
+      <!-- <a class="navbar-item {activePage === 'compare' ? 'is-active' : ''}" href="{basePath}/compare.html">Compare</a> -->
 
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link" href={'#tools'}>Tools</a>

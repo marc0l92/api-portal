@@ -26,6 +26,7 @@ const webOptions = {
     './src/home.ts',
     './src/browser.ts',
     './src/viewer.ts',
+    './src/compare.ts',
     './src/apiToSpreadsheet.ts',
     './src/restApiToText.ts',
     './src/apiToPlantUml.ts',
