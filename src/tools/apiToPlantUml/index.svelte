@@ -68,12 +68,6 @@
   <Errors messages={errors} />
   {#if selectedService}
     <Diagrams service={selectedService} />
-    <div class="box">
-      <details>
-        <summary>Diagrams generation options</summary>
-        <DiagramsOption />
-      </details>
-    </div>
     <DownloadBar apiName={api.getName()} {selectedService} {services} />
   {/if}
 </div>
