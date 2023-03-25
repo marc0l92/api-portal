@@ -75,3 +75,16 @@ export function getApiSummaryFlatFromApi(api: Api): ApiSummaryFlat {
         apiSummary: apiSummary,
     }
 }
+
+export function getApiSummaryToFlat(packageName: string, apiName: string, apiSummary: ApiSummary): ApiSummaryFlat {
+    const versionName = Object.keys(apiSummary)[0]
+    const fileName = Object.keys(apiSummary[versionName])[0]
+    const apiIndexItem: ApiIndexItem = apiSummary[versionName][fileName]
+    return {
+        apiSummary, packageName, apiName, versionName, fileName,
+        status: apiIndexItem.status,
+        metadata: apiIndexItem.metadata,
+        updateTime: apiIndexItem.updateTime,
+        hash: apiIndexItem.hash,
+    }
+}
