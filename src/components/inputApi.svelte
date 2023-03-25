@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { ApiIndex } from 'common/api/apiIndex';
+    import { getApiSummaryFlatByHash, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
     import { API_INDEX_PATH } from 'common/globals';
     import { getOptions, storeOptions } from 'common/localStorage';
-    import { filterApiIndex, type LimitedSearchResults } from 'common/search';
+    import { searchInApiIndex, type LimitedSearchResults } from 'common/search';
     import yaml from 'js-yaml';
     import { createEventDispatcher, onMount } from 'svelte';
     import { readInputFile } from '../common/filesUtils';
@@ -16,9 +16,10 @@
 
     let selectedTab = 'link';
     let browserSearch = '';
+    let browserSelectedApi: ApiSummaryFlat = null;
     let browserHash = '';
     let browserSearchResults: LimitedSearchResults = { list: [], isLast: true };
-    let showBrowserDropdown = false;
+    let showSearchBrowserDropdown = false;
     let apiIndex: ApiIndex = null;
     let link = EXAMPLE_API_LINK;
     let inputError = '';
@@ -35,6 +36,12 @@
             if (selectedTab === 'browser') {
                 if (!apiIndex) {
                     await fetchApiIndex();
+                    if (apiIndex && browserHash) {
+                        browserSelectedApi = getApiSummaryFlatByHash(browserHash, apiIndex);
+                    }
+                }
+                if (browserSelectedApi) {
+                    storeOptions(LOCAL_STORAGE_BROWSE_KEY, browserSelectedApi.hash);
                 }
             } else if (selectedTab === 'link') {
                 const linkResponse = await fetch(link);
@@ -73,7 +80,7 @@
         onApiChange();
     }
 
-    $: browserSearchResults = filterApiIndex(apiIndex, browserSearch, BROWSER_SEARCH_RESULTS_LIMIT);
+    $: browserSearchResults = searchInApiIndex(apiIndex, browserSearch, BROWSER_SEARCH_RESULTS_LIMIT);
 
     onMount(() => {
         selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
@@ -117,7 +124,7 @@
 <div class="box flat-top">
     <div>
         <div class="field {selectedTab === 'browser' ? '' : 'is-hidden'}">
-            <div class="dropdown {showBrowserDropdown ? 'is-active' : ''}">
+            <div class="dropdown {showSearchBrowserDropdown ? 'is-active' : ''}">
                 <div class="dropdown-trigger">
                     <div class="control is-expanded {isLoading ? 'is-loading' : ''}">
                         <input
@@ -125,15 +132,15 @@
                             class="input"
                             bind:value={browserSearch}
                             on:input={onApiChange}
-                            on:blur={() => (showBrowserDropdown = false)}
-                            on:focus={() => (showBrowserDropdown = true)}
+                            on:blur={() => (showSearchBrowserDropdown = false)}
+                            on:focus={() => (showSearchBrowserDropdown = true)}
                             placeholder="Search api" />
                     </div>
                 </div>
                 <div class="dropdown-menu">
                     <div class="dropdown-content">
                         {#each browserSearchResults.list as apiSummary}
-                            <a href={'#'} class="dropdown-item">
+                            <a href={'#'} class="dropdown-item" on:click={() => (browserSelectedApi = apiSummary)}>
                                 <p>{apiSummary.apiName}</p>
                                 <p class="subtext">{apiSummary.packageName}</p>
                             </a>
@@ -144,6 +151,9 @@
                     </div>
                 </div>
             </div>
+            {#if browserSelectedApi}
+                selected
+            {/if}
         </div>
     </div>
     <div>
