@@ -16,7 +16,9 @@
   <div>
     <div class="columns">
       <div class="column"><InputApi /></div>
-      <div class="column is-center is-narrow"><button class="button"><i class="fa-solid fa-right-left" /></button></div>
+      <div class="column is-center is-narrow">
+        <button class="button"><i class="fa-solid fa-right-left" /></button>
+      </div>
       <div class="column"><InputApi /></div>
     </div>
   </div>
@@ -28,5 +30,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
   }
 </style>

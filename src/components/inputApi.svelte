@@ -1,5 +1,6 @@
 <script lang="ts">
     import { getApiSummaryFlatByHash, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
+    import { getApiStatusName } from 'common/api/apiStatus';
     import { API_INDEX_PATH } from 'common/globals';
     import { getOptions, storeOptions } from 'common/localStorage';
     import { searchInApiIndex, type LimitedSearchResults } from 'common/search';
@@ -19,7 +20,9 @@
     let browserSelectedApi: ApiSummaryFlat = null;
     let browserHash = '';
     let browserSearchResults: LimitedSearchResults = { list: [], isLast: true };
-    let showSearchBrowserDropdown = false;
+    let isSearchDropdownExpanded = false;
+    let isVersionDropdownExpanded = false;
+    let isFileNameDropdownExpanded = false;
     let apiIndex: ApiIndex = null;
     let link = EXAMPLE_API_LINK;
     let inputError = '';
@@ -82,12 +85,21 @@
 
     $: browserSearchResults = searchInApiIndex(apiIndex, browserSearch, BROWSER_SEARCH_RESULTS_LIMIT);
 
+    function onBrowserSearchResultsSelect(apiSummary: ApiSummaryFlat) {
+        browserSelectedApi = apiSummary;
+        browserSearch = `${apiSummary.packageName} - ${apiSummary.apiName}`;
+        isSearchDropdownExpanded = false;
+    }
+
     onMount(() => {
         selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
         browserHash = getOptions(LOCAL_STORAGE_BROWSE_KEY) || '';
         link = getOptions(LOCAL_STORAGE_LINK_KEY) || EXAMPLE_API_LINK;
         text = getOptions(LOCAL_STORAGE_TEXT_KEY) || '';
         onApiChange();
+        document.addEventListener('click', () => {
+            isSearchDropdownExpanded = false;
+        });
     });
 </script>
 
@@ -122,9 +134,9 @@
     </div>
 </div>
 <div class="box flat-top">
-    <div>
-        <div class="field {selectedTab === 'browser' ? '' : 'is-hidden'}">
-            <div class="dropdown {showSearchBrowserDropdown ? 'is-active' : ''}">
+    <div class={selectedTab === 'browser' ? '' : 'is-hidden'}>
+        <div class="field">
+            <div class="dropdown {isSearchDropdownExpanded ? 'is-active' : ''}">
                 <div class="dropdown-trigger">
                     <div class="control is-expanded {isLoading ? 'is-loading' : ''}">
                         <input
@@ -132,15 +144,15 @@
                             class="input"
                             bind:value={browserSearch}
                             on:input={onApiChange}
-                            on:blur={() => (showSearchBrowserDropdown = false)}
-                            on:focus={() => (showSearchBrowserDropdown = true)}
+                            on:focus={() => (isSearchDropdownExpanded = true)}
+                            on:click|stopPropagation
                             placeholder="Search api" />
                     </div>
                 </div>
                 <div class="dropdown-menu">
                     <div class="dropdown-content">
                         {#each browserSearchResults.list as apiSummary}
-                            <a href={'#'} class="dropdown-item" on:click={() => (browserSelectedApi = apiSummary)}>
+                            <a href={'#'} class="dropdown-item" on:click={() => onBrowserSearchResultsSelect(apiSummary)}>
                                 <p>{apiSummary.apiName}</p>
                                 <p class="subtext">{apiSummary.packageName}</p>
                             </a>
@@ -151,10 +163,83 @@
                     </div>
                 </div>
             </div>
-            {#if browserSelectedApi}
-                selected
-            {/if}
         </div>
+        {#if browserSelectedApi}
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <div class="dropdown is-right {isVersionDropdownExpanded ? 'is-active' : ''}">
+                            <div class="dropdown-trigger">
+                                <div class="control is-expanded">
+                                    <button class="button" on:click|stopPropagation={() => (isVersionDropdownExpanded = !isVersionDropdownExpanded)}>
+                                        <span>{browserSelectedApi.versionName}</span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-angle-down" aria-hidden="true" />
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                <div class="dropdown-content">
+                                    {#each Object.entries(browserSelectedApi.apiSummary) as [versionName, versionItem]}
+                                        <a href={'#'} class="dropdown-item">
+                                            {#if versionName === browserSelectedApi.versionName}
+                                                <strong>{versionName}</strong>
+                                            {:else}
+                                                {versionName}
+                                            {/if}
+                                        </a>
+                                    {/each}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {#if Object.keys(browserSelectedApi.apiSummary[browserSelectedApi.versionName]).length !== 1}
+                    <div class="column">
+                        <div class="field">
+                            <div class="dropdown is-right {isFileNameDropdownExpanded ? 'is-active' : ''}">
+                                <div class="dropdown-trigger">
+                                    <div class="control is-expanded">
+                                        <button class="button" on:click|stopPropagation={() => (isFileNameDropdownExpanded = !isFileNameDropdownExpanded)}>
+                                            <span><span class="short-text">{browserSelectedApi.fileName}</span></span>
+                                            <span class="icon is-small">
+                                                <i class="fas fa-angle-down" aria-hidden="true" />
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                    <div class="dropdown-content">
+                                        {#each [0, 1, 2] as status}
+                                            <div class="api-status-section status-{status}">
+                                                <p class="menu-label dropdown-item">{getApiStatusName(status)}</p>
+                                                <ul class="menu-list">
+                                                    {#each Object.entries(browserSelectedApi.apiSummary[browserSelectedApi.versionName]) as [fileName, apiItem]}
+                                                        {#if apiItem.status === status}
+                                                            <li>
+                                                                <a href={'#'} class="dropdown-item status-{apiItem.status}">
+                                                                    {#if fileName === browserSelectedApi.fileName}
+                                                                        <strong>{fileName}</strong>
+                                                                    {:else}
+                                                                        {fileName}
+                                                                    {/if}
+                                                                </a>
+                                                            </li>
+                                                        {/if}
+                                                    {/each}
+                                                </ul>
+                                            </div>
+                                            <hr class="dropdown-divider" />
+                                        {/each}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+            </div>
+        {/if}
     </div>
     <div>
         <div class="field {selectedTab === 'link' ? '' : 'is-hidden'}">
@@ -192,5 +277,35 @@
     }
     .subtext {
         color: #b1b1b1;
+    }
+    .control.is-expanded .button {
+        width: 100%;
+    }
+    .control.is-expanded .button > span:first-child {
+        width: 100%;
+    }
+    .short-text {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 15em;
+    }
+    .api-status-section {
+        border-left-width: 3px;
+        border-left-style: solid;
+    }
+    .api-status-section.status-0 {
+        border-left-color: #48c78e;
+    }
+    .api-status-section.status-1 {
+        border-left-color: #ffe08a;
+    }
+    .api-status-section.status-2 {
+        border-left-color: #f14668;
+    }
+    .api-status-section:not(:has(ul > li)) + .dropdown-divider {
+        display: none;
+    }
+    .api-status-section:not(:has(ul > li)) {
+        display: none;
     }
 </style>

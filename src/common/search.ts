@@ -21,7 +21,7 @@ export function filterApiIndex(apiIndex: ApiIndex, searchText: string) {
     const apiIndexFiltered: ApiIndex = {}
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
-            if (fuzzySearchMatch(searchText, packageName + apiName)) {
+            if (fuzzySearchMatch(searchText, `${packageName} - ${apiName}`)) {
                 if (!(packageName in apiIndexFiltered)) {
                     apiIndexFiltered[packageName] = {}
                 }
