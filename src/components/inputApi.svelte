@@ -45,6 +45,7 @@
                     }
                 }
                 if (browserSelectedApi) {
+                    apiObject = await fetchApi(browserSelectedApi.hash);
                     storeOptions(LOCAL_STORAGE_BROWSE_KEY, browserSelectedApi.hash);
                 }
             } else if (selectedTab === 'link') {
@@ -76,6 +77,21 @@
         } else {
             inputError = 'Error while fetching api index: ' + response.status;
         }
+    }
+
+    async function fetchApi(apiHash: string): Promise<any> {
+        try {
+            const response = await fetch(`./apis/${apiHash}.api.json`);
+            if (response.ok) {
+                return yaml.load(await response.text());
+            } else {
+                inputError = 'Error: ' + response.status;
+            }
+        } catch (e) {
+            console.error(e);
+            inputError = 'Error while fetching the api';
+        }
+        return null;
     }
 
     function changeTab(newTab: string) {
