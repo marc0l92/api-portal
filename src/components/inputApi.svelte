@@ -18,7 +18,7 @@
     let selectedTab = 'link';
     let browserSearch = '';
     let browserSelectedApi: ApiSummaryFlat = null;
-    let browserHash = '';
+    export let browserHash = '';
     let browserSearchResults: LimitedSearchResults = { list: [], isLast: true };
     let isSearchDropdownExpanded = false;
     let isVersionDropdownExpanded = false;
@@ -116,9 +116,13 @@
         browserSelectedApi = null;
     }
 
-    onMount(() => {
-        selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
-        browserHash = getOptions(LOCAL_STORAGE_BROWSE_KEY) || '';
+    onMount(async () => {
+        if (browserHash) {
+            selectedTab = 'browser';
+        } else {
+            selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
+            browserHash = getOptions(LOCAL_STORAGE_BROWSE_KEY) || '';
+        }
         link = getOptions(LOCAL_STORAGE_LINK_KEY) || EXAMPLE_API_LINK;
         text = getOptions(LOCAL_STORAGE_TEXT_KEY) || '';
         onApiChange();

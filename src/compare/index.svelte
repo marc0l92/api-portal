@@ -7,6 +7,7 @@
   import InputApi from 'components/inputApi.svelte';
   import LazyLoad from 'components/lazyLoad.svelte';
   import Navbar from 'components/navbar.svelte';
+  import { onMount } from 'svelte';
   import ApiDiff from './apiDiff.svelte';
   import DiagramsDiff from './diagramsDiff.svelte';
   import Tabs from './tabs.svelte';
@@ -63,6 +64,12 @@
   function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
     selectedTab = event.detail.selectedTab;
   }
+
+  onMount(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    leftItem.hash = urlParams.get('leftApi');
+    rightItem.hash = urlParams.get('rightApi');
+  });
 </script>
 
 <Navbar activePage="compare" />
@@ -75,14 +82,14 @@
   </section>
   <div class="columns">
     <div class="column">
-      <InputApi on:apiChange={onApiChange(leftItem)} />
+      <InputApi on:apiChange={onApiChange(leftItem)} browserHash={leftItem.hash} />
       <Errors messages={leftItem.errors} />
     </div>
     <div class="column is-center is-narrow">
       <p class="title is-2"><i class="fa-solid fa-right-long" /></p>
     </div>
     <div class="column">
-      <InputApi on:apiChange={onApiChange(rightItem)} />
+      <InputApi on:apiChange={onApiChange(rightItem)} browserHash={rightItem.hash} />
       <Errors messages={rightItem.errors} />
     </div>
   </div>
