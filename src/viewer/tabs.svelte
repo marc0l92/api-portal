@@ -78,17 +78,6 @@
         flex-grow: 1;
         margin-bottom: 0;
     }
-    .dropdown-trigger {
-        align-items: center;
-        display: flex;
-        justify-content: center;
-        vertical-align: top;
-    }
-    .dropdown-item {
-        display: flex;
-        align-items: center;
-        padding: 0.375rem 1rem;
-    }
     .tag.is-small {
         margin-left: 0.5em;
         padding: 0 0.5em;
