@@ -103,6 +103,7 @@
     function onBrowserSearchResultsSelect(apiSummary: ApiSummaryFlat) {
         browserSelectedApi = apiSummary;
         browserSearch = `${apiSummary.packageName} ${apiSummary.apiName}`;
+        browserHash = browserSelectedApi.hash;
         isSearchDropdownExpanded = false;
         isFileNameDropdownExpanded = false;
         isVersionDropdownExpanded = false;
