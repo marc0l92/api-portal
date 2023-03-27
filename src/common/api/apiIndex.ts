@@ -88,3 +88,19 @@ export function getApiSummaryToFlat(packageName: string, apiName: string, apiSum
         hash: apiIndexItem.hash,
     }
 }
+
+export function modifyApiSummaryFlat(apiSummaryFlat: ApiSummaryFlat, changes: { versionName?: string, fileName?: string }): ApiSummaryFlat {
+    const versionName = changes.versionName || apiSummaryFlat.versionName
+    const fileName = changes.fileName || (changes.versionName ? Object.keys(apiSummaryFlat.apiSummary[versionName])[0] : apiSummaryFlat.apiName)
+    const apiIndexItem: ApiIndexItem = apiSummaryFlat.apiSummary[versionName][fileName]
+    return {
+        apiSummary: apiSummaryFlat.apiSummary,
+        packageName: apiSummaryFlat.packageName,
+        apiName: apiSummaryFlat.apiName,
+        versionName, fileName,
+        status: apiIndexItem.status,
+        metadata: apiIndexItem.metadata,
+        updateTime: apiIndexItem.updateTime,
+        hash: apiIndexItem.hash,
+    }
+}

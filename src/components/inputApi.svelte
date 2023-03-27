@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getApiSummaryFlatByHash, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
+    import { getApiSummaryFlatByHash, getApiSummaryToFlat, modifyApiSummaryFlat, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
     import { getApiStatusName } from 'common/api/apiStatus';
     import { API_INDEX_PATH } from 'common/globals';
     import { getOptions, storeOptions } from 'common/localStorage';
@@ -88,6 +88,8 @@
         browserSelectedApi = apiSummary;
         browserSearch = `${apiSummary.packageName} ${apiSummary.apiName}`;
         isSearchDropdownExpanded = false;
+        isFileNameDropdownExpanded = false;
+        isVersionDropdownExpanded = false;
         onApiChange();
     }
 
@@ -191,7 +193,7 @@
                             <div class="dropdown-menu" id="dropdown-menu" role="menu">
                                 <div class="dropdown-content">
                                     {#each Object.entries(browserSelectedApi.apiSummary) as [versionName, versionItem]}
-                                        <a href={'#'} class="dropdown-item">
+                                        <a href={'#'} class="dropdown-item" on:click={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { versionName }))}>
                                             {#if versionName === browserSelectedApi.versionName}
                                                 <strong>{versionName}</strong>
                                             {:else}
@@ -227,7 +229,10 @@
                                                     {#each Object.entries(browserSelectedApi.apiSummary[browserSelectedApi.versionName]) as [fileName, apiItem]}
                                                         {#if apiItem.status === status}
                                                             <li>
-                                                                <a href={'#'} class="dropdown-item status-{apiItem.status}">
+                                                                <a
+                                                                    href={'#'}
+                                                                    class="dropdown-item status-{apiItem.status}"
+                                                                    on:click={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { fileName }))}>
                                                                     {#if fileName === browserSelectedApi.fileName}
                                                                         <strong>{fileName}</strong>
                                                                     {:else}
