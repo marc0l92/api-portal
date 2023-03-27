@@ -33,7 +33,7 @@
         <ul>
             {#each Object.keys(workbook) as sheet}
                 <li class={selectedSheet === sheet ? 'is-active' : ''}>
-                    <a href={'#'} on:click={() => (selectedSheet = sheet)}>
+                    <a href={'#'} on:click|preventDefault={() => (selectedSheet = sheet)}>
                         <span>{sheet}</span>
                     </a>
                 </li>

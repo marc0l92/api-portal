@@ -26,11 +26,11 @@
     </div>
     <div class="dropdown-menu">
         <div class="dropdown-content">
-            <a href={'#'} class="dropdown-item" on:click={() => ($globalOptions.fluidLayout = !$globalOptions.fluidLayout)}>
+            <a href={'#'} class="dropdown-item" on:click|preventDefault={() => ($globalOptions.fluidLayout = !$globalOptions.fluidLayout)}>
                 <span>{$globalOptions.fluidLayout ? 'Compress container' : 'Expand container'}</span>
                 <i class="fas {$globalOptions.fluidLayout ? 'fa-compress' : 'fa-expand'}" />
             </a>
-            <a href={'#'} class="dropdown-item" on:click={() => (showDiagramsOptionsModal = true)}>
+            <a href={'#'} class="dropdown-item" on:click|preventDefault={() => (showDiagramsOptionsModal = true)}>
                 <span>Diagrams options</span><i class="fa-solid fa-diagram-project" />
             </a>
             <a href="https://github.com/marc0l92/api-tools/issues/new/choose" class="dropdown-item" target="_blank" rel="noreferrer">
