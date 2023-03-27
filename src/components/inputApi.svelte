@@ -41,6 +41,7 @@
                     await fetchApiIndex();
                     if (apiIndex && browserHash) {
                         browserSelectedApi = getApiSummaryFlatByHash(browserHash, apiIndex);
+                        browserSearch = browserSelectedApi.packageName + ' ' + browserSelectedApi.apiName;
                     }
                 }
                 if (browserSelectedApi) {
@@ -83,12 +84,17 @@
         onApiChange();
     }
 
-    $: browserSearchResults = searchInApiIndex(apiIndex, browserSearch, BROWSER_SEARCH_RESULTS_LIMIT);
-
     function onBrowserSearchResultsSelect(apiSummary: ApiSummaryFlat) {
         browserSelectedApi = apiSummary;
-        browserSearch = `${apiSummary.packageName} - ${apiSummary.apiName}`;
+        browserSearch = `${apiSummary.packageName} ${apiSummary.apiName}`;
         isSearchDropdownExpanded = false;
+        onApiChange();
+    }
+
+    function onBrowserSearchChange() {
+        isSearchDropdownExpanded = true;
+        browserSearchResults = searchInApiIndex(apiIndex, browserSearch, BROWSER_SEARCH_RESULTS_LIMIT);
+        browserSelectedApi = null;
     }
 
     onMount(() => {
@@ -143,8 +149,8 @@
                             type="text"
                             class="input"
                             bind:value={browserSearch}
-                            on:input={onApiChange}
-                            on:focus={() => (isSearchDropdownExpanded = true)}
+                            on:input={onBrowserSearchChange}
+                            on:focus={onBrowserSearchChange}
                             on:click|stopPropagation
                             placeholder="Search api" />
                     </div>
@@ -159,6 +165,9 @@
                         {/each}
                         {#if !browserSearchResults.isLast}
                             <p class="dropdown-item">...</p>
+                        {/if}
+                        {#if browserSearchResults.list.length === 0}
+                            <p class="dropdown-item">No API found</p>
                         {/if}
                     </div>
                 </div>

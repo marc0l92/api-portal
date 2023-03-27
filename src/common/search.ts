@@ -36,7 +36,7 @@ export function searchInApiIndex(apiIndex: ApiIndex, searchText: string, limit: 
     const results: LimitedSearchResults = { list: [], isLast: true }
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
-            if (fuzzySearchMatch(searchText, packageName + apiName)) {
+            if (fuzzySearchMatch(searchText, packageName + ' ' + apiName)) {
                 results.list.push(getApiSummaryToFlat(packageName, apiName, apiIndex[packageName][apiName]))
                 if (limit > 0 && results.list.length === limit) {
                     results.isLast = false
