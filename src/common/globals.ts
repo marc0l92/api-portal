@@ -3,7 +3,7 @@ import type { BuildConfig, HomeLink } from "build/buildConfig"
 declare const IS_TEST: boolean
 declare const APP_CONFIG: BuildConfig
 
-export const API_INDEX_PATH = './apis/apiIndex.json';
+const API_INDEX_PATH = '/apis/apiIndex.json';
 
 const isTest = (): boolean => {
     return IS_TEST
@@ -15,6 +15,10 @@ export const getAppName = (): string => {
 
 export const getBasePath = (): string => {
     return APP_CONFIG.basePath || ''
+}
+
+export const getApiIndexPath = (): string => {
+    return getBasePath() + API_INDEX_PATH
 }
 
 export const getDiagramsDefaultServer = (): string => {

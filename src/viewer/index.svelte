@@ -17,7 +17,7 @@
   import { getOptions, storeOptions } from 'common/localStorage';
   import LazyLoad from 'components/lazyLoad.svelte';
   import { getApiSummaryFlatByHash, getApiSummaryFlatFromApi, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
-  import { API_INDEX_PATH, getBasePath } from 'common/globals';
+  import { getApiIndexPath, getBasePath } from 'common/globals';
   import type { ApiValidation } from './validation';
   import Metadata from './metadata.svelte';
   import { getApiStatusName } from 'common/api/apiStatus';
@@ -87,7 +87,7 @@
   }
 
   async function fetchApiSummary() {
-    const response = await fetch(API_INDEX_PATH);
+    const response = await fetch(getApiIndexPath());
     if (response.ok) {
       const apiIndex = (await response.json()) as ApiIndex;
       apiSummary = getApiSummaryFlatByHash(apiHash, apiIndex);

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { getApiSummaryFlatByHash, getApiSummaryToFlat, modifyApiSummaryFlat, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
     import { getApiStatusName } from 'common/api/apiStatus';
-    import { API_INDEX_PATH } from 'common/globals';
+    import { getApiIndexPath, getBasePath } from 'common/globals';
     import { getOptions, storeOptions } from 'common/localStorage';
     import { searchInApiIndex, type LimitedSearchResults } from 'common/search';
     import yaml from 'js-yaml';
@@ -71,7 +71,7 @@
     }
 
     async function fetchApiIndex() {
-        const response = await fetch(API_INDEX_PATH);
+        const response = await fetch(getApiIndexPath());
         if (response.ok) {
             apiIndex = (await response.json()) as ApiIndex;
         } else {
@@ -81,7 +81,7 @@
 
     async function fetchApi(apiHash: string): Promise<any> {
         try {
-            const response = await fetch(`./apis/${apiHash}.api.json`);
+            const response = await fetch(getBasePath() + `/apis/${apiHash}.api.json`);
             if (response.ok) {
                 return yaml.load(await response.text());
             } else {

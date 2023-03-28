@@ -9,7 +9,7 @@
   import SearchBar from './searchBar.svelte';
   import { filterApiIndex } from 'common/search';
   import { globalOptions } from 'common/globalOptions';
-  import { API_INDEX_PATH } from 'common/globals';
+  import { getApiIndexPath } from 'common/globals';
 
   let apiIndex: ApiIndex = null;
   let errors: string[] = [];
@@ -39,7 +39,7 @@
 
   onMount(async () => {
     browserOptionsMount();
-    const response = await fetch(API_INDEX_PATH);
+    const response = await fetch(getApiIndexPath());
     if (response.ok) {
       apiIndex = (await response.json()) as ApiIndex;
       cleanFavourite();
