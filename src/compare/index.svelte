@@ -20,7 +20,6 @@
 
   let leftItem: CompareItem = { hash: null, api: null, errors: [] };
   let rightItem: CompareItem = { hash: null, api: null, errors: [] };
-  let bothValidItems = false;
   let selectedTab: string = 'api-diff';
 
   function rewriteQueryParameters() {
@@ -56,7 +55,8 @@
           }
         }
       }
-      bothValidItems = !!leftItem.api && !!rightItem.api;
+      leftItem = leftItem;
+      rightItem = rightItem;
       rewriteQueryParameters();
     };
   }
@@ -93,7 +93,7 @@
       <Errors messages={rightItem.errors} />
     </div>
   </div>
-  {#if bothValidItems}
+  {#if leftItem.api && rightItem.api}
     <Tabs on:tabChange={onTabChange} {selectedTab} />
     <div class="box flat-top">
       <LazyLoad isVisible={selectedTab === 'api-diff'}><ApiDiff leftApi={leftItem.api} rightApi={rightItem.api} /></LazyLoad>
