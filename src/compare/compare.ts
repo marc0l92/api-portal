@@ -13,7 +13,7 @@ export enum DiffType {
     MODIFIED,
 }
 
-interface DiffItem {
+export interface DiffItem {
     type: DiffType
     path: string
     leftValue?: any
