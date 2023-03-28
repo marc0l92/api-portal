@@ -7,6 +7,7 @@ export interface ApiSwaggerDoc {
         title?: string
         version?: string
         'x-release-note'?: ApiReleaseNotes
+        [otherMetadata: string]: any
     }
     paths: {
         [path: string]: {
@@ -21,6 +22,7 @@ export interface ApiSwaggerDoc {
     parameters?: {
         [name: string]: ApiParameterDoc
     }
+    [otherMetadata: string]: any
 }
 
 interface ApiSwaggerServiceDoc {

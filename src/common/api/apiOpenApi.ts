@@ -9,6 +9,7 @@ export interface ApiOpenApiDoc {
         title?: string
         version?: string
         'x-release-note'?: ApiReleaseNotes
+        [otherMetadata: string]: any
     }
     paths: {
         [path: string]: {
@@ -24,6 +25,7 @@ export interface ApiOpenApiDoc {
         requestBodies?: { [name: string]: any }
         responses?: { [name: string]: any }
     }
+    [otherMetadata: string]: any
 }
 
 export interface ApiOpenApiServiceDoc {

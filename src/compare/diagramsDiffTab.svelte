@@ -6,6 +6,9 @@
 </script>
 
 <div>
+    {#if leftApi && rightApi}
+        Ok
+    {/if}
 </div>
 
 <style>

@@ -8,8 +8,8 @@
   import LazyLoad from 'components/lazyLoad.svelte';
   import Navbar from 'components/navbar.svelte';
   import { onMount } from 'svelte';
-  import ApiDiff from './apiDiff.svelte';
-  import DiagramsDiff from './diagramsDiff.svelte';
+  import ApiDiff from './apiDiffTab.svelte';
+  import DiagramsDiff from './diagramsDiffTab.svelte';
   import Tabs from './tabs.svelte';
 
   interface CompareItem {

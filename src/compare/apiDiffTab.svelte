@@ -5,7 +5,11 @@
     export let rightApi: Api;
 </script>
 
-<div />
+<div>
+    {#if leftApi && rightApi}
+        Ok
+    {/if}
+</div>
 
 <style>
 </style>
