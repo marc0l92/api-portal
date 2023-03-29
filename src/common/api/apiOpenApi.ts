@@ -98,7 +98,9 @@ export class ApiOpenApi extends Api {
 }
 
 export class ApiServiceOpenApi extends ApiService {
-    private serviceDoc: ApiOpenApiServiceDoc = null
+    private getServiceDoc(): ApiOpenApiServiceDoc {
+        return this.serviceDoc as ApiOpenApiServiceDoc
+    }
 
     constructor(serviceDoc: ApiOpenApiServiceDoc) {
         super()
@@ -109,23 +111,23 @@ export class ApiServiceOpenApi extends ApiService {
     }
 
     private initParameters() {
-        if (this.serviceDoc.parameters) {
-            this.requestParameters = this.serviceDoc.parameters
+        if (this.getServiceDoc().parameters) {
+            this.requestParameters = this.getServiceDoc().parameters
         }
     }
 
     private initRequest() {
-        if (this.serviceDoc.requestBody
-            && this.serviceDoc.requestBody.content
-            && this.serviceDoc.requestBody.content['application/json']) {
-            this.request = this.serviceDoc.requestBody.content['application/json']
+        if (this.getServiceDoc().requestBody
+            && this.getServiceDoc().requestBody.content
+            && this.getServiceDoc().requestBody.content['application/json']) {
+            this.request = this.getServiceDoc().requestBody.content['application/json']
         }
     }
 
     private initResponse() {
-        if (this.serviceDoc.responses) {
-            for (const statusCode in this.serviceDoc.responses) {
-                const response = this.serviceDoc.responses[statusCode]
+        if (this.getServiceDoc().responses) {
+            for (const statusCode in this.getServiceDoc().responses) {
+                const response = this.getServiceDoc().responses[statusCode]
                 if (response.content && response.content['application/json']) {
                     this.responses[statusCode] = response.content['application/json']
                 }

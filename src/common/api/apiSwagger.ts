@@ -89,7 +89,9 @@ export class ApiSwagger extends Api {
 }
 
 export class ApiServiceSwagger extends ApiService {
-    private serviceDoc: ApiSwaggerServiceDoc = null
+    private getServiceDoc(): ApiSwaggerServiceDoc {
+        return this.serviceDoc as ApiSwaggerServiceDoc
+    }
 
     constructor(serviceDoc: ApiSwaggerServiceDoc) {
         super()
@@ -100,16 +102,16 @@ export class ApiServiceSwagger extends ApiService {
     }
 
     private initParameters() {
-        if (this.serviceDoc.parameters) {
-            this.requestParameters = this.serviceDoc.parameters.filter((parameter) => {
+        if (this.getServiceDoc().parameters) {
+            this.requestParameters = this.getServiceDoc().parameters.filter((parameter) => {
                 return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
             })
         }
     }
 
     private initRequest() {
-        if (this.serviceDoc.parameters) {
-            const requestParam = this.serviceDoc.parameters.find(p => p.in === 'body')
+        if (this.getServiceDoc().parameters) {
+            const requestParam = this.getServiceDoc().parameters.find(p => p.in === 'body')
             if (requestParam) {
                 this.request = requestParam
             }
@@ -117,8 +119,8 @@ export class ApiServiceSwagger extends ApiService {
     }
 
     private initResponse() {
-        if (this.serviceDoc.responses) {
-            this.responses = this.serviceDoc.responses
+        if (this.getServiceDoc().responses) {
+            this.responses = this.getServiceDoc().responses
         }
     }
 }

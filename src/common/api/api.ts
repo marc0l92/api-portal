@@ -86,6 +86,7 @@ export abstract class Api {
 }
 
 export abstract class ApiService {
+    protected serviceDoc: any = null
     protected requestParameters: ApiParameterDoc[] = []
     protected request: ApiParameterDoc = null
     protected responses: ApiParameterDocMap = {}
@@ -120,5 +121,8 @@ export abstract class ApiService {
     }
     getResponses(): ApiParameterDocMap {
         return this.responses
+    }
+    toJson(): any {
+        return this.serviceDoc
     }
 }

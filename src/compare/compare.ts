@@ -1,4 +1,4 @@
-import type { Api } from "common/api/api"
+import type { Api, ApiService } from "common/api/api"
 
 export interface ApiDiff {
     isBackwardCompatible: boolean
@@ -38,8 +38,6 @@ export interface DiffItem {
     rightValue?: any
 }
 
-const KEYS_NOT_METADATA = ['paths', 'definitions', 'responses', 'parameters', 'components']
-
 export function compareApis(leftApi: Api, rightApi: Api) {
     const apiDiff: ApiDiff = { isBackwardCompatible: true, metadata: [], services: {} }
     apiDiff.metadata = compareMetadata(extractMetadataFromApi(leftApi), extractMetadataFromApi(rightApi))
@@ -48,10 +46,15 @@ export function compareApis(leftApi: Api, rightApi: Api) {
     for (const leftService of leftApi.getServices()) {
         const rightServiceIndex = rightServices.findIndex(s => s.getName() === leftService.getName())
         if (rightServiceIndex >= 0) {
+            const rightService = rightServices[rightServiceIndex]
             const serviceDiff: ServiceDiff = {
                 type: DiffType.MODIFIED,
+                metadata: [], parameters: [], request: [], responses: {},
             }
-            if (serviceDiff.metadata || serviceDiff.parameters || serviceDiff.request || serviceDiff.responses) {
+
+            serviceDiff.metadata = compareMetadata(extractMetadataFromService(leftService), extractMetadataFromService(rightService))
+
+            if (serviceDiff.metadata.length || serviceDiff.parameters.length || serviceDiff.request.length || Object.keys(serviceDiff.responses).length) {
                 apiDiff.services[leftService.getName()] = serviceDiff
             }
             rightServices.splice(rightServiceIndex, 1)
@@ -72,7 +75,15 @@ export function compareApis(leftApi: Api, rightApi: Api) {
 }
 
 function extractMetadataFromApi(api: Api) {
-    return Object.fromEntries(Object.entries(api.toJson()).filter(([key, _]) => KEYS_NOT_METADATA.indexOf(key) === -1))
+    return Object.fromEntries(Object.entries(api.toJson())
+        .filter(([key, _]) => ['paths', 'definitions', 'responses', 'parameters', 'components'].indexOf(key) === -1)
+    )
+}
+
+function extractMetadataFromService(service: ApiService) {
+    return Object.fromEntries(Object.entries(service.toJson())
+        .filter(([key, _]) => ['parameters', 'responses', 'requestBody'].indexOf(key) === -1)
+    )
 }
 
 function getPath(basePath: string, key: string, isArray: boolean): string {
