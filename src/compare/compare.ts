@@ -32,7 +32,15 @@ function extractMetadataFromApi(api: Api) {
     return Object.fromEntries(Object.entries(api.toJson()).filter(([key, _]) => KEYS_NOT_METADATA.indexOf(key) === -1))
 }
 
-function compareMetadata(leftDoc: any, rightDoc: any, path: string = '/'): DiffItem[] {
+function getPath(basePath: string, key: string, isArray: boolean): string {
+    if (isArray) {
+        return `${basePath}[${key}]`
+    } else {
+        return `${basePath}/${key}`
+    }
+}
+
+function compareMetadata(leftDoc: any, rightDoc: any, path: string = ''): DiffItem[] {
     let diffItems: DiffItem[] = []
     const rightKeys = Object.keys(rightDoc)
     for (const leftKey of Object.keys(leftDoc)) {
@@ -40,11 +48,11 @@ function compareMetadata(leftDoc: any, rightDoc: any, path: string = '/'): DiffI
         if (rightKeysIndex >= 0) {
             rightKeys.splice(rightKeysIndex, 1)
             if (typeof leftDoc[leftKey] === 'object' && typeof rightDoc[leftKey] === 'object') {
-                diffItems = diffItems.concat(compareMetadata(leftDoc[leftKey], rightDoc[leftKey], path + leftKey + '/'))
+                diffItems = diffItems.concat(compareMetadata(leftDoc[leftKey], rightDoc[leftKey], getPath(path, leftKey, Array.isArray(leftDoc))))
             } else {
                 if (leftDoc[leftKey] !== rightDoc[leftKey]) {
                     diffItems.push({
-                        path: `${path}${leftKey}`,
+                        path: getPath(path, leftKey, Array.isArray(leftDoc)),
                         type: DiffType.MODIFIED,
                         leftValue: leftDoc[leftKey],
                         rightValue: rightDoc[leftKey],
@@ -53,7 +61,7 @@ function compareMetadata(leftDoc: any, rightDoc: any, path: string = '/'): DiffI
             }
         } else {
             diffItems.push({
-                path: `${path}${leftKey}`,
+                path: getPath(path, leftKey, Array.isArray(leftDoc)),
                 type: DiffType.REMOVED,
                 leftValue: leftDoc[leftKey],
             })
@@ -61,7 +69,7 @@ function compareMetadata(leftDoc: any, rightDoc: any, path: string = '/'): DiffI
     }
     for (const rightKey of rightKeys) {
         diffItems.push({
-            path: `${path}${rightKey}`,
+            path: getPath(path, rightKey, Array.isArray(rightDoc)),
             type: DiffType.ADDED,
             rightValue: rightDoc[rightKey],
         })
