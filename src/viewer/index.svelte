@@ -223,6 +223,9 @@
                 </div>
               </div>
             {/if}
+            <a class="button" href="{basePath}/compare.html?leftApi={apiHash}&rightApi={apiHash}" title="Compare">
+              <i class="fa-solid fa-code-compare" />
+            </a>
           </div>
         </div>
         <Metadata metadata={apiSummary.metadata} updateTime={apiSummary.updateTime} />
