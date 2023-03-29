@@ -82,14 +82,14 @@
   </section>
   <div class="columns">
     <div class="column">
-      <InputApi on:apiChange={onApiChange(leftItem)} browserHash={leftItem.hash} />
+      <InputApi on:apiChange={onApiChange(leftItem)} browserHash={leftItem.hash} storagePrefix={'left'} />
       <Errors messages={leftItem.errors} />
     </div>
     <div class="column is-center is-narrow">
       <p class="title is-2"><i class="fa-solid fa-right-long" /></p>
     </div>
     <div class="column">
-      <InputApi on:apiChange={onApiChange(rightItem)} browserHash={rightItem.hash} />
+      <InputApi on:apiChange={onApiChange(rightItem)} browserHash={rightItem.hash} storagePrefix={'right'} />
       <Errors messages={rightItem.errors} />
     </div>
   </div>

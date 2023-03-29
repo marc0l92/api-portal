@@ -15,6 +15,7 @@
     const EXAMPLE_API_LINK = 'https://petstore3.swagger.io/api/v3/openapi.json';
     const BROWSER_SEARCH_RESULTS_LIMIT = 8;
 
+    export let storagePrefix = '';
     let selectedTab = 'link';
     let browserSearch = '';
     let browserSelectedApi: ApiSummaryFlat = null;
@@ -46,13 +47,13 @@
                 }
                 if (browserSelectedApi) {
                     apiObject = await fetchApi(browserSelectedApi.hash);
-                    storeOptions(LOCAL_STORAGE_BROWSE_KEY, browserSelectedApi.hash);
+                    storeOptions(storagePrefix + LOCAL_STORAGE_BROWSE_KEY, browserSelectedApi.hash);
                 }
             } else if (selectedTab === 'link') {
                 const linkResponse = await fetch(link);
                 if (linkResponse.ok) {
                     apiObject = yaml.load(await linkResponse.text());
-                    storeOptions(LOCAL_STORAGE_LINK_KEY, link);
+                    storeOptions(storagePrefix + LOCAL_STORAGE_LINK_KEY, link);
                 } else {
                     inputError = 'Error: ' + linkResponse.status;
                 }
@@ -60,7 +61,7 @@
                 apiObject = yaml.load(await readInputFile(files[0]));
             } else if (selectedTab === 'text') {
                 apiObject = yaml.load(text);
-                storeOptions(LOCAL_STORAGE_TEXT_KEY, text);
+                storeOptions(storagePrefix + LOCAL_STORAGE_TEXT_KEY, text);
             }
         } catch (e: any) {
             console.error(e);
@@ -96,7 +97,7 @@
 
     function changeTab(newTab: string) {
         selectedTab = newTab;
-        storeOptions(LOCAL_STORAGE_SELECTED_TAB_KEY, newTab);
+        storeOptions(storagePrefix + LOCAL_STORAGE_SELECTED_TAB_KEY, newTab);
         onApiChange();
     }
 
@@ -120,11 +121,11 @@
         if (browserHash) {
             selectedTab = 'browser';
         } else {
-            selectedTab = getOptions(LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
-            browserHash = getOptions(LOCAL_STORAGE_BROWSE_KEY) || '';
+            selectedTab = getOptions(storagePrefix + LOCAL_STORAGE_SELECTED_TAB_KEY) || 'link';
+            browserHash = getOptions(storagePrefix + LOCAL_STORAGE_BROWSE_KEY) || '';
         }
-        link = getOptions(LOCAL_STORAGE_LINK_KEY) || EXAMPLE_API_LINK;
-        text = getOptions(LOCAL_STORAGE_TEXT_KEY) || '';
+        link = getOptions(storagePrefix + LOCAL_STORAGE_LINK_KEY) || EXAMPLE_API_LINK;
+        text = getOptions(storagePrefix + LOCAL_STORAGE_TEXT_KEY) || '';
         onApiChange();
         document.addEventListener('click', () => {
             isSearchDropdownExpanded = false;
