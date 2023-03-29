@@ -20,10 +20,12 @@
                 Not backward compatible changes detected
             </div>
         {/if}
-        <details open>
-            <summary class="title is-5">Apis Metadata</summary>
-            <DiffItemsTable diffItems={apiDiff.metadata} />
-        </details>
+        {#if apiDiff.metadata.length > 0}
+            <details open>
+                <summary class="title is-5">Apis Metadata</summary>
+                <DiffItemsTable diffItems={apiDiff.metadata} />
+            </details>
+        {/if}
         {#each Object.entries(apiDiff.services) as [serviceName, serviceDiff]}
             <details open>
                 <summary class="title is-5">{serviceName}</summary>
@@ -36,11 +38,12 @@
                         {serviceDiff.type}
                     </span>
                 </p>
-                {#if serviceDiff.metadata}
-                    <DiffItemsTable diffItems={serviceDiff.metadata} />
-                {/if}
+                <DiffItemsTable diffItems={serviceDiff.metadata} />
             </details>
         {/each}
+        {#if !apiDiff.metadata.length && !Object.keys(apiDiff.services).length}
+            <p>No differences detected</p>
+        {/if}
     {/if}
 </div>
 

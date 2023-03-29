@@ -4,15 +4,17 @@ export interface ApiDiff {
     isBackwardCompatible: boolean
     metadata: DiffItem[]
     services: {
-        [serviceName: string]: {
-            type: DiffType
-            metadata?: DiffItem[]
-            parameters?: DiffItem[]
-            request?: DiffItem[]
-            responses?: {
-                [statusCode: string]: DiffItem[]
-            }
-        }
+        [serviceName: string]: ServiceDiff
+    }
+}
+
+interface ServiceDiff {
+    type: DiffType
+    metadata?: DiffItem[]
+    parameters?: DiffItem[]
+    request?: DiffItem[]
+    responses?: {
+        [statusCode: string]: DiffItem[]
     }
 }
 
@@ -46,8 +48,11 @@ export function compareApis(leftApi: Api, rightApi: Api) {
     for (const leftService of leftApi.getServices()) {
         const rightServiceIndex = rightServices.findIndex(s => s.getName() === leftService.getName())
         if (rightServiceIndex >= 0) {
-            apiDiff.services[leftService.getName()] = {
+            const serviceDiff: ServiceDiff = {
                 type: DiffType.MODIFIED,
+            }
+            if (serviceDiff.metadata || serviceDiff.parameters || serviceDiff.request || serviceDiff.responses) {
+                apiDiff.services[leftService.getName()] = serviceDiff
             }
             rightServices.splice(rightServiceIndex, 1)
         } else {
