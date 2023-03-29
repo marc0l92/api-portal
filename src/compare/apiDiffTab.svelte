@@ -29,7 +29,7 @@
         {#each Object.entries(apiDiff.services) as [serviceName, serviceDiff]}
             <details open>
                 <summary class="title is-5">{serviceName}</summary>
-                <p>
+                <p class="mb-2">
                     Status:
                     <span class="tag {diffTypeColor[serviceDiff.type]}">
                         {#if serviceDiff.type === DiffType.REMOVED}
@@ -38,7 +38,21 @@
                         {serviceDiff.type}
                     </span>
                 </p>
-                <DiffItemsTable diffItems={serviceDiff.metadata} />
+                {#if serviceDiff.metadata && serviceDiff.metadata.length}
+                    <p class="table-title">Metadata</p>
+                    <DiffItemsTable diffItems={serviceDiff.metadata} />
+                {/if}
+                {#if serviceDiff.parameters && serviceDiff.parameters.length}
+                    <p class="table-title">Request Parameters</p>
+                    <DiffItemsTable diffItems={serviceDiff.parameters} />
+                {/if}
+                {#if serviceDiff.request && serviceDiff.request.length}
+                    <p class="table-title">Request Body</p>
+                    <DiffItemsTable diffItems={serviceDiff.request} />
+                {/if}
+                {#if serviceDiff.responses && Object.keys(serviceDiff.responses).length}
+                    <p class="table-title">Responses Body</p>
+                {/if}
             </details>
         {/each}
         {#if !apiDiff.metadata.length && !Object.keys(apiDiff.services).length}
@@ -48,4 +62,10 @@
 </div>
 
 <style>
+    details:not(:last-child) {
+        margin-bottom: 1.5em;
+    }
+    .table-title {
+        font-weight: bold;
+    }
 </style>

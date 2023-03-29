@@ -9,7 +9,7 @@
         <thead>
             <tr>
                 <th>Type</th>
-                <th>Path</th>
+                <th>Location</th>
                 <th>Left Value</th>
                 <th>Right Value</th>
             </tr>

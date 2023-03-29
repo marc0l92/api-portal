@@ -1,4 +1,4 @@
-import type { Api, ApiService } from "common/api/api"
+import type { Api, ApiParameterDoc, ApiParameterDocMap, ApiService } from "common/api/api"
 
 export interface ApiDiff {
     isBackwardCompatible: boolean
@@ -13,9 +13,11 @@ interface ServiceDiff {
     metadata?: DiffItem[]
     parameters?: DiffItem[]
     request?: DiffItem[]
-    responses?: {
-        [statusCode: string]: DiffItem[]
-    }
+    responses?: ResponseDiff
+}
+
+interface ResponseDiff {
+    [statusCode: string]: DiffItem[]
 }
 
 export enum DiffType {
@@ -51,10 +53,16 @@ export function compareApis(leftApi: Api, rightApi: Api) {
                 type: DiffType.MODIFIED,
                 metadata: [], parameters: [], request: [], responses: {},
             }
-
             serviceDiff.metadata = compareMetadata(extractMetadataFromService(leftService), extractMetadataFromService(rightService))
+            serviceDiff.parameters = compareRequestParameters(leftService.getRequestParameters(), rightService.getRequestParameters())
+            serviceDiff.request = compareRequests(leftService.getRequest(), rightService.getRequest())
+            serviceDiff.responses = compareResponses(leftService.getResponses(), rightService.getResponses())
 
             if (serviceDiff.metadata.length || serviceDiff.parameters.length || serviceDiff.request.length || Object.keys(serviceDiff.responses).length) {
+                apiDiff.isBackwardCompatible &&= serviceDiff.metadata.every(i => i.isBackwardCompatible)
+                    && serviceDiff.parameters.every(i => i.isBackwardCompatible)
+                    && serviceDiff.request.every(i => i.isBackwardCompatible)
+                    && Object.values(serviceDiff.responses).every(r => r.every(i => i.isBackwardCompatible))
                 apiDiff.services[leftService.getName()] = serviceDiff
             }
             rightServices.splice(rightServiceIndex, 1)
@@ -131,5 +139,60 @@ function compareMetadata(leftDoc: any, rightDoc: any, path: string = ''): DiffIt
             isBackwardCompatible: true,
         })
     }
+    return diffItems
+}
+
+
+function compareRequestParameters(leftRequestParameters: ApiParameterDoc[], rightRequestParameters: ApiParameterDoc[]): DiffItem[] {
+    const diffItems: DiffItem[] = []
+    const rightRequestParametersIndexes = Object.keys(rightRequestParameters).map(x => parseInt(x))
+    for (const leftRequestParameter of leftRequestParameters) {
+        const rightRequestParameterIndex = rightRequestParameters.findIndex(p => p.name === leftRequestParameter.name && p.in === leftRequestParameter.in)
+        if (rightRequestParameterIndex >= 0) {
+            rightRequestParametersIndexes.splice(rightRequestParametersIndexes.indexOf(rightRequestParameterIndex), 1)
+        } else {
+            diffItems.push({
+                path: `${leftRequestParameter.name} [${leftRequestParameter.in}]`,
+                type: DiffType.REMOVED,
+                leftValue: leftRequestParameter,
+                isBackwardCompatible: false,
+            })
+        }
+    }
+    for (const rightRequestParametersIndex of rightRequestParametersIndexes) {
+        const param: ApiParameterDoc = rightRequestParameters[rightRequestParametersIndex]
+        diffItems.push({
+            path: `${param.name} [${param.in}]`,
+            type: DiffType.ADDED,
+            rightValue: param,
+            isBackwardCompatible: true,
+        })
+    }
+    return diffItems
+}
+
+function compareRequests(leftRequest: ApiParameterDoc, rightRequest: ApiParameterDoc): DiffItem[] {
+    const diffItems: DiffItem[] = []
+    if (!leftRequest && rightRequest) {
+        return [{
+            path: `Request body`,
+            type: DiffType.ADDED,
+            rightValue: rightRequest,
+            isBackwardCompatible: true,
+        }]
+    }
+    if (leftRequest && !rightRequest) {
+        return [{
+            path: `Request body`,
+            type: DiffType.REMOVED,
+            rightValue: leftRequest,
+            isBackwardCompatible: false,
+        }]
+    }
+    return diffItems
+}
+
+function compareResponses(leftResponses: ApiParameterDocMap, rightResponses: ApiParameterDocMap): ResponseDiff {
+    const diffItems: ResponseDiff = {}
     return diffItems
 }
