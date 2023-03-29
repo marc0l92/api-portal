@@ -23,9 +23,9 @@ export enum DiffType {
 }
 
 export const diffTypeColor: { [type: string]: string } = {
-    [DiffType.ADDED]:'is-success',
-    [DiffType.MODIFIED]:'is-warning',
-    [DiffType.REMOVED]:'is-danger',
+    [DiffType.ADDED]: 'is-success',
+    [DiffType.MODIFIED]: 'is-warning',
+    [DiffType.REMOVED]: 'is-danger',
 };
 
 export interface DiffItem {
@@ -46,6 +46,9 @@ export function compareApis(leftApi: Api, rightApi: Api) {
     for (const leftService of leftApi.getServices()) {
         const rightServiceIndex = rightServices.findIndex(s => s.getName() === leftService.getName())
         if (rightServiceIndex >= 0) {
+            apiDiff.services[leftService.getName()] = {
+                type: DiffType.MODIFIED,
+            }
             rightServices.splice(rightServiceIndex, 1)
         } else {
             apiDiff.isBackwardCompatible = false

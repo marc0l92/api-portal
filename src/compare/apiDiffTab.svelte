@@ -21,12 +21,12 @@
             </div>
         {/if}
         <details open>
-            <summary class="title is-4">Apis Metadata</summary>
+            <summary class="title is-5">Apis Metadata</summary>
             <DiffItemsTable diffItems={apiDiff.metadata} />
         </details>
         {#each Object.entries(apiDiff.services) as [serviceName, serviceDiff]}
             <details open>
-                <summary class="title is-4">{serviceName}</summary>
+                <summary class="title is-5">{serviceName}</summary>
                 <p>
                     Status:
                     <span class="tag {diffTypeColor[serviceDiff.type]}">
