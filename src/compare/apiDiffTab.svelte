@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Api } from 'common/api/api';
-    import { compareApis, DiffType, type ApiDiff } from './compare';
+    import { compareApis, DiffType, diffTypeColor, type ApiDiff } from './compare';
+    import DiffItemsTable from './diffItemsTable.svelte';
 
     export let leftApi: Api;
     export let rightApi: Api;
@@ -13,35 +14,33 @@
 
 <div>
     {#if apiDiff}
+        {#if !apiDiff.isBackwardCompatible}
+            <div class="notification is-small is-danger">
+                <i class="fa-solid fa-triangle-exclamation mx-1" title="Not backward compatible change" />
+                Not backward compatible changes detected
+            </div>
+        {/if}
         <details open>
-            <summary class="title is-4">Metadata</summary>
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Path</th>
-                        <th>Left Value</th>
-                        <th>Right Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each apiDiff.metadata as diffItem}
-                        <tr>
-                            {#if diffItem.type === DiffType.ADDED}
-                                <td class="is-success">Added</td>
-                            {:else if diffItem.type === DiffType.MODIFIED}
-                                <td class="is-warning">Modified</td>
-                            {:else if diffItem.type === DiffType.REMOVED}
-                                <td class="is-danger">Removed</td>
-                            {/if}
-                            <td>{diffItem.path}</td>
-                            <td>{diffItem.leftValue ? JSON.stringify(diffItem.leftValue) : ''}</td>
-                            <td>{diffItem.rightValue ? JSON.stringify(diffItem.rightValue) : ''}</td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            <summary class="title is-4">Apis Metadata</summary>
+            <DiffItemsTable diffItems={apiDiff.metadata} />
         </details>
+        {#each Object.entries(apiDiff.services) as [serviceName, serviceDiff]}
+            <details open>
+                <summary class="title is-4">{serviceName}</summary>
+                <p>
+                    Status:
+                    <span class="tag {diffTypeColor[serviceDiff.type]}">
+                        {#if serviceDiff.type === DiffType.REMOVED}
+                            <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                        {/if}
+                        {serviceDiff.type}
+                    </span>
+                </p>
+                {#if serviceDiff.metadata}
+                    <DiffItemsTable diffItems={serviceDiff.metadata} />
+                {/if}
+            </details>
+        {/each}
     {/if}
 </div>
 
