@@ -261,6 +261,8 @@
         <RawTab {apiText} />
       </LazyLoad>
     </div>
+  {:else}
+    <progress class="progress is-info" max="100">30%</progress>
   {/if}
 </div>
 <Footer />
