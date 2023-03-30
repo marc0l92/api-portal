@@ -56,6 +56,7 @@ export class ApiSwagger extends Api {
         const services: ApiServiceSwagger[] = []
         for (const path in this.getApi().paths) {
             const globalParam = this.getApi().paths[path].parameters || []
+            globalParam.forEach((p, i) => (p["x-path"] = `/paths["${path}"]/parameters[${i}]`))
             for (const method in this.getApi().paths[path]) {
                 if (method !== 'parameters') {
                     const apiService = new ApiServiceSwagger(this.getApi().paths[path][method] as ApiSwaggerServiceDoc)
@@ -103,6 +104,7 @@ export class ApiServiceSwagger extends ApiService {
 
     private initParameters() {
         if (this.getServiceDoc().parameters) {
+            this.getServiceDoc().parameters.forEach((p, i) => (p["x-path"] = `${this.getServiceBasePath()}/parameters[${i}]`))
             this.requestParameters = this.getServiceDoc().parameters.filter((parameter) => {
                 return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
             })
@@ -120,7 +122,14 @@ export class ApiServiceSwagger extends ApiService {
 
     private initResponse() {
         if (this.getServiceDoc().responses) {
+            for (const statusCode in this.getServiceDoc().responses) {
+                this.getServiceDoc().responses[statusCode]["x-path"] = `${this.getServiceBasePath()}/responses[${statusCode}]`
+            }
             this.responses = this.getServiceDoc().responses
         }
+    }
+
+    getServiceBasePath(): string {
+        return `/paths["${this.path}"]/${this.method}`
     }
 }

@@ -65,6 +65,7 @@ export class ApiOpenApi extends Api {
         const services: ApiServiceOpenApi[] = []
         for (const path in this.getApi().paths) {
             const globalParam = this.getApi().paths[path].parameters || []
+            globalParam.forEach((p, i) => (p["x-path"] = `/paths["${path}"]/parameters[${i}]`))
             for (const method in this.getApi().paths[path]) {
                 if (PATH_METHODS.indexOf(method) >= 0) {
                     const apiService = new ApiServiceOpenApi(this.getApi().paths[path][method] as ApiOpenApiServiceDoc)
@@ -112,6 +113,7 @@ export class ApiServiceOpenApi extends ApiService {
 
     private initParameters() {
         if (this.getServiceDoc().parameters) {
+            this.getServiceDoc().parameters.forEach((p, i) => (p['x-path'] = `${this.getServiceBasePath()}/parameters[${i}]`))
             this.requestParameters = this.getServiceDoc().parameters
         }
     }
@@ -120,6 +122,7 @@ export class ApiServiceOpenApi extends ApiService {
         if (this.getServiceDoc().requestBody
             && this.getServiceDoc().requestBody.content
             && this.getServiceDoc().requestBody.content['application/json']) {
+            this.getServiceDoc().requestBody.content['application/json']["x-path"] = `${this.getServiceBasePath()}/requestBody/content["application/json"]`
             this.request = this.getServiceDoc().requestBody.content['application/json']
         }
     }
@@ -129,9 +132,14 @@ export class ApiServiceOpenApi extends ApiService {
             for (const statusCode in this.getServiceDoc().responses) {
                 const response = this.getServiceDoc().responses[statusCode]
                 if (response.content && response.content['application/json']) {
+                    response.content['application/json']["x-path"] = `${this.getServiceBasePath()}/responses[${statusCode}]/content["application/json"]`
                     this.responses[statusCode] = response.content['application/json']
                 }
             }
         }
+    }
+
+    getServiceBasePath(): string {
+        return `/paths["${this.path}"]/${this.method}`
     }
 }

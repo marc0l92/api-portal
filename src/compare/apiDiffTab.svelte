@@ -32,26 +32,46 @@
                 <p class="mb-2">
                     Status:
                     <span class="tag {diffTypeColor[serviceDiff.type]}">
-                        {#if serviceDiff.type === DiffType.REMOVED}
+                        {#if !serviceDiff.isBackwardCompatible}
                             <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
                         {/if}
                         {serviceDiff.type}
                     </span>
                 </p>
-                {#if serviceDiff.metadata && serviceDiff.metadata.length}
-                    <p class="table-title">Metadata</p>
-                    <DiffItemsTable diffItems={serviceDiff.metadata} />
+                {#if serviceDiff.metadata && serviceDiff.metadata.items.length}
+                    <p class="table-title">
+                        {#if !serviceDiff.metadata.isBackwardCompatible}
+                            <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                        {/if}
+                        Metadata
+                    </p>
+                    <DiffItemsTable diffItems={serviceDiff.metadata.items} />
                 {/if}
-                {#if serviceDiff.parameters && serviceDiff.parameters.length}
-                    <p class="table-title">Request Parameters</p>
-                    <DiffItemsTable diffItems={serviceDiff.parameters} />
+                {#if serviceDiff.parameters && serviceDiff.parameters.items.length}
+                    <p class="table-title">
+                        {#if !serviceDiff.parameters.isBackwardCompatible}
+                            <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                        {/if}
+                        Request Parameters
+                    </p>
+                    <DiffItemsTable diffItems={serviceDiff.parameters.items} />
                 {/if}
-                {#if serviceDiff.request && serviceDiff.request.length}
-                    <p class="table-title">Request Body</p>
-                    <DiffItemsTable diffItems={serviceDiff.request} />
+                {#if serviceDiff.request && serviceDiff.request.items.length}
+                    <p class="table-title">
+                        {#if !serviceDiff.request.isBackwardCompatible}
+                            <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                        {/if}
+                        Request Body
+                    </p>
+                    <DiffItemsTable diffItems={serviceDiff.request.items} />
                 {/if}
                 {#if serviceDiff.responses && Object.keys(serviceDiff.responses).length}
-                    <p class="table-title">Responses Body</p>
+                    <p class="table-title">
+                        <!-- {#if !serviceDiff.responses.isBackwardCompatible}
+                            <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                        {/if} -->
+                        Responses Body
+                    </p>
                 {/if}
             </details>
         {/each}

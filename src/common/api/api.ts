@@ -25,6 +25,7 @@ export interface ApiParameterDoc {
     schema?: ApiModelDoc
     description?: string
     example?: any
+    ["x-path"]?: string
 }
 
 export interface ApiMetadata {
@@ -125,4 +126,6 @@ export abstract class ApiService {
     toJson(): any {
         return this.serviceDoc
     }
+
+    abstract getServiceBasePath(): string
 }
