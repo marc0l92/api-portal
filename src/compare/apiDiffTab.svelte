@@ -21,7 +21,7 @@
             </div>
         {/if}
         {#if apiDiff.metadata.length > 0}
-            <details open>
+            <details>
                 <summary class="title is-5">Apis Metadata</summary>
                 <DiffItemsTable diffItems={apiDiff.metadata} />
             </details>
@@ -65,13 +65,18 @@
                     </p>
                     <DiffItemsTable diffItems={serviceDiff.request.items} />
                 {/if}
-                {#if serviceDiff.responses && Object.keys(serviceDiff.responses).length}
-                    <p class="table-title">
-                        <!-- {#if !serviceDiff.responses.isBackwardCompatible}
-                            <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
-                        {/if} -->
-                        Responses Body
-                    </p>
+                {#if serviceDiff.responses}
+                    {#each Object.entries(serviceDiff.responses) as [statusCode, responseDiff]}
+                        {#if responseDiff.items.length}
+                            <p class="table-title">
+                                {#if !responseDiff.isBackwardCompatible}
+                                    <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                                {/if}
+                                Response: {statusCode}
+                            </p>
+                            <DiffItemsTable diffItems={responseDiff.items} />
+                        {/if}
+                    {/each}
                 {/if}
             </details>
         {/each}
@@ -82,7 +87,7 @@
 </div>
 
 <style>
-    details:not(:last-child) {
+    details[open]:not(:last-child) {
         margin-bottom: 1.5em;
     }
     .table-title {

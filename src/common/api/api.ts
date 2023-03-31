@@ -33,7 +33,7 @@ export interface ApiMetadata {
 }
 
 export interface ApiParameterDocMap {
-    [key: string]: ApiParameterDoc
+    [statusCode: string]: ApiParameterDoc
 }
 
 export interface ApiReleaseNotes {

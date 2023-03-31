@@ -248,6 +248,41 @@ function compareApiParameters(leftParameter: ApiParameterDoc, rightParameter: Ap
 
 function compareResponses(leftResponses: ApiParameterDocMap, rightResponses: ApiParameterDocMap): ResponseDiff {
     const diffItems: ResponseDiff = {}
+    const rightResponsesStatusCode = Object.keys(rightResponses)
+    for (const leftResponseStatusCode of Object.keys(leftResponses)) {
+        const leftResponse = leftResponses[leftResponseStatusCode]
+        const rightResponseStatusCodeIndex = rightResponsesStatusCode.indexOf(leftResponseStatusCode)
+        if (rightResponseStatusCodeIndex >= 0) {
+            const rightResponse = rightResponses[leftResponseStatusCode]
+            const childDiff = compareApiParameters(leftResponse, rightResponse)
+            if (childDiff.items.length) {
+                diffItems[leftResponseStatusCode] = childDiff
+            }
+            rightResponsesStatusCode.splice(rightResponseStatusCodeIndex, 1)
+        } else {
+            diffItems[leftResponseStatusCode] = {
+                items: [{
+                    path: leftResponse["x-path"],
+                    type: DiffType.REMOVED,
+                    rightValue: leftResponse,
+                    isBackwardCompatible: false,
+                }],
+                isBackwardCompatible: false,
+            }
+        }
+    }
+    for (const rightResponseStatusCode of rightResponsesStatusCode) {
+        const rightResponse = rightResponses[rightResponseStatusCode]
+        diffItems[rightResponseStatusCode] = {
+            items: [{
+                path: rightResponse["x-path"],
+                type: DiffType.ADDED,
+                rightValue: rightResponse,
+                isBackwardCompatible: true,
+            }],
+            isBackwardCompatible: true,
+        }
+    }
     return diffItems
 }
 
