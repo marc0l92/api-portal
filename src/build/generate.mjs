@@ -13,8 +13,8 @@ import process from 'process'
 const INPUT_FOLDER = 'inputApi/'
 const OUTPUT_FOLDER = 'public/apis'
 const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/apiIndex.json`
-const API_SUFFIX = '.api.json'
-const VALIDATION_SUFFIX = '.validation.json'
+const API_SUFFIX = '.api.json.gzip'
+const VALIDATION_SUFFIX = '.validation.json.gzip'
 const MAX_VERSION_DIGITS = 5
 const MAX_PARALLEL_VALIDATIONS = 10
 const VALIDATION_TIMEOUT = 300000
@@ -60,9 +60,9 @@ function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
             for (const versionName in apiIndex[packageName][apiName]) {
                 for (const fileName in apiIndex[packageName][apiName][versionName]) {
                     const hash = apiIndex[packageName][apiName][versionName][fileName].hash
-                    const position = fileNames.indexOf(`${OUTPUT_FOLDER}/${hash}.api.json`)
+                    const position = fileNames.indexOf(`${OUTPUT_FOLDER}/${hash}${API_SUFFIX}`)
                     if (position === -1) {
-                        console.warn('File not found on disk:', `${OUTPUT_FOLDER}/${hash}.api.json`)
+                        console.warn('File not found on disk:', `${OUTPUT_FOLDER}/${hash}${API_SUFFIX}`)
                         delete apiIndex[packageName][apiName][versionName][fileName]
                     } else {
                         fileNames.splice(position, 1)
@@ -95,7 +95,7 @@ async function loadAndValidateApiIndex() {
     if (fs.existsSync(INDEX_FILE_PATH)) {
         apiIndex = fs.readJsonSync(INDEX_FILE_PATH)
     }
-    const fileNames = (await glob.glob(`${OUTPUT_FOLDER}**/*.api.json`)).map(x => x.replace(/\\/g, '/'))
+    const fileNames = (await glob.glob(`${OUTPUT_FOLDER}**/*${API_SUFFIX}`)).map(x => x.replace(/\\/g, '/'))
     deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames)
     return apiIndex
 }
@@ -105,14 +105,14 @@ async function loadAndValidateApiIndex() {
  * @param {string} apiHash
  */
 async function generateApi(apiDoc, apiHash) {
-    await fs.outputJson(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, apiDoc)
+    await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, apiTools.compressApiDoc(apiDoc))
 }
 
 /**
  * @param {string} filename
  */
-async function minifyJsonFile(filename) {
-    await fs.writeJSON(filename, await fs.readJSON(filename))
+async function minifyAndCompressJsonFile(filename) {
+    await fs.outputFile(filename, apiTools.compressApiDoc(await fs.readJSON(filename)))
 }
 
 /**
@@ -133,7 +133,7 @@ async function generateValidation(apiHash) {
                 } if (error && error.killed && error.signal === 'SIGTERM') {
                     return reject('Execution timeout reached while validating: ' + apiHash)
                 } else {
-                    await minifyJsonFile(outputFile)
+                    await minifyAndCompressJsonFile(outputFile)
                     return resolve(null)
                 }
             })

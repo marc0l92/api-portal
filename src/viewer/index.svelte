@@ -22,6 +22,7 @@
   import Metadata from './metadata.svelte';
   import { getApiStatusName } from 'common/api/apiStatus';
   import InputApi from 'components/inputApi.svelte';
+  import { decompress } from 'common/compress';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const basePath = getBasePath();
@@ -46,9 +47,9 @@
 
   async function fetchApi() {
     try {
-      const response = await fetch(`./apis/${apiHash}.api.json`);
+      const response = await fetch(`./apis/${apiHash}.api.json.gzip`);
       if (response.ok) {
-        apiText = await response.text();
+        apiText = decompress(await response.arrayBuffer());
         apiDoc = yaml.load(apiText);
         api = apiFactory(apiDoc);
         api.setModelsTitle();
@@ -73,9 +74,9 @@
 
   async function fetchValidation() {
     try {
-      const response = await fetch(`./apis/${apiHash}.validation.json`);
+      const response = await fetch(`./apis/${apiHash}.validation.json.gzip`);
       if (response.ok) {
-        validationData = yaml.load(await response.text()) as ApiValidation[];
+        validationData = yaml.load(decompress(await response.arrayBuffer())) as ApiValidation[];
       } else if (selectedTab === 'validation') {
         selectedTab = 'api';
       }
@@ -261,7 +262,7 @@
         <RawTab {apiText} />
       </LazyLoad>
     </div>
-  {:else}
+  {:else if errors.length === 0 && !showApiInput}
     <progress class="progress is-info" max="100">30%</progress>
   {/if}
 </div>
