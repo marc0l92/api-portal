@@ -17,6 +17,7 @@
     "config-schema": "typescript-json-schema --required src/build/BuildConfig.ts BuildConfig > src/build/config.schema.json"
   },
   "dependencies": {
+    "fflate": "^0.7.4",
     "js-yaml": "^4.1.0",
     "jszip": "^3.10.1",
     "plantuml-encoder": "^1.4.0",
