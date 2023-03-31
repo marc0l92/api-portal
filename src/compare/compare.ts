@@ -64,7 +64,7 @@ export function compareApis(leftApi: Api, rightApi: Api) {
                 request: { isBackwardCompatible: true, items: [] },
                 responses: {},
             }
-            // console.log(leftService.getName())
+
             serviceDiff.metadata = compareMetadata(extractMetadataFromService(leftService), extractMetadataFromService(rightService))
             serviceDiff.parameters = compareRequestParameters(leftService.getRequestParameters(), rightService.getRequestParameters())
             serviceDiff.request = compareApiParameters(leftService.getRequest(), rightService.getRequest())
