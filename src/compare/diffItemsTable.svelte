@@ -1,6 +1,6 @@
 <script lang="ts">
     import LongText from 'components/longText.svelte';
-    import { diffTypeColor, type DiffItem } from './compare';
+    import { DiffTypeColor, type DiffItem } from './compareInterfaces';
 
     const PATH_MAX_LENGTH = 30;
     const VALUE_MAX_LENGTH = 120;
@@ -23,11 +23,11 @@
                 {#each diffItems as diffItem}
                     <tr>
                         <td>
-                            <span class="tag {diffTypeColor[diffItem.type]}">
+                            <span class="tag {DiffTypeColor[diffItem.diffType]}">
                                 {#if !diffItem.isBackwardCompatible}
                                     <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
                                 {/if}
-                                {diffItem.type}
+                                {diffItem.diffType}
                             </span>
                         </td>
                         <td><LongText text={diffItem.path} maxLength={PATH_MAX_LENGTH} keepEnd={true} /></td>

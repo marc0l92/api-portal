@@ -1,51 +1,6 @@
 import type { Api, ApiParameterDoc, ApiParameterDocMap, ApiService } from "common/api/api"
 import type { ApiModelDoc } from "common/api/apiModel"
-
-export interface ApiDiff {
-    isBackwardCompatible: boolean
-    metadata: DiffItem[]
-    services: {
-        [serviceName: string]: ServiceDiff
-    }
-}
-
-interface ServiceDiff {
-    type: DiffType
-    isBackwardCompatible: boolean
-    metadata?: DiffSection
-    parameters?: DiffSection
-    request?: DiffSection
-    responses?: ResponseDiff
-}
-
-interface ResponseDiff {
-    [statusCode: string]: DiffSection
-}
-
-export enum DiffType {
-    ADDED = 'Added',
-    REMOVED = 'Removed',
-    MODIFIED = 'Modified',
-}
-
-export const diffTypeColor: { [type: string]: string } = {
-    [DiffType.ADDED]: 'is-success',
-    [DiffType.MODIFIED]: 'is-warning',
-    [DiffType.REMOVED]: 'is-danger',
-};
-
-interface DiffSection {
-    isBackwardCompatible: boolean
-    items: DiffItem[]
-}
-
-export interface DiffItem {
-    type: DiffType
-    path: string
-    isBackwardCompatible: boolean
-    leftValue?: any
-    rightValue?: any
-}
+import { DiffType, type ApiDiff, type ServiceDiff, type DiffSection, type ResponseDiff, type ApiModelDocDiff, DiffDirection } from "./compareInterfaces"
 
 export function compareApis(leftApi: Api, rightApi: Api) {
     const apiDiff: ApiDiff = { isBackwardCompatible: true, metadata: [], services: {} }
@@ -57,7 +12,7 @@ export function compareApis(leftApi: Api, rightApi: Api) {
         if (rightServiceIndex >= 0) {
             const rightService = rightServices[rightServiceIndex]
             const serviceDiff: ServiceDiff = {
-                type: DiffType.MODIFIED,
+                diffType: DiffType.MODIFIED,
                 isBackwardCompatible: true,
                 metadata: { isBackwardCompatible: true, items: [] },
                 parameters: { isBackwardCompatible: true, items: [] },
@@ -85,14 +40,14 @@ export function compareApis(leftApi: Api, rightApi: Api) {
         } else {
             apiDiff.isBackwardCompatible = false
             apiDiff.services[leftService.getName()] = {
-                type: DiffType.REMOVED,
+                diffType: DiffType.REMOVED,
                 isBackwardCompatible: false,
             }
         }
     }
     for (const rightService of rightServices) {
         apiDiff.services[rightService.getName()] = {
-            type: DiffType.ADDED,
+            diffType: DiffType.ADDED,
             isBackwardCompatible: true,
         }
     }
@@ -127,23 +82,23 @@ function getPath(basePath: string, key: string, isArray: boolean): string {
 }
 
 function compareMetadata(leftDoc: any, rightDoc: any, basePath: string = '', notBackwardCompatiblePaths: string[] = []): DiffSection {
-    let diffItems: DiffSection = { isBackwardCompatible: true, items: [] }
+    let diffSection: DiffSection = { isBackwardCompatible: true, items: [] }
     const rightKeys = Object.keys(rightDoc)
     for (const leftKey of Object.keys(leftDoc)) {
         const rightKeysIndex = rightKeys.indexOf(leftKey)
         if (rightKeysIndex >= 0) {
             if (typeof leftDoc[leftKey] === 'object' && typeof rightDoc[leftKey] === 'object') {
                 const childDiff = compareMetadata(leftDoc[leftKey], rightDoc[leftKey], getPath(basePath, leftKey, Array.isArray(leftDoc)), notBackwardCompatiblePaths)
-                diffItems.isBackwardCompatible &&= childDiff.isBackwardCompatible
-                diffItems.items = diffItems.items.concat(childDiff.items)
+                diffSection.isBackwardCompatible &&= childDiff.isBackwardCompatible
+                diffSection.items = diffSection.items.concat(childDiff.items)
             } else {
                 if (leftDoc[leftKey] !== rightDoc[leftKey]) {
                     const path = getPath(basePath, leftKey, Array.isArray(leftDoc))
                     const isBackwardCompatible = notBackwardCompatiblePaths.indexOf(path) === -1
-                    diffItems.isBackwardCompatible &&= isBackwardCompatible
-                    diffItems.items.push({
+                    diffSection.isBackwardCompatible &&= isBackwardCompatible
+                    diffSection.items.push({
                         path: path,
-                        type: DiffType.MODIFIED,
+                        diffType: DiffType.MODIFIED,
                         leftValue: leftDoc[leftKey],
                         rightValue: rightDoc[leftKey],
                         isBackwardCompatible: isBackwardCompatible,
@@ -154,10 +109,10 @@ function compareMetadata(leftDoc: any, rightDoc: any, basePath: string = '', not
         } else {
             const path = getPath(basePath, leftKey, Array.isArray(leftDoc))
             const isBackwardCompatible = notBackwardCompatiblePaths.indexOf(path) === -1
-            diffItems.isBackwardCompatible &&= isBackwardCompatible
-            diffItems.items.push({
+            diffSection.isBackwardCompatible &&= isBackwardCompatible
+            diffSection.items.push({
                 path: path,
-                type: DiffType.REMOVED,
+                diffType: DiffType.REMOVED,
                 leftValue: leftDoc[leftKey],
                 isBackwardCompatible: isBackwardCompatible,
             })
@@ -166,34 +121,34 @@ function compareMetadata(leftDoc: any, rightDoc: any, basePath: string = '', not
     for (const rightKey of rightKeys) {
         const path = getPath(basePath, rightKey, Array.isArray(rightDoc))
         const isBackwardCompatible = notBackwardCompatiblePaths.indexOf(path) === -1
-        diffItems.isBackwardCompatible &&= isBackwardCompatible
-        diffItems.items.push({
+        diffSection.isBackwardCompatible &&= isBackwardCompatible
+        diffSection.items.push({
             path: path,
-            type: DiffType.ADDED,
+            diffType: DiffType.ADDED,
             rightValue: rightDoc[rightKey],
             isBackwardCompatible: isBackwardCompatible,
         })
     }
-    return diffItems
+    return diffSection
 }
 
 
 function compareRequestParameters(leftRequestParameters: ApiParameterDoc[], rightRequestParameters: ApiParameterDoc[]): DiffSection {
-    let diffItems: DiffSection = { isBackwardCompatible: true, items: [] }
+    let diffSection: DiffSection = { isBackwardCompatible: true, items: [] }
     const rightRequestParametersIndexes = Object.keys(rightRequestParameters).map(x => parseInt(x))
     for (const leftRequestParameter of leftRequestParameters) {
         const rightRequestParameterIndex = rightRequestParameters.findIndex(p => p.name === leftRequestParameter.name && p.in === leftRequestParameter.in)
         if (rightRequestParameterIndex >= 0) {
             const rightRequestParameter = rightRequestParameters[rightRequestParameterIndex]
             const childDiff = compareApiParameters(leftRequestParameter, rightRequestParameter)
-            diffItems.isBackwardCompatible &&= childDiff.isBackwardCompatible
-            diffItems.items = diffItems.items.concat(childDiff.items)
+            diffSection.isBackwardCompatible &&= childDiff.isBackwardCompatible
+            diffSection.items = diffSection.items.concat(childDiff.items)
             rightRequestParametersIndexes.splice(rightRequestParametersIndexes.indexOf(rightRequestParameterIndex), 1)
         } else {
-            diffItems.isBackwardCompatible = false
-            diffItems.items.push({
+            diffSection.isBackwardCompatible = false
+            diffSection.items.push({
                 path: leftRequestParameter["x-path"],
-                type: DiffType.REMOVED,
+                diffType: DiffType.REMOVED,
                 leftValue: leftRequestParameter,
                 isBackwardCompatible: false,
             })
@@ -201,26 +156,26 @@ function compareRequestParameters(leftRequestParameters: ApiParameterDoc[], righ
     }
     for (const rightRequestParametersIndex of rightRequestParametersIndexes) {
         const param: ApiParameterDoc = rightRequestParameters[rightRequestParametersIndex]
-        diffItems.items.push({
+        diffSection.items.push({
             path: param["x-path"],
-            type: DiffType.ADDED,
+            diffType: DiffType.ADDED,
             rightValue: param,
             isBackwardCompatible: true,
         })
     }
-    return diffItems
+    return diffSection
 }
 
 function compareApiParameters(leftParameter: ApiParameterDoc, rightParameter: ApiParameterDoc): DiffSection {
-    let diffItems: DiffSection = { isBackwardCompatible: true, items: [] }
+    let diffSection: DiffSection = { isBackwardCompatible: true, items: [] }
     if (!leftParameter && !rightParameter) {
-        return diffItems
+        return diffSection
     }
     if (!leftParameter && rightParameter) {
         return {
             items: [{
                 path: rightParameter["x-path"],
-                type: DiffType.ADDED,
+                diffType: DiffType.ADDED,
                 rightValue: rightParameter,
                 isBackwardCompatible: true,
             }],
@@ -231,7 +186,7 @@ function compareApiParameters(leftParameter: ApiParameterDoc, rightParameter: Ap
         return {
             items: [{
                 path: leftParameter["x-path"],
-                type: DiffType.REMOVED,
+                diffType: DiffType.REMOVED,
                 rightValue: leftParameter,
                 isBackwardCompatible: false,
             }],
@@ -240,14 +195,13 @@ function compareApiParameters(leftParameter: ApiParameterDoc, rightParameter: Ap
     }
     const notBackwardCompatiblePaths: string[] = ['in', 'name', 'type', 'required', 'schema']
     const metadataDiff = compareMetadata(extractMetadataFromApiParameter(leftParameter), extractMetadataFromApiParameter(rightParameter), leftParameter["x-path"], notBackwardCompatiblePaths)
-    const modelDiff = compareModels(leftParameter.schema, rightParameter.schema, leftParameter["x-path"])
-    diffItems.isBackwardCompatible &&= metadataDiff.isBackwardCompatible && modelDiff.isBackwardCompatible
-    diffItems.items = diffItems.items.concat(metadataDiff.items, modelDiff.items)
-    return diffItems
+    // diffSection.model = compareModels(leftParameter.schema, rightParameter.schema, leftParameter["x-path"])
+    diffSection.isBackwardCompatible &&= metadataDiff.isBackwardCompatible && diffSection.model.isBackwardCompatible
+    return diffSection
 }
 
 function compareResponses(leftResponses: ApiParameterDocMap, rightResponses: ApiParameterDocMap): ResponseDiff {
-    const diffItems: ResponseDiff = {}
+    const responseDiff: ResponseDiff = {}
     const rightResponsesStatusCode = Object.keys(rightResponses)
     for (const leftResponseStatusCode of Object.keys(leftResponses)) {
         const leftResponse = leftResponses[leftResponseStatusCode]
@@ -256,14 +210,14 @@ function compareResponses(leftResponses: ApiParameterDocMap, rightResponses: Api
             const rightResponse = rightResponses[leftResponseStatusCode]
             const childDiff = compareApiParameters(leftResponse, rightResponse)
             if (childDiff.items.length) {
-                diffItems[leftResponseStatusCode] = childDiff
+                responseDiff[leftResponseStatusCode] = childDiff
             }
             rightResponsesStatusCode.splice(rightResponseStatusCodeIndex, 1)
         } else {
-            diffItems[leftResponseStatusCode] = {
+            responseDiff[leftResponseStatusCode] = {
                 items: [{
                     path: leftResponse["x-path"],
-                    type: DiffType.REMOVED,
+                    diffType: DiffType.REMOVED,
                     rightValue: leftResponse,
                     isBackwardCompatible: false,
                 }],
@@ -273,20 +227,36 @@ function compareResponses(leftResponses: ApiParameterDocMap, rightResponses: Api
     }
     for (const rightResponseStatusCode of rightResponsesStatusCode) {
         const rightResponse = rightResponses[rightResponseStatusCode]
-        diffItems[rightResponseStatusCode] = {
+        responseDiff[rightResponseStatusCode] = {
             items: [{
                 path: rightResponse["x-path"],
-                type: DiffType.ADDED,
+                diffType: DiffType.ADDED,
                 rightValue: rightResponse,
                 isBackwardCompatible: true,
             }],
             isBackwardCompatible: true,
         }
     }
-    return diffItems
+    return responseDiff
 }
 
-function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, basePath: string): DiffSection {
-    const diffItems: DiffSection = { isBackwardCompatible: true, items: [] }
-    return diffItems
-}
+// function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, direction: DiffDirection, isRequired: boolean): ApiModelDocDiff {
+//     if (!leftModel && !rightModel) {
+//         return { isBackwardCompatible: true, diffType: DiffType.NO_CHANGES }
+//     }
+//     if (!leftModel && rightModel) {
+//         return Object.assign({
+//             diffType: DiffType.ADDED,
+//             isBackwardCompatible: direction === DiffDirection.RESPONSE || !isRequired,
+//         }, rightModel)
+//     }
+//     if (leftModel && !rightModel) {
+//         return Object.assign({
+//             diffType: DiffType.REMOVED,
+//             isBackwardCompatible: direction === DiffDirection.REQUEST || !isRequired,
+//         }, leftModel)
+//     }
+//     const modelDiff: ApiModelDocDiff = { isBackwardCompatible: true, diffType: DiffType.MODIFIED }
+
+//     return modelDiff
+// }

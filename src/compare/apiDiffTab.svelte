@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Api } from 'common/api/api';
-    import { compareApis, DiffType, diffTypeColor, type ApiDiff } from './compare';
+    import { compareApis } from './compare';
+    import { DiffTypeColor, type ApiDiff } from './compareInterfaces';
     import DiffItemsTable from './diffItemsTable.svelte';
 
     export let leftApi: Api;
@@ -31,11 +32,11 @@
                 <summary class="title is-5">{serviceName}</summary>
                 <p class="mb-2">
                     Status:
-                    <span class="tag {diffTypeColor[serviceDiff.type]}">
+                    <span class="tag {DiffTypeColor[serviceDiff.diffType]}">
                         {#if !serviceDiff.isBackwardCompatible}
                             <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
                         {/if}
-                        {serviceDiff.type}
+                        {serviceDiff.diffType}
                     </span>
                 </p>
                 {#if serviceDiff.metadata && serviceDiff.metadata.items.length}
