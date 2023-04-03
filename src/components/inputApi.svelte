@@ -1,7 +1,7 @@
 <script lang="ts">
     import { getApiSummaryFlatByHash, getApiSummaryToFlat, modifyApiSummaryFlat, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
     import { getApiStatusName } from 'common/api/apiStatus';
-    import { decompress } from 'common/compress';
+    import { decompressFromArray } from 'common/compress';
     import { getApiIndexPath, getBasePath } from 'common/globals';
     import { getOptions, storeOptions } from 'common/localStorage';
     import { searchInApiIndex, type LimitedSearchResults } from 'common/search';
@@ -85,7 +85,7 @@
         try {
             const response = await fetch(getBasePath() + `/apis/${apiHash}.api.json.gzip`);
             if (response.ok) {
-                return yaml.load(decompress(await response.arrayBuffer()));
+                return yaml.load(decompressFromArray(await response.arrayBuffer() as Uint8Array));
             } else {
                 inputError = 'Error: ' + response.status;
             }

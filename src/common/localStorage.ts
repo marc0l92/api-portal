@@ -3,10 +3,14 @@ export const storeOptions = (key: string, options: any) => {
 }
 
 export const getOptions = (key: string, defaultValue: any = null) => {
-    const item = localStorage.getItem(key)
-    if (item) {
-        return JSON.parse(item)
-    } else {
-        return defaultValue
+    try {
+        const options = localStorage.getItem(key)
+        if (options) {
+            return JSON.parse(options)
+        }
+    } catch (error) {
+        console.warn('Failure while parsing local options:', key, error)
+        storeOptions(key, defaultValue)
     }
+    return defaultValue
 }

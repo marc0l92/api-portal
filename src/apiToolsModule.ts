@@ -6,7 +6,7 @@ import type { Api } from "common/api/api"
 import { apiFactory } from "common/api/apiFactory"
 import { bufferToBlob } from "common/filesUtils"
 import * as RefParser from "common/api/refParser"
-import { compress } from "common/compress"
+import { compressToArray } from "common/compress"
 
 export const resolveReferences = RefParser.resolveReferences
 
@@ -63,7 +63,7 @@ export const apiToTables = async (apiObject: any) => {
 }
 
 export const compressApiDoc = (apiDoc: any): ArrayBuffer => {
-    return compress(JSON.stringify(apiDoc))
+    return compressToArray(JSON.stringify(apiDoc))
 }
 
 export default { resolveReferences, parseApi, apiToPlantUmlDiagrams, apiToSpreadsheet, apiToTables }

@@ -22,7 +22,7 @@
   import Metadata from './metadata.svelte';
   import { getApiStatusName } from 'common/api/apiStatus';
   import InputApi from 'components/inputApi.svelte';
-  import { decompress } from 'common/compress';
+  import { decompressFromArray } from 'common/compress';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const basePath = getBasePath();
@@ -49,7 +49,7 @@
     try {
       const response = await fetch(`./apis/${apiHash}.api.json.gzip`);
       if (response.ok) {
-        apiText = decompress(await response.arrayBuffer());
+        apiText = decompressFromArray((await response.arrayBuffer()) as Uint8Array);
         apiDoc = yaml.load(apiText);
         api = apiFactory(apiDoc);
         api.setModelsTitle();
@@ -76,7 +76,7 @@
     try {
       const response = await fetch(`./apis/${apiHash}.validation.json.gzip`);
       if (response.ok) {
-        validationData = yaml.load(decompress(await response.arrayBuffer())) as ApiValidation[];
+        validationData = yaml.load(decompressFromArray((await response.arrayBuffer()) as Uint8Array)) as ApiValidation[];
       } else if (selectedTab === 'validation') {
         selectedTab = 'api';
       }
