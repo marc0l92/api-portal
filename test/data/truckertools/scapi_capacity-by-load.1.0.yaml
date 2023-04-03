@@ -1,7 +1,7 @@
 openapi: 3.0.0
 
 info:
-  version: '1.0'
+  version: "1.0"
   title: SmartCapacity - Capacity by Load
   termsOfService: https://www.truckertools.com/terms/
   contact:
@@ -72,35 +72,33 @@ info:
         ```
 
 servers:
-  - url: 'https://scapi.truckertools.com'
+  - url: "https://scapi.truckertools.com"
     description: |
       Production Server
-  - url: 'https://scapi-staging.truckertools.com'
+  - url: "https://scapi-staging.truckertools.com"
     description: |
       Staging Server
 
 paths:
-  '/api/carrierCapacityForLoad':
+  "/api/carrierCapacityForLoad":
     get:
       tags:
-      - Requests
+        - Requests
       summary: Carrier Capacity by Load
       description: |
         Get carrier capacity by load number.
       parameters:
-        - $ref: '#/components/parameters/ApiKey'
-        - $ref: '#/components/parameters/Signature'
-        - $ref: '#/components/parameters/LoadNumber'
+        - $ref: "#/components/parameters/ApiKey"
+        - $ref: "#/components/parameters/Signature"
+        - $ref: "#/components/parameters/LoadNumber"
       responses:
-        '200':
-          $ref: '#/components/responses/LoadCapacityResponse'
-        '401':
-          $ref: '#/components/responses/UnauthenticatedResponse'
+        "200":
+          $ref: "#/components/responses/LoadCapacityResponse"
+        "401":
+          $ref: "#/components/responses/UnauthenticatedResponse"
 
 components:
-
   parameters:
-
     ApiKey:
       description: |
         Public key provided at signup.
@@ -130,7 +128,6 @@ components:
         example: 9001
 
   responses:
-
     UnauthenticatedResponse:
       description: |
         Response indicating invalid authentication.
@@ -139,7 +136,7 @@ components:
           schema:
             type: object
             required:
-            - status
+              - status
             properties:
               status:
                 description: |
@@ -160,10 +157,9 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/Carrier'
+              $ref: "#/components/schemas/Carrier"
 
   schemas:
-
     Carrier:
       type: object
       properties:
@@ -210,19 +206,19 @@ components:
         type:
           type: string
           enum:
-          - in network
-          - out of network
-          - my capacity
-          - dibs
+            - in network
+            - out of network
+            - my capacity
+            - dibs
           example: in network
         preferredDestinations:
           type: array
           items:
             type: string
             example:
-            - DC
-            - MD
-            - VA
+              - DC
+              - MD
+              - VA
         equipmentType:
           type: string
           example: Flatbed Hazardous

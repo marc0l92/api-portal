@@ -1,11 +1,14 @@
 <script lang="ts">
-    import type { ApiReleaseNotes } from 'common/api';
+    import type { ApiReleaseNotes } from 'common/api/api';
 
     export let releaseNotes: ApiReleaseNotes = null;
 </script>
 
 <div>
-    {#each Object.entries(releaseNotes) as [versionName, versionNotes]}
+    {#each Object.entries(releaseNotes) as [versionName, versionNotes], index}
+        {#if index !== 0}
+            <hr />
+        {/if}
         <details open>
             <summary class="title is-4">{versionName}</summary>
             {#each Object.values(versionNotes) as note}
@@ -16,7 +19,6 @@
                 {/if}
             {/each}
         </details>
-        <hr />
     {/each}
 </div>
 

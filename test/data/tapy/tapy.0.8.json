@@ -215,8 +215,7 @@
                 "example": {
                   "nextRequest": true,
                   "nextRequestId": 100000,
-                  "nextRequestParams": {
-                  }
+                  "nextRequestParams": {}
                 }
               }
             }
@@ -559,8 +558,7 @@
                       "responseCode": 404,
                       "responseMsg": "Not Found"
                     },
-                    "requestBody": {
-                    }
+                    "requestBody": {}
                   }
                 }
               }

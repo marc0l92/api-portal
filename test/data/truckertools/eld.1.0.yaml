@@ -3,19 +3,19 @@ info:
   version: "1.0.0"
   title: ELD Integrations
   description: The APIs for providing carrier ELD integration information
-  
+
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/truckertools/ELD/1.0.0
-  - url: 'https://scapi.truckertools.com'
+  - url: "https://scapi.truckertools.com"
     description: Trucker Tools Production Server
-  - url: 'https://scapi-staging.truckertools.com'
+  - url: "https://scapi-staging.truckertools.com"
     description: Staging Server
 
 security:
   - bearerAuth: []
-      
+
 paths:
   /api/partners/ELD/ELDProvider:
     get:
@@ -23,11 +23,11 @@ paths:
         - Get List of ELD Providers
       description: returns all existing ELD providers
       responses:
-        '200':
-          $ref: '#/components/responses/ELDProviderResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-          
+        "200":
+          $ref: "#/components/responses/ELDProviderResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
   /api/partners/ELD/ELDIntegration/{CarrierMC}:
     get:
       tags:
@@ -39,45 +39,45 @@ paths:
           required: true
           description: Carrier MC number, without 0 (zero) leading
           schema:
-            type: integer       
+            type: integer
       responses:
-        '200':
-          $ref: '#/components/responses/ELDIntegrationResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
- 
+        "200":
+          $ref: "#/components/responses/ELDIntegrationResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT  
+      bearerFormat: JWT
   responses:
     ELDProviderResponse:
       description: all ELD providers
       content:
         application/json:
-          schema:      
+          schema:
             type: array
             items:
-              $ref: '#/components/schemas/ELDProvider'
+              $ref: "#/components/schemas/ELDProvider"
     ELDIntegrationResponse:
       description: ELD integration
       content:
         application/json:
-          schema:  
+          schema:
             type: array
             items:
-              $ref: '#/components/schemas/ELDProvider'   
+              $ref: "#/components/schemas/ELDProvider"
     UnauthorizedError:
       description: Access token is missing or invalid
   schemas:
     ELDProvider:
-        type: object
-        properties:
-          name:
-            type: string
-            example: Simple Truck
-          code:
-            type: string
-            example: SimpleTruck
+      type: object
+      properties:
+        name:
+          type: string
+          example: Simple Truck
+        code:
+          type: string
+          example: SimpleTruck

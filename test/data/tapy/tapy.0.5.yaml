@@ -1,7 +1,7 @@
 info:
   title: tapy Dokumentation
   description: Erster Entwurf der tapy Dokumentation
-  version: '0.5'
+  version: "0.5"
 servers:
   - url: https://mock-server
 tags:
@@ -15,8 +15,7 @@ tags:
     description: Bezahlen einzelner Bestellungen
   - name: invoices
     description: Rechnungsbezogene Daten
-  
-    
+
 paths:
   /tables/get:
     post:
@@ -35,20 +34,20 @@ paths:
               type: object
               properties:
                 ackbody:
-                  $ref: '#/components/schemas/ackObj'
+                  $ref: "#/components/schemas/ackObj"
                 requestBody:
-                  $ref: '#/components/schemas/allTables'
-                
+                  $ref: "#/components/schemas/allTables"
+
             example:
-              requestID: 
+              requestID:
                 requestId: "AF155F"
                 responseCode: 200
                 responseMsg: "OK"
               requestBody:
                 tables:
-                  - tableId: '2421242'
+                  - tableId: "2421242"
                     items:
-                      - orderId: '626307377'
+                      - orderId: "626307377"
                         orderUnixTimestamp: 1666533212
                         itemId: 26909720
                         quantity: 1
@@ -58,29 +57,29 @@ paths:
                         orderComment: Ohne Zitrone
                         isFood: false
                         isLocked: false
-                      - orderId: '626307399'
+                      - orderId: "626307399"
                         orderUnixTimestamp: 1666523212
                         itemId: 26902720
                         quantity: 1
                         priceItem: 1790
                         priceTotal: 1790
                         itemName: Rinderhüftsteak
-                        orderComment: ''
+                        orderComment: ""
                         isFood: true
                         isLocked: false
-                  - tableId: '2421243'
+                  - tableId: "2421243"
                     items:
-                      - orderId: '626317399'
+                      - orderId: "626317399"
                         orderUnixTimestamp: 1666333200
                         itemId: 26909719
                         quantity: 1
                         priceItem: 1290
                         priceTotal: 1290
                         itemName: Penne "Two Broke Girls"
-                        orderComment: ''
+                        orderComment: ""
                         isFood: true
                         isLocked: false
-                      - orderId: '626307123'
+                      - orderId: "626307123"
                         orderUnixTimestamp: 1666323200
                         itemId: 26909721
                         quantity: 1
@@ -91,20 +90,19 @@ paths:
                         isFood: false
                         isLocked: false
       responses:
-        '200':
+        "200":
           description: >-
             Gibt an ob bei der nächsten Anfrage die Daten des POS geschickt
             werden sollen.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/nextRequestObj'
-              example: 
+                $ref: "#/components/schemas/nextRequestObj"
+              example:
                 nextRequest: true
                 nextRequestId: "AF155F"
                 nextRequestParams: {}
-          
-          
+
   /table/get:
     post:
       tags:
@@ -119,18 +117,18 @@ paths:
               type: object
               properties:
                 ackbody:
-                  $ref: '#/components/schemas/ackObj'
+                  $ref: "#/components/schemas/ackObj"
                 requestBody:
-                  $ref: '#/components/schemas/tableState'
-            example: 
-              ackbody: 
+                  $ref: "#/components/schemas/tableState"
+            example:
+              ackbody:
                 requestId: "AF1601"
                 responseCode: 200
                 responseMsg: "OK"
               requestBody:
-                tableId: '2421242'
+                tableId: "2421242"
                 items:
-                  - orderId: '626307377'
+                  - orderId: "626307377"
                     orderUnixTimestamp: 1666533212
                     itemId: 26909720
                     quantity: 1
@@ -140,18 +138,18 @@ paths:
                     orderComment: Ohne Zitrone
                     isFood: false
                     isLocked: false
-                  - orderId: '626307399'
+                  - orderId: "626307399"
                     orderUnixTimestamp: 1666523212
                     itemId: 26902720
                     quantity: 1
                     priceItem: 1790
                     priceTotal: 1790
                     itemName: Rinderhüftsteak
-                    orderComment: ''
+                    orderComment: ""
                     isFood: true
                     isLocked: false
       responses:
-        '200':
+        "200":
           description: >-
             Gibt an ob bei der nächsten Anfrage die Daten des POS geschickt
             werden sollen. Enthält als Parameter eine Tisch ID zu welchem die
@@ -159,12 +157,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/nextRequestObj'
-              example: 
+                $ref: "#/components/schemas/nextRequestObj"
+              example:
                 nextRequest: true
                 nextRequestId: "AF1601"
-                nextRequestParams: { tableID: '2421242'}
-
+                nextRequestParams: { tableID: "2421242" }
 
   /locked/post:
     post:
@@ -175,9 +172,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ackObj'
+              $ref: "#/components/schemas/ackObj"
       responses:
-        '200':
+        "200":
           description: Übermittelt welche bonierte Bestellungen ent-/gesperrt werden sollen
           content:
             application/json:
@@ -202,17 +199,15 @@ paths:
                     items:
                       type: string
                       description: Eindeutige IDs der bonierten Bestellungen
-                        
-                        
-              example: 
+
+              example:
                 nextRequestId: "AF1602"
-                tableId: '2421242'
+                tableId: "2421242"
                 toLocked: true
                 orders:
-                  - '626307399'
-                  - '626307377'
-                            
-                            
+                  - "626307399"
+                  - "626307377"
+
   /payment/post:
     post:
       tags:
@@ -222,9 +217,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ackObj'
+              $ref: "#/components/schemas/ackObj"
       responses:
-        '200':
+        "200":
           description: Übermittelt welche bonierte Bestellungen bezahlt wurde
           content:
             application/json:
@@ -259,19 +254,18 @@ paths:
                   paymentMethod:
                     type: string
                     description: "Enum der verwendeten Bezahlmethode"
-              example: 
+              example:
                 nextRequestId: "AF1603"
                 invoiceId: "XX1603"
-                tableId: '2421242'
+                tableId: "2421242"
                 orders:
-                  - '626307399'
-                  - '626307377'
+                  - "626307399"
+                  - "626307377"
                 hospitalityReceipt: false
                 priceTotal: 2580
                 tip: 300
                 paymentMethod: applePay
-  
-  
+
   /invoices/get:
     post:
       tags:
@@ -285,7 +279,7 @@ paths:
               type: object
               properties:
                 ackbody:
-                  $ref: '#/components/schemas/ackObj'
+                  $ref: "#/components/schemas/ackObj"
                 requestBody:
                   type: object
                   properties:
@@ -298,8 +292,8 @@ paths:
                     url:
                       type: string
                       description: "Downloadlink zur Rechnung"
-            example: 
-              ackbody: 
+            example:
+              ackbody:
                 requestId: "AF1604"
                 responseCode: 200
                 responseMsg: "OK"
@@ -307,22 +301,19 @@ paths:
                 invoiceId: "XX1603"
                 hospitalityReceipt: false
                 url: "invoices.cadu.de/XX1603"
-                
+
       responses:
-        '200':
+        "200":
           description: >-
             Gibt an ob bei der nächsten Anfrage die eine Rechnung weitergeleitet werden soll. Enthält als Parameter eine invoiceId zur Anfrage, welche Rechnung geschickt werden soll
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/nextRequestObj'
+                $ref: "#/components/schemas/nextRequestObj"
               example:
                 nextRequest: true
                 nextRequestId: "AF1604"
-                nextRequestParams: { invoiceId: 'XX1603'}
-                
-
-
+                nextRequestParams: { invoiceId: "XX1603" }
 
 components:
   schemas:
@@ -399,7 +390,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/item'
+            $ref: "#/components/schemas/item"
           description: Liste an auf dem Tisch aktuell bonierte Bestellungen
       description: Aktueller ist-Zustand des Tisches
     allTables:
@@ -408,9 +399,9 @@ components:
         tables:
           type: array
           items:
-            $ref: '#/components/schemas/tableState'
+            $ref: "#/components/schemas/tableState"
           description: >-
             Liste an allen Tischen in der Gastro und deren zugehörigen
             Informationen´
-      description: ''
+      description: ""
 openapi: 3.0.0

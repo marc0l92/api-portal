@@ -15,36 +15,33 @@ servers:
     description: Staging Server
 
 paths:
-
-  '/api/postLoads':
+  "/api/postLoads":
     post:
       tags:
-       - Requests
+        - Requests
       summary: |
         Sync loads to Smart Capacity Digital Freight Matching platform
       description: |
         This API can be used to call a Web Service end point to Sync loads to Smart Capacity system.
       requestBody:
-        $ref: '#/components/requestBodies/PostLoadsRequest'
+        $ref: "#/components/requestBodies/PostLoadsRequest"
       responses:
-        '200':
-          $ref: '#/components/responses/PostLoadsSuccessResponse'
+        "200":
+          $ref: "#/components/responses/PostLoadsSuccessResponse"
 
 components:
-
   requestBodies:
-
     PostLoadsRequest:
       description: |
         Request body.
       content:
-        'application/json':
+        "application/json":
           schema:
             type: object
             required:
-            - integrationId
-            - accountId
-            - loads
+              - integrationId
+              - accountId
+              - loads
             properties:
               integrationId:
                 type: string
@@ -61,28 +58,26 @@ components:
                 description: |
                   Array of loads that gets to be processed
                 items:
-                  $ref: '#/components/schemas/Load'
+                  $ref: "#/components/schemas/Load"
 
   responses:
-
     PostLoadsSuccessResponse:
       description: |
         Success response.
       content:
-        'application/json':
+        "application/json":
           schema:
             type: object
 
   schemas:
-
     Load:
       type: object
       required:
-      - externalId
-      - loadNumber
-      - status
-      - pickup
-      - delivery
+        - externalId
+        - loadNumber
+        - status
+        - pickup
+        - delivery
       properties:
         status:
           type: string
@@ -114,30 +109,30 @@ components:
           description: |
             Unique identifier of the load on partner system.
         pickup:
-          $ref: '#/components/schemas/LoadStop'
+          $ref: "#/components/schemas/LoadStop"
         delivery:
-          $ref: '#/components/schemas/LoadStop'
+          $ref: "#/components/schemas/LoadStop"
         loadType:
           type: string
           example: FL
           enum:
-          - FL
-          - LTL
-          description: 'Full Load (FL), LTL (Less than Truck Load)'
+            - FL
+            - LTL
+          description: "Full Load (FL), LTL (Less than Truck Load)"
         loadContact:
-          $ref: '#/components/schemas/Contact'
+          $ref: "#/components/schemas/Contact"
           #description: Direct contact for this load, this will overwrite broker contact when provided
         operationUser:
-          $ref: '#/components/schemas/OperationUser'
+          $ref: "#/components/schemas/OperationUser"
         salesPerson:
-          #description: Sales Contact of the load. 
-          $ref: '#/components/schemas/Contact'
+          #description: Sales Contact of the load.
+          $ref: "#/components/schemas/Contact"
         revenue:
-          $ref: '#/components/schemas/Revenue'
+          $ref: "#/components/schemas/Revenue"
         carrierPay:
-          $ref: '#/components/schemas/CarrierPay'
+          $ref: "#/components/schemas/CarrierPay"
         targetCarrierPay:
-          $ref: '#/components/schemas/TargetCarrierPay'
+          $ref: "#/components/schemas/TargetCarrierPay"
         trucksCount:
           type: integer
           example: 1
@@ -216,28 +211,28 @@ components:
         additionalStops:
           type: array
           items:
-            $ref: '#/components/schemas/LoadStop'
+            $ref: "#/components/schemas/LoadStop"
           description: |
             Address details of additional stops, if any.
         broker:
-          $ref: '#/components/schemas/Broker'
+          $ref: "#/components/schemas/Broker"
         shipperLoadNumber:
           type: string
           example: SHP123
           description: |
             Load identifier number for the shipper. This can be used to identify the load on third party tracking platforms.
         carrier:
-          $ref: '#/components/schemas/Carrier'
+          $ref: "#/components/schemas/Carrier"
         driver:
-          $ref: '#/components/schemas/Driver'
+          $ref: "#/components/schemas/Driver"
         dispatcher:
-          $ref: '#/components/schemas/Contact'
+          $ref: "#/components/schemas/Contact"
         shipper:
-          $ref: '#/components/schemas/Shipper'
+          $ref: "#/components/schemas/Shipper"
         minRate:
-          $ref: '#/components/schemas/Rate'
+          $ref: "#/components/schemas/Rate"
         maxRate:
-          $ref: '#/components/schemas/Rate'
+          $ref: "#/components/schemas/Rate"
         tractorNumber:
           type: string
           example: TN12345
@@ -273,7 +268,7 @@ components:
           type: number
           example: 2.75
           description: |
-            Rate offered per mile with fuel for the load. 
+            Rate offered per mile with fuel for the load.
         triggerTracking:
           type: boolean
           default: false
@@ -284,7 +279,7 @@ components:
           items:
             type: string
           example:
-          - Carrier must have van
+            - Carrier must have van
           description: |
             A list of services required for this load. Carrier requirements, truck type, etc.
         responsibilityCodes:
@@ -296,20 +291,20 @@ components:
         extras:
           type: array
           items:
-            $ref: '#/components/schemas/Extra'
+            $ref: "#/components/schemas/Extra"
 
     LoadStop:
       type: object
       required:
-      - city
-      - state
-      - postalCode
-      - sequence
-      - scheduledAtEarlyDateTime
+        - city
+        - state
+        - postalCode
+        - sequence
+        - scheduledAtEarlyDateTime
       properties:
         address:
           type: string
-          example:  150 Main Street
+          example: 150 Main Street
           description: |
             Street address of the stop.
         city:
@@ -361,7 +356,7 @@ components:
           type: string
           example: -77.348146
           description: |
-            Longitude that customer wants to display to the carrier instead of actual longitude.    
+            Longitude that customer wants to display to the carrier instead of actual longitude.
         timeZone:
           type: string
           example: EST
@@ -396,7 +391,7 @@ components:
         extras:
           type: array
           items:
-            $ref: '#/components/schemas/Extra'
+            $ref: "#/components/schemas/Extra"
 
     Broker:
       type: object
@@ -436,10 +431,10 @@ components:
       description: |
         Carrier details. Required for Covered loads.
       required:
-      - companyName
-      - mc
-      - contactPhone
-      - contactEmail
+        - companyName
+        - mc
+        - contactPhone
+        - contactEmail
       properties:
         companyName:
           type: string
@@ -486,7 +481,7 @@ components:
       properties:
         name:
           type: string
-          example: John Smith 
+          example: John Smith
           description: |
             Name of the driver.
         phone:
@@ -547,7 +542,7 @@ components:
     OperationUser:
       type: object
       description: |
-        Dispatcher of the load information. 
+        Dispatcher of the load information.
       properties:
         id:
           type: string
@@ -583,7 +578,7 @@ components:
     Rate:
       type: object
       required:
-      - total
+        - total
       properties:
         total:
           type: number
@@ -592,28 +587,28 @@ components:
         lineHaul:
           type: object
           required:
-          - type
-          - value
+            - type
+            - value
           properties:
             type:
               type: string
-              enum: 
-              - flat
-              - mile
+              enum:
+                - flat
+                - mile
             value:
               type: number
         fuelSurcharge:
           type: object
           required:
-          - type
-          - value          
+            - type
+            - value
           properties:
-            type: 
+            type:
               type: string
               enum:
-              - flat
-              - mile
-              - percent
+                - flat
+                - mile
+                - percent
             value:
               type: number
         accessorial:
@@ -624,7 +619,7 @@ components:
               name:
                 type: string
               value:
-                type: number        
+                type: number
 
     Revenue:
       type: object
@@ -667,7 +662,7 @@ components:
           example: 800
           description: |
             Total rate for carrier pay.
-  
+
     TargetCarrierPay:
       type: object
       description: |
@@ -687,8 +682,8 @@ components:
     Extra:
       type: object
       required:
-      - name
-      - value
+        - name
+        - value
       properties:
         name:
           type: string

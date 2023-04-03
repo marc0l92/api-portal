@@ -1,7 +1,7 @@
 info:
   title: tapy Dokumentation
   description: "Alle X Sekunden wird jeder Endpunkt vom Cadu-Server angefragt. Bei einer Antwort des tapy-Servers mit nextRequest=true enthält die nächste Anfrage des Cadu-Servers die angeforderten Daten"
-  version: '0.11'
+  version: "0.11"
 # servers:
 #   - url: https://mock-server
 tags:
@@ -18,14 +18,13 @@ tags:
   - name: invoice
     description: Rechnungsbezogene Daten
 
-
 paths:
   /info:
     post:
       tags:
         - info
       requestBody:
-        description: Antwort, dass das letzte Info-Paket korrekt angekommen ist 
+        description: Antwort, dass das letzte Info-Paket korrekt angekommen ist
         content:
           application/json:
             schema:
@@ -52,16 +51,14 @@ paths:
                         type: string
                       responseBody:
                         type: object
-                
+
             example:
               infoId: 100001
               responseCode: 200
               responseMsg: OK
-              
-              
-              
+
       responses:
-        '200':
+        "200":
           description: ""
           content:
             application/json:
@@ -83,7 +80,7 @@ paths:
                         nextRequestParams:
                           tableId: 2421242
                           toLocked: true
-                    
+
                 tables-get:
                   value:
                     nextInfoId: 100001
@@ -91,7 +88,7 @@ paths:
                       - nextRequestId: 100001
                         type: tables-get
                         nextRequestParams: {}
-                    
+
                 table-get:
                   value:
                     nextInfoId: 100001
@@ -100,7 +97,7 @@ paths:
                         type: table-get
                         nextRequestParams:
                           tableId: 2421241
-                          
+
                 locked-post:
                   value:
                     nextInfoId: 100001
@@ -111,7 +108,7 @@ paths:
                           tableId: 2421242
                           toLocked: true
                           tableHash: "MTIzNDU2Nw=="
-                
+
                 payment-post:
                   value:
                     nextInfoId: 100001
@@ -122,13 +119,13 @@ paths:
                           invoiceId: "XX1603"
                           tableId: 2421242
                           orders:
-                            - {'orderId': '626307399', 'quantity': 1}
-                            - {'orderId': '626307377', 'quantity': 3}
+                            - { "orderId": "626307399", "quantity": 1 }
+                            - { "orderId": "626307377", "quantity": 3 }
                           hospitalityReceipt: false
                           priceTotal: 2580
                           tip: 300
                           paymentMethod: applePay
-                          
+
                 payment-post-hospitalityReceipt:
                   value:
                     nextInfoId: 100001
@@ -139,8 +136,8 @@ paths:
                           invoiceId: "XX1603"
                           tableId: 2421242
                           orders:
-                            - {'orderId': '626307399', 'quantity': 1}
-                            - {'orderId': '626307377', 'quantity': 2}
+                            - { "orderId": "626307399", "quantity": 1 }
+                            - { "orderId": "626307377", "quantity": 2 }
                           hospitalityReceipt: true
                           hospitalityInfo:
                             companyName: "Burgers and More"
@@ -153,20 +150,18 @@ paths:
                               - "Eric Bergmann"
                               - "Max Mustermann"
                             signature: "https://storage.googleapis.com/tapy-signatures/33F4091B-9B2B-4F3C-B61C-C12D6EB0DFC9.jpeg"
-                            
+
                           priceTotal: 2580
                           tip: 300
                           paymentMethod: applePay
-                          
+
                 invoice-get:
                   value:
                     nextInfoId: 100001
                     requests:
                       - nextRequestId: 100001
                         type: invoice-get
-                        nextRequestParams: { invoiceId: 'XX1603'}
-
-
+                        nextRequestParams: { invoiceId: "XX1603" }
 
   /tables/get:
     post:
@@ -179,8 +174,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ackObj'
-                
+              $ref: "#/components/schemas/ackObj"
+
             example:
               requestId: 100000
               responseCode: 200
@@ -190,15 +185,12 @@ paths:
                   - tableId: 2421242
                   - tableId: 2421243
       responses:
-        '200':
+        "200":
           description: ""
           content:
             application/json:
               example:
-                
-                    
-          
-          
+
   /table/get:
     post:
       tags:
@@ -210,8 +202,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ackObj'
-            examples: 
+              $ref: "#/components/schemas/ackObj"
+            examples:
               tableOpen:
                 value:
                   requestId: 100001
@@ -223,7 +215,7 @@ paths:
                     tableDescription: "Tisch 4"
                     waiter: "Marcel"
                     items:
-                      - orderId: '626307377'
+                      - orderId: "626307377"
                         orderUnixTimestamp: 1666533212
                         itemId: 26909720
                         quantity: 1
@@ -233,14 +225,14 @@ paths:
                         orderComment: Ohne Zitrone
                         isDiscounted: false
                         isToGO: false
-                      - orderId: '626307399'
+                      - orderId: "626307399"
                         orderUnixTimestamp: 1666523212
                         itemId: 26902720
                         quantity: 1
                         priceItem: 1790
                         priceTotal: 1790
                         itemName: Rinderhüftsteak
-                        orderComment: ''
+                        orderComment: ""
                         isDiscounted: false
                         isToGO: false
               isLocked:
@@ -258,15 +250,13 @@ paths:
                   requestId: 100001
                   responseCode: 404
                   responseMsg: "Not found"
-                
 
       responses:
-        '200':
+        "200":
           description: ""
           content:
             application/json:
               example:
-
 
   /locked/post:
     post:
@@ -277,7 +267,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ackObj'
+              $ref: "#/components/schemas/ackObj"
             examples:
               OK:
                 value:
@@ -296,13 +286,12 @@ paths:
                   responseMsg: "Not found"
 
       responses:
-        '200':
+        "200":
           description: ""
           content:
             application/json:
               example:
-                            
-                            
+
   /payment/post:
     post:
       tags:
@@ -312,7 +301,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ackObj'
+              $ref: "#/components/schemas/ackObj"
             examples:
               ok:
                 value:
@@ -331,14 +320,12 @@ paths:
                   responseMsg: "Not found"
 
       responses:
-        '200':
+        "200":
           description: ""
           content:
             application/json:
               example:
-                
-  
-  
+
   /invoice/get:
     post:
       tags:
@@ -349,7 +336,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ackObj'
+              $ref: "#/components/schemas/ackObj"
             examples:
               hospitalityReceiptFalse:
                 value:
@@ -376,17 +363,15 @@ paths:
                   responseMsg: "Not Found"
 
       responses:
-        '200':
+        "200":
           description: ""
           content:
             application/json:
               example:
-                
-
 
 components:
   securitySchemes:
-    bearerAuth:            # arbitrary name for the security scheme
+    bearerAuth: # arbitrary name for the security scheme
       type: http
       scheme: bearer
   schemas:
@@ -549,7 +534,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/item'
+            $ref: "#/components/schemas/item"
           description: Liste an auf dem Tisch aktuell bonierte Bestellungen
       description: Aktueller ist-Zustand des Tisches
     allTables:
@@ -558,16 +543,16 @@ components:
         tables:
           type: array
           items:
-              type: string
-              description: "Eindeutige ID des jeweiligen Tisches"
-              # isLocked:
-              #  type: boolean
-              #  description: >-
-              #    Boolean ob die Bestellung sich aktuell in einem Bezahlvorgang
-              #    befindet oder nicht
-              
+            type: string
+            description: "Eindeutige ID des jeweiligen Tisches"
+            # isLocked:
+            #  type: boolean
+            #  description: >-
+            #    Boolean ob die Bestellung sich aktuell in einem Bezahlvorgang
+            #    befindet oder nicht
+
           description: >-
             Liste an allen Tischen in der Gastro und deren zugehörigen
             Informationen´
-      description: ''
+      description: ""
 openapi: 3.0.0
