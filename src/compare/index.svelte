@@ -74,6 +74,7 @@
 
 <Navbar activePage="compare" />
 <div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
+  <Errors messages={['This feature is not completed yet']} />
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">Api Compare</h1>
