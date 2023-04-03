@@ -10,11 +10,8 @@ function escapeRegExp(str: string) {
 }
 
 export function fuzzySearchMatch(searchText: string, item: string) {
-    let keyRegex = ''
-    for (const c of searchText) {
-        keyRegex += `.*${escapeRegExp(c)}.*`
-    }
-    return item.match(new RegExp(keyRegex, 'i'))
+    const searchTextRegex = '.*' + escapeRegExp(searchText).replace(/ /g, '.*[^0-9a-zA-Z]') + '.*'
+    return item.match(new RegExp(searchTextRegex, 'i'))
 }
 
 export function filterApiIndex(apiIndex: ApiIndex, searchText: string) {

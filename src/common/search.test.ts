@@ -38,14 +38,14 @@ describe('Search', () => {
             const kItem = 'qwertyuiop'
             expect(fuzzySearchMatch(kKey, kItem)).toBeTruthy()
         })
-        test('Contains characters', () => {
-            const kKey = 'rup'
-            const kItem = 'qwertyuiop'
-            expect(fuzzySearchMatch(kKey, kItem)).toBeTruthy()
-        })
         test('Escape regular expressions', () => {
             const kKey = '+{/\\tt'
             const kItem = 'c+{/\\tt=^@#$'
+            expect(fuzzySearchMatch(kKey, kItem)).toBeTruthy()
+        })
+        test('Begin of multiple words', () => {
+            const kKey = 'SWA pet opena'
+            const kItem = 'swagger_ .+-#  petstore-OPENapi'
             expect(fuzzySearchMatch(kKey, kItem)).toBeTruthy()
         })
     })
