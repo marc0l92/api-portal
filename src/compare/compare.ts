@@ -272,7 +272,7 @@ function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, directio
     for (const metadataKey of ApiModelDocMetadata) {
         modelDiff[metadataKey] = {
             diffType: getDiffType(leftModel[metadataKey], rightModel[metadataKey]),
-            isBackwardCompatible: ApiModelDocBackwardCompatibility[metadataKey](leftModel[metadataKey], rightModel[metadataKey], direction, isRequired),
+            isBackwardCompatible: ApiModelDocBackwardCompatibility[metadataKey](leftModel[metadataKey] ?? null, rightModel[metadataKey] ?? null, direction, isRequired),
             leftValue: leftModel[metadataKey], rightValue: rightModel[metadataKey],
         }
     }

@@ -116,16 +116,16 @@ async function minifyAndCompressJsonFile(filename) {
 }
 
 /**
+ * @param {string} fileName
  * @param {string} apiHash
  * @returns {Promise<any>}
  */
-async function generateValidation(apiHash) {
+async function generateValidation(fileName, apiHash) {
     return new Promise((resolve, reject) => {
         if (appConfig && appConfig.validation && appConfig.validation.spectralRulesFile && appConfig.validation.enable) {
-            const inputFile = `${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`
             const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
             const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'
-            const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${inputFile} --output ${outputFile}`
+            const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${fileName} --output ${outputFile}`
             console.log('Run:', `${executable} ${options}`)
             exec(`${executable} ${options}`, { timeout: VALIDATION_TIMEOUT }, async (error, stdout, stderr) => {
                 if (stderr) {
@@ -271,7 +271,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`).then(async (fileNames) => {
                     })
 
                     await generateApi(apiDoc, apiHash)
-                    validationPromises.push(generateValidation(apiHash).catch(reason => {
+                    validationPromises.push(generateValidation(fileName, apiHash).catch(reason => {
                         console.warn('!', reason)
                     }))
 
