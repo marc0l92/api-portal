@@ -1,6 +1,6 @@
 import type { Api, ApiParameterDoc, ApiParameterDocMap, ApiService } from "common/api/api"
 import type { ApiModelDoc } from "common/api/apiModel"
-import { DiffType, type ApiDiff, type ServiceDiff, type DiffSection, type ResponseDiff, type ApiModelDocDiff, DiffDirection, type DiffItem, ApiModelDocMetadata, ApiModelDocBackwardCompatibility } from "./compareInterfaces"
+import { DiffType, type ApiDiff, type ServiceDiff, type DiffSection, type ResponseDiff, type ApiModelDocDiff, DiffDirection, type DiffItem, ApiModelDocMetadata, ApiModelPropertiesBackwardCompatibility } from "./compareInterfaces"
 
 export function compareApis(leftApi: Api, rightApi: Api) {
     const apiDiff: ApiDiff = { isBackwardCompatible: true, metadata: [], services: {} }
@@ -272,7 +272,7 @@ function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, directio
     for (const metadataKey of ApiModelDocMetadata) {
         modelDiff[metadataKey] = {
             diffType: getDiffType(leftModel[metadataKey], rightModel[metadataKey]),
-            isBackwardCompatible: ApiModelDocBackwardCompatibility[metadataKey](leftModel[metadataKey] ?? null, rightModel[metadataKey] ?? null, direction, isRequired),
+            isBackwardCompatible: ApiModelPropertiesBackwardCompatibility[metadataKey](leftModel[metadataKey] ?? null, rightModel[metadataKey] ?? null, direction, isRequired),
             leftValue: leftModel[metadataKey], rightValue: rightModel[metadataKey],
         }
     }
