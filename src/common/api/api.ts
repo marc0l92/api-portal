@@ -94,14 +94,8 @@ export abstract class ApiService {
     protected path: string
     protected method: string
 
-    setPath(path: string) {
-        this.path = path
-    }
     getPath() {
         return this.path
-    }
-    setMethod(method: string) {
-        this.method = method
     }
     getMethod() {
         return this.method

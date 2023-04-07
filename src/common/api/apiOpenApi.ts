@@ -68,9 +68,7 @@ export class ApiOpenApi extends Api {
             globalParam.forEach((p, i) => (p["x-path"] = `/paths["${path}"]/parameters[${i}]`))
             for (const method in this.getApi().paths[path]) {
                 if (PATH_METHODS.indexOf(method) >= 0) {
-                    const apiService = new ApiServiceOpenApi(this.getApi().paths[path][method] as ApiOpenApiServiceDoc)
-                    apiService.setPath(path)
-                    apiService.setMethod(method)
+                    const apiService = new ApiServiceOpenApi(path, method, this.getApi().paths[path][method] as ApiOpenApiServiceDoc)
                     apiService.addGlobalParameters(globalParam)
                     services.push(apiService)
                 }
@@ -103,8 +101,10 @@ export class ApiServiceOpenApi extends ApiService {
         return this.serviceDoc as ApiOpenApiServiceDoc
     }
 
-    constructor(serviceDoc: ApiOpenApiServiceDoc) {
+    constructor(path: string, method: string, serviceDoc: ApiOpenApiServiceDoc) {
         super()
+        this.path = path
+        this.method = method
         this.serviceDoc = serviceDoc
         this.initParameters()
         this.initRequest()
@@ -140,6 +140,6 @@ export class ApiServiceOpenApi extends ApiService {
     }
 
     getServiceBasePath(): string {
-        return `/paths["${this.path}"]/${this.method}`
+        return `/paths["${this.getPath()}"]/${this.getMethod()}`
     }
 }

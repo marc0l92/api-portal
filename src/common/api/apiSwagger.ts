@@ -59,9 +59,7 @@ export class ApiSwagger extends Api {
             globalParam.forEach((p, i) => (p["x-path"] = `/paths["${path}"]/parameters[${i}]`))
             for (const method in this.getApi().paths[path]) {
                 if (method !== 'parameters') {
-                    const apiService = new ApiServiceSwagger(this.getApi().paths[path][method] as ApiSwaggerServiceDoc)
-                    apiService.setPath(path)
-                    apiService.setMethod(method)
+                    const apiService = new ApiServiceSwagger(path, method, this.getApi().paths[path][method] as ApiSwaggerServiceDoc)
                     apiService.addGlobalParameters(globalParam)
                     services.push(apiService)
                 }
@@ -94,8 +92,10 @@ export class ApiServiceSwagger extends ApiService {
         return this.serviceDoc as ApiSwaggerServiceDoc
     }
 
-    constructor(serviceDoc: ApiSwaggerServiceDoc) {
+    constructor(path: string, method: string, serviceDoc: ApiSwaggerServiceDoc) {
         super()
+        this.path = path
+        this.method = method
         this.serviceDoc = serviceDoc
         this.initParameters()
         this.initRequest()
@@ -130,6 +130,6 @@ export class ApiServiceSwagger extends ApiService {
     }
 
     getServiceBasePath(): string {
-        return `/paths["${this.path}"]/${this.method}`
+        return `/paths["${this.getPath()}"]/${this.getMethod()}`
     }
 }
