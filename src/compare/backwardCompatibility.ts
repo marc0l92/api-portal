@@ -1,25 +1,38 @@
 import { DiffDirection, type ApiModelDocMetadata, DiffType } from "./compareInterfaces"
-
+type CompatibilityFunction = (leftValue: any, rightValue: any, direction: DiffDirection, isRequired: boolean) => boolean
 type CompatibilityMap = { [K in typeof ApiModelDocMetadata[number]]?: (leftValue: any, rightValue: any, direction: DiffDirection, isRequired: boolean) => boolean }
+
+const minCheck: CompatibilityFunction = (leftValue: number, rightValue: number, direction: DiffDirection) => ((direction === DiffDirection.REQUEST && (rightValue === null || (leftValue !== null && leftValue >= rightValue)))
+    || (direction === DiffDirection.RESPONSE && (leftValue === null || (rightValue !== null && leftValue <= rightValue))))
+const maxCheck: CompatibilityFunction = (leftValue: number, rightValue: number, direction: DiffDirection) => ((direction === DiffDirection.REQUEST && (rightValue === null || (leftValue !== null && leftValue <= rightValue)))
+    || (direction === DiffDirection.RESPONSE && (leftValue === null || (rightValue !== null && leftValue >= rightValue))))
+const equalCheck: CompatibilityFunction = (leftValue: any, rightValue: any) => (rightValue !== null && leftValue === rightValue)
+const equalOrNullCheck: CompatibilityFunction = (leftValue: any, rightValue: any) => (rightValue === null || leftValue === rightValue)
+const noCheck: CompatibilityFunction = () => true
+
+
 export const ApiModelPropertiesBackwardCompatibility: CompatibilityMap = {
-    title: () => true,
-    example: () => true,
-    description: () => true,
-    type: (leftValue: any, rightValue: any) => (rightValue !== null && leftValue === rightValue),
-    minLength: (leftValue: number, rightValue: number, direction: DiffDirection) => ((direction === DiffDirection.REQUEST && (rightValue === null || (leftValue !== null && leftValue >= rightValue)))
-        || (direction === DiffDirection.RESPONSE && (leftValue === null || (rightValue !== null && leftValue <= rightValue)))),
-    maxLength: (leftValue: number, rightValue: number, direction: DiffDirection) => ((direction === DiffDirection.REQUEST && (rightValue === null || (leftValue !== null && leftValue <= rightValue)))
-        || (direction === DiffDirection.RESPONSE && (leftValue === null || (rightValue !== null && leftValue >= rightValue)))),
-    minItems: (leftValue: number, rightValue: number, direction: DiffDirection) => ((direction === DiffDirection.REQUEST && (rightValue === null || (leftValue !== null && leftValue >= rightValue)))
-        || (direction === DiffDirection.RESPONSE && (leftValue === null || (rightValue !== null && leftValue <= rightValue)))),
-    maxItems: (leftValue: number, rightValue: number, direction: DiffDirection) => ((direction === DiffDirection.REQUEST && (rightValue === null || (leftValue !== null && leftValue <= rightValue)))
-        || (direction === DiffDirection.RESPONSE && (leftValue === null || (rightValue !== null && leftValue >= rightValue)))),
-    minProperties: (leftValue: number, rightValue: number, direction: DiffDirection) => ((direction === DiffDirection.REQUEST && (rightValue === null || (leftValue !== null && leftValue >= rightValue)))
-        || (direction === DiffDirection.RESPONSE && (leftValue === null || (rightValue !== null && leftValue <= rightValue)))),
-    maxProperties: (leftValue: number, rightValue: number, direction: DiffDirection) => ((direction === DiffDirection.REQUEST && (rightValue === null || (leftValue !== null && leftValue <= rightValue)))
-        || (direction === DiffDirection.RESPONSE && (leftValue === null || (rightValue !== null && leftValue >= rightValue)))),
-    pattern: (leftValue: any, rightValue: any) => (rightValue === null || leftValue === rightValue),
-    format: (leftValue: any, rightValue: any) => (rightValue === null || leftValue === rightValue),
+    title: noCheck,
+    example: noCheck,
+    description: noCheck,
+    type: equalCheck,
+    minLength: minCheck,
+    maxLength: maxCheck,
+    minItems: minCheck,
+    maxItems: maxCheck,
+    minProperties: minCheck,
+    maxProperties: maxCheck,
+    minimum: minCheck,
+    maximum: maxCheck,
+    exclusiveMinimum: minCheck,
+    exclusiveMaximum: maxCheck,
+    pattern: equalOrNullCheck,
+    format: equalOrNullCheck,
+    collectionFormat: equalOrNullCheck,
+    multipleOf: equalOrNullCheck,
+    uniqueItems: equalOrNullCheck,
+    default: noCheck,
+    allowEmptyValue: (leftValue: any, rightValue: any, direction: DiffDirection, isRequired: boolean) => (rightValue === null || rightValue !== isRequired || leftValue === rightValue),
     enum: (leftValue: string[], rightValue: string[], direction: DiffDirection) => ((direction === DiffDirection.RESPONSE)
         || (rightValue === null)
         || (leftValue !== null && leftValue.every(r => (rightValue.indexOf(r) !== -1)))),

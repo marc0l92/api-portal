@@ -51,14 +51,17 @@ export interface DiffItem {
     rightValue?: any
 }
 
-export const ApiModelDocMetadata = ['title', 'type', 'example', 'minLength', 'maxLength', 'minItems', 'maxItems', 'minProperties', 'maxProperties', 'pattern', 'format', 'enum', 'description', 'required', 'additionalProperties', 'readOnly', 'writeOnly'] as const
+export const ApiModelDocMetadata = ['title', 'type', 'example', 'minLength', 'maxLength', 'minItems', 'maxItems',
+    'minProperties', 'maxProperties', 'pattern', 'format', 'enum', 'description', 'required', 'additionalProperties',
+    'readOnly', 'writeOnly', 'allowEmptyValue', 'collectionFormat', 'default', 'maximum', 'minimum', 'exclusiveMaximum',
+    'exclusiveMinimum', 'uniqueItems', 'multipleOf'] as const
 type ApiModelDocMetadataType = { [K in typeof ApiModelDocMetadata[number]]?: DiffItem }
 export interface ApiModelDocDiff extends ApiModelDocMetadataType {
     isBackwardCompatible: boolean
     diffType: DiffType
 
-    items?: DiffItem
+    items?: ApiModelDocDiff
     properties?: {
-        [name: string]: DiffItem
+        [name: string]: ApiModelDocDiff
     }
 }
