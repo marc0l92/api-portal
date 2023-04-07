@@ -10,11 +10,13 @@
 
     $: if (leftApi && rightApi) {
         apiDiff = compareApis(leftApi, rightApi);
+        console.log({ apiDiff });
     }
 </script>
 
 <div>
     {#if apiDiff}
+        Filter on added, removed, modified
         {#if !apiDiff.isBackwardCompatible}
             <div class="notification is-small is-danger">
                 <i class="fa-solid fa-triangle-exclamation mx-1" title="Not backward compatible change" />

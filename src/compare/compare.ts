@@ -29,6 +29,7 @@ export function compareApis(leftApi: Api, rightApi: Api) {
             if (serviceDiff.metadata.items.length
                 || serviceDiff.parameters.items.length
                 || serviceDiff.request.items.length
+                || (serviceDiff.request.model && serviceDiff.request.model.diffType !== DiffType.NO_CHANGES)
                 || Object.keys(serviceDiff.responses).length) {
                 serviceDiff.isBackwardCompatible &&= serviceDiff.metadata.isBackwardCompatible
                     && serviceDiff.parameters.isBackwardCompatible
@@ -83,13 +84,22 @@ function getPath(basePath: string, key: string, isArray: boolean): string {
 }
 
 function getDiffType(leftValue: any, rightValue: any): DiffType {
+    if (leftValue === rightValue) {
+        return DiffType.NO_CHANGES
+    }
     if (leftValue === null || leftValue === undefined) {
         return DiffType.ADDED
     }
     if (rightValue === null || rightValue === undefined) {
         return DiffType.REMOVED
     }
-    return leftValue === rightValue ? DiffType.NO_CHANGES : DiffType.MODIFIED
+    if (Array.isArray(leftValue) && Array.isArray(rightValue)) {
+        const rightSorted = rightValue.slice().sort()
+        if (leftValue.length === rightValue.length && leftValue.slice().sort().every((value: any, index: number) => (value === rightSorted[index]))) {
+            return DiffType.NO_CHANGES
+        }
+    }
+    return DiffType.MODIFIED
 }
 
 function compareMetadata(leftDoc: any, rightDoc: any, basePath: string = '', notBackwardCompatiblePaths: string[] = []): DiffSection {
@@ -205,9 +215,9 @@ function compareApiParameters(leftParameter: ApiParameterDoc, rightParameter: Ap
         }
     }
     const notBackwardCompatiblePaths: string[] = ['in', 'name', 'type', 'required', 'schema']
-    const metadataDiff = compareMetadata(extractMetadataFromApiParameter(leftParameter), extractMetadataFromApiParameter(rightParameter), leftParameter["x-path"], notBackwardCompatiblePaths)
+    diffSection = compareMetadata(extractMetadataFromApiParameter(leftParameter), extractMetadataFromApiParameter(rightParameter), leftParameter["x-path"], notBackwardCompatiblePaths)
     diffSection.model = compareModels(leftParameter.schema, rightParameter.schema, direction)
-    diffSection.isBackwardCompatible &&= metadataDiff.isBackwardCompatible && diffSection.model.isBackwardCompatible
+    diffSection.isBackwardCompatible &&= diffSection.model.isBackwardCompatible
     return diffSection
 }
 
@@ -251,32 +261,74 @@ function compareResponses(leftResponses: ApiParameterDocMap, rightResponses: Api
     return responseDiff
 }
 
-function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, direction: DiffDirection, isRequired: boolean = false): DiffItem {
+function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, direction: DiffDirection, isRequired: boolean = false): ApiModelDocDiff {
     if (!leftModel && !rightModel) {
-        return { diffType: DiffType.NO_CHANGES, isBackwardCompatible: true, leftValue: leftModel, rightValue: rightModel }
+        return { diffType: DiffType.NO_CHANGES, isBackwardCompatible: true }
     }
     if (!leftModel && rightModel) {
-        return {
+        return Object.assign({
             diffType: DiffType.ADDED,
             isBackwardCompatible: ApiModelBackwardCompatibility(DiffType.ADDED, direction, isRequired),
-            rightValue: rightModel
-        }
+        } as ApiModelDocDiff, rightModel)
     }
     if (leftModel && !rightModel) {
-        return {
+        return Object.assign({
             diffType: DiffType.REMOVED,
             isBackwardCompatible: ApiModelBackwardCompatibility(DiffType.REMOVED, direction, isRequired),
-            leftValue: leftModel,
-        }
+        } as ApiModelDocDiff, leftModel)
     }
-    const modelDiff: ApiModelDocDiff = { isBackwardCompatible: true, diffType: DiffType.MODIFIED }
+    const modelDiff: ApiModelDocDiff = { isBackwardCompatible: true, diffType: DiffType.NO_CHANGES, properties: {} }
     for (const metadataKey of ApiModelDocMetadata) {
-        modelDiff[metadataKey] = {
-            diffType: getDiffType(leftModel[metadataKey], rightModel[metadataKey]),
-            isBackwardCompatible: ApiModelPropertiesBackwardCompatibility[metadataKey](leftModel[metadataKey] ?? null, rightModel[metadataKey] ?? null, direction, isRequired),
-            leftValue: leftModel[metadataKey], rightValue: rightModel[metadataKey],
+        if (leftModel[metadataKey] !== rightModel[metadataKey]) {
+            modelDiff[metadataKey] = {
+                diffType: getDiffType(leftModel[metadataKey], rightModel[metadataKey]),
+                isBackwardCompatible: ApiModelPropertiesBackwardCompatibility[metadataKey](leftModel[metadataKey] ?? null, rightModel[metadataKey] ?? null, direction, isRequired),
+                leftValue: leftModel[metadataKey], rightValue: rightModel[metadataKey],
+            }
+            modelDiff.isBackwardCompatible &&= modelDiff[metadataKey].isBackwardCompatible
+            if (modelDiff[metadataKey].diffType !== DiffType.NO_CHANGES) {
+                modelDiff.diffType = DiffType.MODIFIED
+            }
         }
     }
-    // TODO: check properties, items, additionalProperties
+    if (leftModel.items !== rightModel.items) {
+        modelDiff.items = compareModels(leftModel.items, rightModel.items, direction)
+        if (modelDiff.items.diffType !== DiffType.NO_CHANGES) {
+            modelDiff.diffType = DiffType.MODIFIED
+        }
+    }
+
+    if (leftModel.properties !== rightModel.properties) {
+        const leftRequired: string[] = leftModel.required || []
+        const rightPropertiesKey: string[] = rightModel.properties ? Object.keys(rightModel.properties) : []
+        if (leftModel.properties) {
+            for (const leftPropertyKey in leftModel.properties) {
+                const isPropertyRequired = leftRequired.indexOf(leftPropertyKey) !== -1
+                const rightPropertiesKeyIndex = rightPropertiesKey.indexOf(leftPropertyKey)
+                if (rightPropertiesKeyIndex !== -1) {
+                    rightPropertiesKey.splice(rightPropertiesKeyIndex, 1)
+                    const propertyDiff = compareModels(leftModel.properties[leftPropertyKey], rightModel.properties[leftPropertyKey], direction, isPropertyRequired)
+                    if (propertyDiff.diffType !== DiffType.NO_CHANGES) {
+                        modelDiff.properties[leftPropertyKey] = propertyDiff
+                        modelDiff.diffType = DiffType.MODIFIED
+                    }
+                } else {
+                    modelDiff.properties[leftPropertyKey] = compareModels(leftModel.properties[leftPropertyKey], null, direction, isPropertyRequired)
+                    modelDiff.diffType = DiffType.MODIFIED
+                }
+            }
+        }
+        const rightRequired: string[] = rightModel.required || []
+        for (const rightPropertyKey of rightPropertiesKey) {
+            const isPropertyRequired = rightRequired.indexOf(rightPropertyKey) !== -1
+            modelDiff.properties[rightPropertyKey] = compareModels(null, rightModel.properties[rightPropertyKey], direction, isPropertyRequired)
+        }
+        if (rightPropertiesKey.length > 0) {
+            modelDiff.diffType = DiffType.MODIFIED
+        }
+    }
+
+    // TODO: check additionalProperties
+
     return modelDiff
 }
