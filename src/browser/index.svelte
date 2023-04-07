@@ -10,16 +10,18 @@
   import { filterApiIndex } from 'common/search';
   import { globalOptions } from 'common/globalOptions';
   import { getApiIndexPath } from 'common/globals';
+  import type { BrowserFilters } from 'build/buildConfig';
 
   let apiIndex: ApiIndex = null;
   let errors: string[] = [];
   let favoriteCount = 0;
   let searchText = '';
+  let filters: BrowserFilters = {};
   $: {
     favoriteCount = Object.values($browserOptions.favorites).filter((pi) => Object.values(pi).filter((fi) => fi).length).length;
   }
 
-  function cleanFavourite() {
+  function cleanFavorite() {
     for (const packageName in $browserOptions.favorites) {
       for (const apiName in $browserOptions.favorites[packageName]) {
         if (!$browserOptions.favorites[packageName][apiName] || !apiIndex[packageName] || !apiIndex[packageName][apiName]) {
@@ -33,8 +35,9 @@
     $browserOptions.favorites = $browserOptions.favorites;
   }
 
-  function onSearchTextChange(event: CustomEvent<{ searchText: string }>) {
+  function onSearchTextChange(event: CustomEvent<{ searchText: string; filters: BrowserFilters }>) {
     searchText = event.detail.searchText;
+    filters = event.detail.filters;
   }
 
   onMount(async () => {
@@ -42,7 +45,7 @@
     const response = await fetch(getApiIndexPath());
     if (response.ok) {
       apiIndex = (await response.json()) as ApiIndex;
-      cleanFavourite();
+      cleanFavorite();
     } else {
       errors = [...errors, 'Error while fetching api index: ' + response.status];
     }

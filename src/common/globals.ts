@@ -3,7 +3,7 @@ import type { BrowserFilters, BuildConfig, HomeLink } from "build/buildConfig"
 declare const IS_TEST: boolean
 declare const APP_CONFIG: BuildConfig
 
-const API_INDEX_PATH = '/apis/apiIndex.json';
+const API_INDEX_PATH = '/apis/_apiIndex.json';
 
 const isTest = (): boolean => {
     return IS_TEST
@@ -42,9 +42,9 @@ export const getHomeLinks = (): HomeLink[] => {
     return []
 }
 
-export const getBrowserFilters = (): BrowserFilters => {
+export const getBrowserFiltersCopy = (): BrowserFilters => {
     if (APP_CONFIG.browser && APP_CONFIG.browser.filters) {
-        return APP_CONFIG.browser.filters
+        return JSON.parse(JSON.stringify(APP_CONFIG.browser.filters))
     }
     return {}
 }

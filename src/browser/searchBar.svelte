@@ -1,21 +1,25 @@
 <script lang="ts">
-    import { getBrowserFilters } from 'common/globals';
+    import type { BrowserFilters } from 'build/buildConfig';
+    import { getBrowserFiltersCopy } from 'common/globals';
     import { createEventDispatcher } from 'svelte';
 
     let searchText: string = '';
     let showFilters: boolean = false;
-    let defaultFilters = getBrowserFilters();
-    let filters = {};
-    let hasFilters = Object.keys(defaultFilters).length > 0;
+    let filters: BrowserFilters = getBrowserFiltersCopy();
+    let hasFilters = Object.keys(filters).length > 0;
 
     function resetFilters() {
-        filters = JSON.parse(JSON.stringify(defaultFilters));
+        filters = getBrowserFiltersCopy();
+        onInputChange();
     }
-    resetFilters();
+    function toggleFilter(sectionName: string, categoryName: string, propertyName: string) {
+        filters[sectionName][categoryName][propertyName] = !filters[sectionName][categoryName][propertyName];
+        onInputChange();
+    }
 
     const dispatch = createEventDispatcher();
     function onInputChange() {
-        dispatch('searchTextChange', { searchText });
+        dispatch('searchTextChange', { searchText, filters });
     }
 </script>
 
@@ -48,7 +52,7 @@
                             <div class="field-body">
                                 <div class="buttons has-addons">
                                     {#each Object.entries(category) as [propertyName, isActive]}
-                                        <button class="button {isActive ? 'is-active is-info' : ''}" on:click={() => (filters[sectionName][categoryName][propertyName] = !isActive)}>
+                                        <button class="button {isActive ? 'is-active is-info' : ''}" on:click={() => toggleFilter(sectionName, categoryName, propertyName)}>
                                             {propertyName}
                                         </button>
                                     {/each}

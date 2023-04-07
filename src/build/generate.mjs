@@ -12,7 +12,7 @@ import process from 'process'
 
 const INPUT_FOLDER = 'inputApi/'
 const OUTPUT_FOLDER = 'public/apis'
-const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/apiIndex.json`
+const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/_apiIndex.json`
 const API_SUFFIX = '.api.json.gzip'
 const VALIDATION_SUFFIX = '.validation.json.gzip'
 const MAX_VERSION_DIGITS = 5
