@@ -22,6 +22,15 @@ export interface ApiModelDoc {
     $ref?: string
     readOnly?: boolean
     writeOnly?: boolean
+    allowEmptyValue?: boolean
+    collectionFormat?: string
+    default?: any
+    maximum?: number
+    minimum?: number
+    exclusiveMaximum?: boolean
+    exclusiveMinimum?: boolean
+    uniqueItems?: boolean
+    multipleOf?: number
 }
 
 export enum ModelType {
