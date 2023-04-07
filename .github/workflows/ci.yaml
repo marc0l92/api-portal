@@ -26,10 +26,10 @@ jobs:
         id: build
         run: |
           pnpm run build
-      # - name: Build config-schema
-      #   id: config-schema
-      #   run: |
-      #     pnpm run config-schema
+      - name: Build config-schema
+        id: config-schema
+        run: |
+          pnpm run config-schema
   test:
     runs-on: ubuntu-latest
     steps:

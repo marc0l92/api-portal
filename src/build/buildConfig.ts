@@ -53,6 +53,16 @@ export interface BuildConfig {
          */
         spectralRulesFile?: string
     }
+    /**
+     * Browser settings
+     * @additionalProperties false
+     */
+    browser?: {
+        /**
+         * Filters to show in the browser search section and their default value
+         */
+        filters?: BrowserFilters
+    }
 }
 
 /**
@@ -79,4 +89,12 @@ export interface HomeLink {
      * Font-awesome icon of the item in the home page
      */
     icon?: string
+}
+
+export interface BrowserFilters {
+    [sectionName: string]: {
+        [categoryName: string]: {
+            [propertyName: string]: boolean
+        }
+    }
 }

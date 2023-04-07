@@ -1,7 +1,6 @@
 {
   "$schema": "src/build/config.schema.json",
-  "name": "Api Tools",
-  "basePath": "/api-tools",
+  "name": "Api Tools DEV",
   "diagrams": {
     "defaultServer": "https://www.plantuml.com/plantuml",
     "allowServerChange": true
