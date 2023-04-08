@@ -30,7 +30,7 @@ const kServiceBaseDoc: ApiOpenApiServiceDoc = {
     }
 }
 
-const kServiceBase = new ApiServiceOpenApi(kServiceBaseDoc)
+const kServiceBase = new ApiServiceOpenApi('/', 'post', kServiceBaseDoc)
 
 
 describe('SwaggerParsing', () => {
