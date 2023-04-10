@@ -71,7 +71,7 @@
                 {/if}
                 {#if serviceDiff.responses}
                     {#each Object.entries(serviceDiff.responses) as [statusCode, responseDiff]}
-                        {#if responseDiff.items.length}
+                        {#if responseDiff.items.length || responseDiff.model}
                             <p class="table-title">
                                 {#if !responseDiff.isBackwardCompatible}
                                     <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />

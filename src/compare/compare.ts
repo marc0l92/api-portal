@@ -216,8 +216,11 @@ function compareApiParameters(leftParameter: ApiParameterDoc, rightParameter: Ap
     }
     const notBackwardCompatiblePaths: string[] = ['in', 'name', 'type', 'required', 'schema']
     diffSection = compareMetadata(extractMetadataFromApiParameter(leftParameter), extractMetadataFromApiParameter(rightParameter), leftParameter["x-path"], notBackwardCompatiblePaths)
-    diffSection.model = compareModels(leftParameter.schema, rightParameter.schema, direction)
-    diffSection.isBackwardCompatible &&= diffSection.model.isBackwardCompatible
+    const modelDiff = compareModels(leftParameter.schema, rightParameter.schema, direction)
+    if (modelDiff.diffType !== DiffType.NO_CHANGES) {
+        diffSection.model = modelDiff
+        diffSection.isBackwardCompatible &&= modelDiff.isBackwardCompatible
+    }
     return diffSection
 }
 
@@ -230,7 +233,7 @@ function compareResponses(leftResponses: ApiParameterDocMap, rightResponses: Api
         if (rightResponseStatusCodeIndex >= 0) {
             const rightResponse = rightResponses[leftResponseStatusCode]
             const childDiff = compareApiParameters(leftResponse, rightResponse, DiffDirection.RESPONSE)
-            if (childDiff.items.length) {
+            if (childDiff.items.length || childDiff.model) {
                 responseDiff[leftResponseStatusCode] = childDiff
             }
             rightResponsesStatusCode.splice(rightResponseStatusCodeIndex, 1)
@@ -325,6 +328,9 @@ function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, directio
         if (rightPropertiesKey.length > 0) {
             modelDiff.diffType = DiffType.MODIFIED
         }
+    }
+    if (Object.keys(modelDiff.properties).length === 0) {
+        delete modelDiff.properties
     }
 
     // TODO: check additionalProperties

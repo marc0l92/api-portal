@@ -41,7 +41,7 @@
                 {/each}
             </tbody>
         </table>
-        {#if diffModel.properties && Object.keys(diffModel.properties).length > 0}
+        {#if diffModel.properties}
             <table class="table is-bordered is-narrow is-fullwidth">
                 <tbody>
                     {#each Object.entries(diffModel.properties) as [propertyKey, propertyValue]}
@@ -69,6 +69,35 @@
                             </td>
                         </tr>
                     {/each}
+                </tbody>
+            </table>
+        {/if}
+        {#if diffModel.items}
+            <table class="table is-bordered is-narrow is-fullwidth">
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="tag {DiffTypeColor[diffModel.items.diffType]}">
+                                {#if !diffModel.items.isBackwardCompatible}
+                                    <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                                {/if}
+                                {diffModel.items.diffType}
+                            </span>
+                        </td>
+                        <td>
+                            {#if !diffModel.items.isBackwardCompatible}
+                                <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                            {/if}
+                            Items
+                        </td>
+                        <td>
+                            {#if diffModel.items.diffType === DiffType.MODIFIED}
+                                <svelte:self diffModel={diffModel.items} />
+                            {:else}
+                                {JSON.stringify(modelDiffToModel(diffModel.items))}
+                            {/if}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         {/if}
