@@ -48,4 +48,7 @@
     .diff-table-container .is-fullwidth {
         width: calc(100% - 1px);
     }
+    .diff-table-container:not(:last-child) {
+        margin-bottom: 1em;
+    }
 </style>

@@ -3,6 +3,7 @@
     import { compareApis } from './compare';
     import { DiffTypeColor, type ApiDiff } from './compareInterfaces';
     import DiffItemsTable from './diffItemsTable.svelte';
+    import DiffModel from './diffModel.svelte';
 
     export let leftApi: Api;
     export let rightApi: Api;
@@ -16,7 +17,6 @@
 
 <div>
     {#if apiDiff}
-        Filter on added, removed, modified
         {#if !apiDiff.isBackwardCompatible}
             <div class="notification is-small is-danger">
                 <i class="fa-solid fa-triangle-exclamation mx-1" title="Not backward compatible change" />
@@ -59,7 +59,7 @@
                     </p>
                     <DiffItemsTable diffItems={serviceDiff.parameters.items} />
                 {/if}
-                {#if serviceDiff.request && serviceDiff.request.items.length}
+                {#if serviceDiff.request && (serviceDiff.request.items.length || serviceDiff.request.model)}
                     <p class="table-title">
                         {#if !serviceDiff.request.isBackwardCompatible}
                             <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
@@ -67,6 +67,7 @@
                         Request Body
                     </p>
                     <DiffItemsTable diffItems={serviceDiff.request.items} />
+                    <DiffModel diffModel={serviceDiff.request.model} />
                 {/if}
                 {#if serviceDiff.responses}
                     {#each Object.entries(serviceDiff.responses) as [statusCode, responseDiff]}
@@ -78,6 +79,7 @@
                                 Response: {statusCode}
                             </p>
                             <DiffItemsTable diffItems={responseDiff.items} />
+                            <DiffModel diffModel={responseDiff.model} />
                         {/if}
                     {/each}
                 {/if}

@@ -35,6 +35,7 @@ export const DiffTypeColor: { [type: string]: string } = {
     [DiffType.ADDED]: 'is-success',
     [DiffType.MODIFIED]: 'is-warning',
     [DiffType.REMOVED]: 'is-danger',
+    [DiffType.NO_CHANGES]: 'is-light',
 };
 
 export interface DiffSection {

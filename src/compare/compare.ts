@@ -1,6 +1,6 @@
 import type { Api, ApiParameterDoc, ApiParameterDocMap, ApiService } from "common/api/api"
 import type { ApiModelDoc } from "common/api/apiModel"
-import { DiffType, type ApiDiff, type ServiceDiff, type DiffSection, type ResponseDiff, type ApiModelDocDiff, DiffDirection, type DiffItem, ApiModelDocMetadata } from "./compareInterfaces"
+import { DiffType, type ApiDiff, type ServiceDiff, type DiffSection, type ResponseDiff, type ApiModelDocDiff, DiffDirection, ApiModelDocMetadata } from "./compareInterfaces"
 import { ApiModelBackwardCompatibility, ApiModelPropertiesBackwardCompatibility } from "./backwardCompatibility"
 
 export function compareApis(leftApi: Api, rightApi: Api) {
@@ -279,16 +279,15 @@ function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, directio
     }
     const modelDiff: ApiModelDocDiff = { isBackwardCompatible: true, diffType: DiffType.NO_CHANGES, properties: {} }
     for (const metadataKey of ApiModelDocMetadata) {
-        if (leftModel[metadataKey] !== rightModel[metadataKey]) {
-            modelDiff[metadataKey] = {
-                diffType: getDiffType(leftModel[metadataKey], rightModel[metadataKey]),
-                isBackwardCompatible: ApiModelPropertiesBackwardCompatibility[metadataKey](leftModel[metadataKey] ?? null, rightModel[metadataKey] ?? null, direction, isRequired),
-                leftValue: leftModel[metadataKey], rightValue: rightModel[metadataKey],
-            }
-            modelDiff.isBackwardCompatible &&= modelDiff[metadataKey].isBackwardCompatible
-            if (modelDiff[metadataKey].diffType !== DiffType.NO_CHANGES) {
-                modelDiff.diffType = DiffType.MODIFIED
-            }
+        const metadataDiff = {
+            diffType: getDiffType(leftModel[metadataKey], rightModel[metadataKey]),
+            isBackwardCompatible: ApiModelPropertiesBackwardCompatibility[metadataKey](leftModel[metadataKey] ?? null, rightModel[metadataKey] ?? null, direction, isRequired),
+            leftValue: leftModel[metadataKey], rightValue: rightModel[metadataKey],
+        }
+        if (metadataDiff.diffType !== DiffType.NO_CHANGES) {
+            modelDiff[metadataKey] = metadataDiff
+            modelDiff.isBackwardCompatible &&= metadataDiff.isBackwardCompatible
+            modelDiff.diffType = DiffType.MODIFIED
         }
     }
     if (leftModel.items !== rightModel.items) {
