@@ -30,9 +30,15 @@
                                 {diffItem.diffType}
                             </span>
                         </td>
-                        <td><LongText text={diffItem.path || ''} maxLength={PATH_MAX_LENGTH} keepEnd={true} /></td>
-                        <td><LongText text={diffItem.leftValue ? JSON.stringify(diffItem.leftValue) : ''} maxLength={VALUE_MAX_LENGTH} /></td>
-                        <td><LongText text={diffItem.rightValue ? JSON.stringify(diffItem.rightValue) : ''} maxLength={VALUE_MAX_LENGTH} /></td>
+                        <td>
+                            <LongText text={diffItem.path || ''} maxLength={PATH_MAX_LENGTH} keepEnd={true} />
+                        </td>
+                        <td>
+                            <LongText text={diffItem.leftValue ? JSON.stringify(diffItem.leftValue) : ''} maxLength={VALUE_MAX_LENGTH} />
+                        </td>
+                        <td>
+                            <LongText text={diffItem.rightValue ? JSON.stringify(diffItem.rightValue) : ''} maxLength={VALUE_MAX_LENGTH} />
+                        </td>
                     </tr>
                 {/each}
             </tbody>

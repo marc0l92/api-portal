@@ -47,18 +47,18 @@
                     {#each Object.entries(diffModel.properties) as [propertyKey, propertyValue]}
                         <tr>
                             <td>
-                                <span class="tag {DiffTypeColor[propertyValue.diffType]}">
-                                    {#if !propertyValue.isBackwardCompatible}
-                                        <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
-                                    {/if}
-                                    {propertyValue.diffType}
-                                </span>
-                            </td>
-                            <td>
                                 {#if !propertyValue.isBackwardCompatible}
                                     <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
                                 {/if}
                                 {propertyKey}
+                                {#if propertyValue.diffType !== DiffType.MODIFIED}
+                                    <span class="tag {DiffTypeColor[propertyValue.diffType]}">
+                                        {#if !propertyValue.isBackwardCompatible}
+                                            <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                                        {/if}
+                                        {propertyValue.diffType}
+                                    </span>
+                                {/if}
                             </td>
                             <td>
                                 {#if propertyValue.diffType === DiffType.MODIFIED}

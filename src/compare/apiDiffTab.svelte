@@ -18,7 +18,7 @@
 <div>
     {#if apiDiff}
         {#if !apiDiff.isBackwardCompatible}
-            <div class="notification is-small is-danger">
+            <div class="notification is-small is-info">
                 <i class="fa-solid fa-triangle-exclamation mx-1" title="Not backward compatible change" />
                 Not backward compatible changes detected
             </div>
@@ -31,16 +31,15 @@
         {/if}
         {#each Object.entries(apiDiff.services) as [serviceName, serviceDiff]}
             <details open>
-                <summary class="title is-5">{serviceName}</summary>
-                <p class="mb-2">
-                    Status:
+                <summary class="title is-5">
+                    {serviceName}
                     <span class="tag {DiffTypeColor[serviceDiff.diffType]}">
                         {#if !serviceDiff.isBackwardCompatible}
                             <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
                         {/if}
                         {serviceDiff.diffType}
                     </span>
-                </p>
+                </summary>
                 {#if serviceDiff.metadata && serviceDiff.metadata.items.length}
                     <p class="table-title">
                         {#if !serviceDiff.metadata.isBackwardCompatible}
