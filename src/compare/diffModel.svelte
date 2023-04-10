@@ -77,18 +77,18 @@
                 <tbody>
                     <tr>
                         <td>
-                            <span class="tag {DiffTypeColor[diffModel.items.diffType]}">
-                                {#if !diffModel.items.isBackwardCompatible}
-                                    <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
-                                {/if}
-                                {diffModel.items.diffType}
-                            </span>
-                        </td>
-                        <td>
                             {#if !diffModel.items.isBackwardCompatible}
                                 <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
                             {/if}
-                            Items
+                            [ ]
+                            {#if diffModel.items.diffType !== DiffType.MODIFIED}
+                                <span class="tag {DiffTypeColor[diffModel.items.diffType]}">
+                                    {#if !diffModel.items.isBackwardCompatible}
+                                        <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
+                                    {/if}
+                                    {diffModel.items.diffType}
+                                </span>
+                            {/if}
                         </td>
                         <td>
                             {#if diffModel.items.diffType === DiffType.MODIFIED}
