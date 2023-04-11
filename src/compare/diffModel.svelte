@@ -3,6 +3,8 @@
     import { ApiModelDocMetadata, type ApiModelDocDiff, DiffTypeColor, DiffType } from './compareInterfaces';
 
     export let diffModel: ApiModelDocDiff;
+    let diffModelMetadata: [key: string, value: any][] = [];
+    $: diffModelMetadata = Object.entries(diffModel).filter(([key, _]) => ApiModelDocMetadata.indexOf(key) !== -1);
 
     function modelDiffToModel(modelDiff: ApiModelDocDiff): ApiModelDoc {
         return Object.fromEntries(Object.entries(modelDiff).filter(([key, _]) => ['diffType', 'isBackwardCompatible'].indexOf(key) === -1));
@@ -11,36 +13,36 @@
 
 {#if diffModel}
     <div class="diff-model-container">
-        <table class="table is-narrow is-ghost">
-            <tbody>
-                {#each ApiModelDocMetadata as metadataKey}
-                    {#if metadataKey in diffModel}
+        {#if diffModelMetadata.length > 0}
+            <table class="table is-narrow is-ghost">
+                <tbody>
+                    {#each diffModelMetadata as [metadataName, metadata]}
                         <tr>
                             <td>
-                                <span class="tag {DiffTypeColor[diffModel[metadataKey].diffType]}">
-                                    {#if !diffModel[metadataKey].isBackwardCompatible}
+                                <span class="tag {DiffTypeColor[metadata.diffType]}">
+                                    {#if !metadata.isBackwardCompatible}
                                         <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
                                     {/if}
-                                    {diffModel[metadataKey].diffType}
+                                    {metadata.diffType}
                                 </span>
                             </td>
-                            <th>{metadataKey}:</th>
+                            <th>{metadataName}:</th>
                             <td>
-                                {#if diffModel[metadataKey].leftValue}
-                                    <span>{diffModel[metadataKey].leftValue}</span>
+                                {#if metadata.leftValue}
+                                    <span>{JSON.stringify(metadata.leftValue)}</span>
                                 {/if}
-                                {#if diffModel[metadataKey].diffType === DiffType.MODIFIED}
+                                {#if metadata.diffType === DiffType.MODIFIED}
                                     <i class="fa-solid fa-right-long" />
                                 {/if}
-                                {#if diffModel[metadataKey].rightValue}
-                                    <span>{diffModel[metadataKey].rightValue}</span>
+                                {#if metadata.rightValue}
+                                    <span>{JSON.stringify(metadata.rightValue)}</span>
                                 {/if}
                             </td>
                         </tr>
-                    {/if}
-                {/each}
-            </tbody>
-        </table>
+                    {/each}
+                </tbody>
+            </table>
+        {/if}
         {#if diffModel.properties}
             <table class="table is-bordered is-narrow is-fullwidth">
                 <tbody>

@@ -1,5 +1,9 @@
 export const storeOptions = (key: string, options: any) => {
-    localStorage.setItem(key, JSON.stringify(options))
+    try{
+        localStorage.setItem(key, JSON.stringify(options))
+    }catch(error){
+        console.warn('Failure while storing local options:', key, error)
+    }
 }
 
 export const getOptions = (key: string, defaultValue: any = null) => {
