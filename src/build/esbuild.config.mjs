@@ -20,7 +20,7 @@ if (argv.configFile) {
 /** @type {esbuild.BuildOptions} */
 const webOptions = {
   banner: {
-    js: '// Project: https://github.com/marc0l92/api-tools',
+    js: '// Project: https://github.com/marc0l92/api-portal',
   },
   entryPoints: [
     './src/home.ts',
@@ -67,11 +67,11 @@ const webOptions = {
 /** @type {esbuild.BuildOptions} */
 const moduleOptions = {
   banner: {
-    js: '// Project: https://github.com/marc0l92/api-tools',
+    js: '// Project: https://github.com/marc0l92/api-portal',
   },
   entryPoints: [{
-    in: './src/apiToolsModule.ts',
-    out: './api-tools'
+    in: './src/apiPortalModule.ts',
+    out: './api-portal'
   }],
   bundle: true,
   external: [...builtins],

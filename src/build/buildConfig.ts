@@ -1,5 +1,5 @@
 /**
- * @id api-tools-config
+ * @id api-portal-config
  * @additionalProperties false
  */
 export interface BuildConfig {

@@ -10,7 +10,7 @@ const isTest = (): boolean => {
 }
 
 export const getAppName = (): string => {
-    return APP_CONFIG.name || 'Api Tools'
+    return APP_CONFIG.name || 'Api Portal'
 }
 
 export const getBasePath = (): string => {
