@@ -1,7 +1,7 @@
 {
   "$schema": "src/build/config.schema.json",
-  "name": "Api Tools",
-  "basePath": "/api-tools",
+  "name": "Api Portal",
+  "basePath": "/api-portal",
   "diagrams": {
     "defaultServer": "https://www.plantuml.com/plantuml",
     "allowServerChange": true
@@ -15,7 +15,7 @@
       {
         "title": "Repository",
         "description": "GitHub repository with the project code",
-        "link": "https://github.com/marc0l92/api-tools",
+        "link": "https://github.com/marc0l92/api-portal",
         "icon": "fa-solid fa-code"
       },
       {
