@@ -4,7 +4,7 @@ import yaml from 'js-yaml'
 import objectHash from 'object-hash'
 import { exit } from 'process'
 import fs from 'fs-extra'
-import apiTools from '../../dist/api-tools.js'
+import apiPortal from '../../dist/api-portal.js'
 import { exec } from 'child_process'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
@@ -105,14 +105,14 @@ async function loadAndValidateApiIndex() {
  * @param {string} apiHash
  */
 async function generateApi(apiDoc, apiHash) {
-    await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, apiTools.compressApiDoc(apiDoc))
+    await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, apiPortal.compressApiDoc(apiDoc))
 }
 
 /**
  * @param {string} filename
  */
 async function minifyAndCompressJsonFile(filename) {
-    await fs.outputFile(filename, apiTools.compressApiDoc(await fs.readJSON(filename)))
+    await fs.outputFile(filename, apiPortal.compressApiDoc(await fs.readJSON(filename)))
 }
 
 /**
@@ -254,7 +254,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`).then(async (fileNames) => {
             const apiHash = objectHash(apiDoc)
             const relativeFileName = fileName.replace(INPUT_FOLDER, '').replace(/\.(json|ya?ml)$/, '')
             const packageName = path.dirname(relativeFileName)
-            const api = await apiTools.parseApi(apiDoc, { ignoreReferenceErrors: true })
+            const api = await apiPortal.parseApi(apiDoc, { ignoreReferenceErrors: true })
 
             if (!(apiHash in apiIndexHashes)) {
                 apiIndexHashes[apiHash] = true

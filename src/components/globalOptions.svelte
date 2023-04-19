@@ -33,7 +33,7 @@
             <a href={'#'} class="dropdown-item" on:click|preventDefault={() => (showDiagramsOptionsModal = true)}>
                 <span>Diagrams options</span><i class="fa-solid fa-diagram-project" />
             </a>
-            <a href="https://github.com/marc0l92/api-tools/issues/new/choose" class="dropdown-item" target="_blank" rel="noreferrer">
+            <a href="https://github.com/marc0l92/api-portal/issues/new/choose" class="dropdown-item" target="_blank" rel="noreferrer">
                 <span>Report issue</span><i class="fa-solid fa-bug" />
             </a>
         </div>
