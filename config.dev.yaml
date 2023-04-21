@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/marc0l92/api-portal/master/src/build/config.schema.json
 
-name: Api Tools DEV
+name: Api Portal DEV
 diagrams:
   defaultServer: https://www.plantuml.com/plantuml
   allowServerChange: true
@@ -11,7 +11,7 @@ home:
   links:
     - title: Repository
       description: GitHub repository with the project code
-      link: "https: //github.com/marc0l92/api-tools"
+      link: "https: //github.com/marc0l92/api-portal"
       icon: fa-solid fa-code
     - title: Project Plan
       description: GitHub Project with the backlog of items for this project
