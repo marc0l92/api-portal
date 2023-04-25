@@ -75,7 +75,7 @@
             </table>
         {/if}
         {#if diffModel.items}
-            <table class="table is-bordered is-narrow is-fullwidth">
+            <table class="table is-bordered is-narrow">
                 <tbody>
                     <tr>
                         <td>
@@ -118,5 +118,11 @@
     }
     .table:not(:last-child) {
         margin-bottom: 0.5rem;
+    }
+    .diff-model-container {
+        overflow-x: auto;
+    }
+    .diff-model-container > table.table {
+        width: calc(100% - 1px);
     }
 </style>

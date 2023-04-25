@@ -99,6 +99,9 @@ function getDiffType(leftValue: any, rightValue: any): DiffType {
             return DiffType.NO_CHANGES
         }
     }
+    if (JSON.stringify(leftValue) === JSON.stringify(rightValue)) {
+        return DiffType.NO_CHANGES
+    }
     return DiffType.MODIFIED
 }
 
@@ -281,6 +284,7 @@ function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, directio
         } as ApiModelDocDiff, leftModel)
     }
     const modelDiff: ApiModelDocDiff = { isBackwardCompatible: true, diffType: DiffType.NO_CHANGES, properties: {} }
+    // Compare metadata
     for (const metadataKey of ApiModelDocMetadata) {
         const metadataDiff = {
             diffType: getDiffType(leftModel[metadataKey], rightModel[metadataKey]),
@@ -293,13 +297,14 @@ function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, directio
             modelDiff.diffType = DiffType.MODIFIED
         }
     }
+    // Compare items
     if (leftModel.items !== rightModel.items) {
         modelDiff.items = compareModels(leftModel.items, rightModel.items, direction)
         if (modelDiff.items.diffType !== DiffType.NO_CHANGES) {
             modelDiff.diffType = DiffType.MODIFIED
         }
     }
-
+    // Compare properties
     if (leftModel.properties !== rightModel.properties) {
         const leftRequired: string[] = leftModel.required || []
         const rightPropertiesKey: string[] = rightModel.properties ? Object.keys(rightModel.properties) : []
@@ -332,7 +337,7 @@ function compareModels(leftModel: ApiModelDoc, rightModel: ApiModelDoc, directio
     if (Object.keys(modelDiff.properties).length === 0) {
         delete modelDiff.properties
     }
-
+    // Compare additionalProperties
     // TODO: check additionalProperties
 
     return modelDiff

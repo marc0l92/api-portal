@@ -7,7 +7,7 @@
 
 <div>
     {#if leftApi && rightApi}
-        Ok
+        Work in progress
     {/if}
 </div>
 
