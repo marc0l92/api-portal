@@ -75,14 +75,14 @@
             </table>
         {/if}
         {#if diffModel.items}
-            <table class="table is-bordered is-narrow">
+            <table class="table is-bordered is-narrow is-fullwidth">
                 <tbody>
                     <tr>
                         <td>
                             {#if !diffModel.items.isBackwardCompatible}
                                 <i class="fa-solid fa-triangle-exclamation mr-1" title="Not backward compatible change" />
                             {/if}
-                            [ ]
+                            []
                             {#if diffModel.items.diffType !== DiffType.MODIFIED}
                                 <span class="tag {DiffTypeColor[diffModel.items.diffType]}">
                                     {#if !diffModel.items.isBackwardCompatible}
@@ -121,8 +121,9 @@
     }
     .diff-model-container {
         overflow-x: auto;
+        max-width: 100%;
     }
-    .diff-model-container > table.table {
+    .diff-model-container .is-fullwidth {
         width: calc(100% - 1px);
     }
 </style>
