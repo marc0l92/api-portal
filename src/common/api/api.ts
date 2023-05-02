@@ -26,6 +26,11 @@ export interface ApiParameterDoc {
     description?: string
     example?: any
     ["x-path"]?: string
+    headers?: {
+        [headerName: string]: {
+            type: string
+        }
+    }
 }
 
 export interface ApiMetadata {
