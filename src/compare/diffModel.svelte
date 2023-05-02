@@ -4,7 +4,9 @@
 
     export let diffModel: ApiModelDocDiff;
     let diffModelMetadata: [key: string, value: any][] = [];
-    $: diffModelMetadata = Object.entries(diffModel).filter(([key, _]) => ApiModelDocMetadata.indexOf(key) !== -1);
+    $: if (diffModel) {
+        diffModelMetadata = Object.entries(diffModel).filter(([key, _]) => ApiModelDocMetadata.indexOf(key) !== -1);
+    }
 
     function modelDiffToModel(modelDiff: ApiModelDocDiff): ApiModelDoc {
         return Object.fromEntries(Object.entries(modelDiff).filter(([key, _]) => ['diffType', 'isBackwardCompatible'].indexOf(key) === -1));
