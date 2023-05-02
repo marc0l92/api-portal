@@ -120,10 +120,9 @@ export class ApiServiceOpenApi extends ApiService {
 
     private initRequest() {
         if (this.getServiceDoc().requestBody
-            && this.getServiceDoc().requestBody.content
-            && this.getServiceDoc().requestBody.content['application/json']) {
-            this.getServiceDoc().requestBody.content['application/json']["x-path"] = `${this.getServiceBasePath()}/requestBody/content["application/json"]`
-            this.request = this.getServiceDoc().requestBody.content['application/json']
+            && this.getContentType(this.getServiceDoc().requestBody)) {
+            this.getContentType(this.getServiceDoc().requestBody)["x-path"] = `${this.getServiceBasePath()}/requestBody/content["application/json"]`
+            this.request = this.getContentType(this.getServiceDoc().requestBody)
         }
     }
 
@@ -131,12 +130,28 @@ export class ApiServiceOpenApi extends ApiService {
         if (this.getServiceDoc().responses) {
             for (const statusCode in this.getServiceDoc().responses) {
                 const response = this.getServiceDoc().responses[statusCode]
-                if (response.content && response.content['application/json']) {
-                    response.content['application/json']["x-path"] = `${this.getServiceBasePath()}/responses[${statusCode}]/content["application/json"]`
-                    this.responses[statusCode] = response.content['application/json']
+                if (this.getContentType(response)) {
+                    this.getContentType(response)["x-path"] = `${this.getServiceBasePath()}/responses[${statusCode}]/content["application/json"]`
+                    this.responses[statusCode] = this.getContentType(response)
                 }
             }
         }
+    }
+
+    private getContentType(apiOpenApiParameterDoc: ApiOpenApiParameterDoc): ApiParameterDoc {
+        if (apiOpenApiParameterDoc.content) {
+            const contentTypes = Object.keys(apiOpenApiParameterDoc.content)
+            if (contentTypes.length === 1) {
+                return apiOpenApiParameterDoc.content[contentTypes[0]]
+            } else if (contentTypes.length > 1) {
+                const jsonContentType = contentTypes.find(t => t.match(/json/i))
+                if (jsonContentType) {
+                    return apiOpenApiParameterDoc.content[jsonContentType]
+                }
+            }
+
+        }
+        return null
     }
 
     getServiceBasePath(): string {
