@@ -37,7 +37,7 @@ export interface ApiOpenApiServiceDoc {
 }
 
 export interface ApiOpenApiParameterDoc {
-    headers: {
+    headers?: {
         [headerName: string]: {
             schema: ApiParameterDoc
         }
