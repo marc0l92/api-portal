@@ -45,9 +45,9 @@
     storeOptions(LOCAL_STORAGE_SELECTED_TAB_KEY, selectedTab);
   }
 
-  async function fetchApi() {
+  async function fetchApi(apiDir: string = 'apis') {
     try {
-      const response = await fetch(`./apis/${apiHash}.api.json.gzip`);
+      const response = await fetch(`./${apiDir}/${apiHash}.api.json.gzip`);
       if (response.ok) {
         apiText = decompressFromArray((await response.arrayBuffer()) as Uint8Array);
         apiDoc = yaml.load(apiText);
@@ -131,6 +131,13 @@
       fetchApi();
       fetchValidation();
       fetchApiSummary();
+    } else if (urlParams.has('tmp-api')) {
+      apiHash = urlParams.get('tmp-api');
+      await fetchApi('tmp-apis');
+      apiSummary = getApiSummaryFlatFromApi(api);
+      if (selectedTab === 'validation') {
+        selectedTab = 'api';
+      }
     } else {
       showApiInput = true;
       if (selectedTab === 'validation') {
