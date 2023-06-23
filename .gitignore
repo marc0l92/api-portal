@@ -5,6 +5,7 @@ coverage
 # Deliverable
 public/js/*
 public/apis/*
+public/tmp-apis/*
 inputApi/*
 !inputApi/.gitkeep
 dist/*

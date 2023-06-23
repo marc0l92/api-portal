@@ -15,6 +15,9 @@ export interface ApiGenericDoc {
         branch?: string
         pullRequest?: string
     }
+    info?: {
+        ['x-tags']: string[]
+    }
 }
 
 export interface ApiParameterDoc {
@@ -69,6 +72,7 @@ export abstract class Api {
     }
     getMetadata(): ApiMetadata {
         const apiMetadata: any = this.apiDoc['x-metadata']
+        const apiTags: string[] = this.apiDoc?.info?.['x-tags'] || []
         const metadata: ApiMetadata = {}
 
         for (const name in apiMetadata) {
@@ -77,6 +81,9 @@ export abstract class Api {
             } else {
                 metadata[name] = JSON.stringify(apiMetadata[name])
             }
+        }
+        if (apiTags.length > 0) {
+            metadata['tags'] = apiTags.join(', ')
         }
         return metadata
     }
