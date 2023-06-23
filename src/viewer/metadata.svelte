@@ -30,9 +30,9 @@
     }
 </script>
 
-<div class="columns">
-    <div class="column metadata-row">
-        {#each Object.entries(metadata) as [name, value]}
+<div class="columns metadata-row is-multiline is-1 is-variable">
+    {#each Object.entries(metadata) as [name, value]}
+        <div class="column is-narrow">
             <span class="tags has-addons">
                 <span class="tag is-dark is-capitalized">{name}</span>
                 <span class="tag {getTagColor(name, value)}">
@@ -45,14 +45,16 @@
                     {/if}
                 </span>
             </span>
-        {/each}
-        {#if updateTime}
+        </div>
+    {/each}
+    {#if updateTime}
+        <div class="column is-narrow">
             <span class="tags has-addons">
                 <span class="tag is-dark is-capitalized">UpdateTime</span>
                 <span class="tag {DEFAULT_TAG_COLOR}">{updateTime}</span>
             </span>
-        {/if}
-    </div>
+        </div>
+    {/if}
 </div>
 
 <style>
@@ -67,5 +69,9 @@
     }
     .metadata-row .tags:not(:last-child) {
         margin-right: 0.5em;
+    }
+    .columns.is-variable > .column {
+        padding-top: var(--columnGap);
+        padding-bottom: var(--columnGap);
     }
 </style>
