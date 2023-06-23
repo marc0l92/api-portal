@@ -1,6 +1,10 @@
 <script lang="ts">
     import { isChangeDiagramServerAllowed } from 'common/globals';
     import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, DiagramBuilderFormat, diagramBuilderOptions } from './diagramBuilderOptions';
+
+    function resetToDefaultValue() {
+        $diagramBuilderOptions = Object.assign({}, DEFAULT_DIAGRAM_BUILDER_OPTIONS);
+    }
 </script>
 
 <div class="mt-4">
@@ -38,6 +42,11 @@
     <div class="field">
         <div class="control">
             <label class="checkbox"><input type="checkbox" bind:checked={$diagramBuilderOptions.parameters} /> Render parameters</label>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <button class="button is-warning" on:click={resetToDefaultValue}>Reset to default value</button>
         </div>
     </div>
 </div>
