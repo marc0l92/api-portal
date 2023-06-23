@@ -10,11 +10,11 @@
     "API"
   ],
   "scripts": {
-    "dev": "node src/build/esbuild.config.mjs --configFile=config.dev.yaml",
+    "dev": "node src/build/esbuild.config.mjs --configFile=config/config.dev.yaml",
     "generate": "node src/build/generate.mjs",
     "test": "jest --silent=false",
     "build": "tsc -noEmit -skipLibCheck && node src/build/esbuild.config.mjs production",
-    "config-schema": "typescript-json-schema --required src/build/buildConfig.ts BuildConfig > src/build/config.schema.json"
+    "config-schema": "typescript-json-schema --required src/build/buildConfig.ts BuildConfig > src/build/buildConfig.schema.json && typescript-json-schema --required src/build/servicesTags.ts ServicesTags > src/build/servicesTags.schema.json"
   },
   "dependencies": {
     "fflate": "^0.7.4",

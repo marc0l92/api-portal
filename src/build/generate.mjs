@@ -22,13 +22,22 @@ const VALIDATION_TIMEOUT = 300000
 /**
  * @typedef {import('../common/api/apiIndex').ApiIndex} ApiIndex
  * @typedef {import('../common/api/apiIndex').ApiIndexItem} ApiIndexItem
+ * @typedef {import('./buildConfig').BuildConfig} BuildConfig
+ * @typedef {import('./servicesTags').ServicesTags} ServicesTags
  */
 
 const argv = yargs(hideBin(process.argv)).argv
+/** @type {BuildConfig} */
 let appConfig = {}
 if (argv.configFile) {
     appConfig = yaml.load(fs.readFileSync(argv.configFile))
     console.log('Config loaded:', appConfig)
+}
+/** @type {ServicesTags} */
+let servicesTags = {}
+if (argv.tagsFile) {
+    servicesTags = yaml.load(fs.readFileSync(argv.tagsFile))
+    console.log('Tags loaded.')
 }
 
 /**

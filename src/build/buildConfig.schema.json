@@ -44,7 +44,7 @@
             "type": "object"
         }
     },
-    "id": "api-portal-config",
+    "id": "api-portal-build-config",
     "properties": {
         "$schema": {
             "type": "string"

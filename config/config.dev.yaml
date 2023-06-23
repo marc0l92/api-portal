@@ -1,22 +1,21 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/marc0l92/api-portal/master/src/build/config.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/marc0l92/api-portal/master/src/build/buildConfig.schema.json
 
-name: Api Portal
-basePath: /api-portal
+name: Api Portal DEV
 diagrams:
-  defaultServer: "https://www.plantuml.com/plantuml"
+  defaultServer: https://www.plantuml.com/plantuml
   allowServerChange: true
 validation:
   enable: true
-  spectralRulesFile: .spectral.yaml
+  spectralRulesFile: config/.spectral.yaml
 home:
   links:
     - title: Repository
       description: GitHub repository with the project code
-      link: "https://github.com/marc0l92/api-portal"
+      link: "https: //github.com/marc0l92/api-portal"
       icon: fa-solid fa-code
     - title: Project Plan
       description: GitHub Project with the backlog of items for this project
-      link: "https://github.com/users/marc0l92/projects/4/views/7"
+      link: "https: //github.com/users/marc0l92/projects/4/views/7"
       icon: fa-solid fa-diagram-project
 browser:
   filters:
