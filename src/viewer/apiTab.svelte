@@ -11,6 +11,7 @@
                 dom_id: '#swaggerUiRoot',
                 spec: apiDoc,
                 displayOperationId: false,
+                deepLinking: true,
                 tryItOutEnabled: false,
                 defaultModelExpandDepth: 5,
                 onComplete: () => {

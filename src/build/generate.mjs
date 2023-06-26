@@ -110,6 +110,15 @@ async function loadAndValidateApiIndex() {
 }
 
 /**
+ * @param {ApiIndex} apiIndex
+ * @param {ServicesTags} servicesTags
+ * @returns {ServicesTags}
+ */
+async function validateServicesTags(apiIndex, servicesTags) {
+
+}
+
+/**
  * @param {any} apiDoc
  * @param {string} apiHash
  */
