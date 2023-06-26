@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "dev": "node src/build/esbuild.config.mjs --configFile=config/config.dev.yaml",
+    "dev:generate": "node src/build/generate.mjs --configFile=config/config.dev.yaml",
     "generate": "node src/build/generate.mjs",
     "test": "jest --silent=false",
     "build": "tsc -noEmit -skipLibCheck && node src/build/esbuild.config.mjs production",

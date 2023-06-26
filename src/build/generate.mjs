@@ -31,7 +31,7 @@ const argv = yargs(hideBin(process.argv)).argv
 let appConfig = {}
 if (argv.configFile) {
     appConfig = yaml.load(fs.readFileSync(argv.configFile))
-    console.log('Config loaded:', appConfig)
+    console.log('Config loaded:', JSON.stringify(appConfig))
 }
 /** @type {ServicesTags} */
 let servicesTags = {}
@@ -51,7 +51,7 @@ function dateNow() {
  * @param {string} fileName
  */
 function deleteFilesByHash(fileName) {
-    const apiHashMatches = fileName.match(/^.*\/([a-z0-9]+)\.[a-z]+\.json$/)
+    const apiHashMatches = fileName.match(new RegExp(`^.*\\/([a-z0-9]+)${API_SUFFIX.replace('.', '\\.')}$`))
     if (apiHashMatches) {
         const apiHash = apiHashMatches[1]
         fs.remove(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`)
