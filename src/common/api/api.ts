@@ -16,7 +16,7 @@ export interface ApiGenericDoc {
         pullRequest?: string
     }
     info?: {
-        ['x-tags']: string[]
+        ['x-tags']?: string[]
     }
 }
 

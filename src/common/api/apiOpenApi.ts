@@ -1,14 +1,15 @@
-import { Api, ApiService, ApiType, type ApiParameterDoc, type ApiReleaseNotes } from "./api"
+import { Api, ApiService, ApiType, type ApiParameterDoc, type ApiReleaseNotes, type ApiGenericDoc } from "./api"
 import type { ApiModelDocMap } from "./apiModel"
 
 const PATH_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
 
-export interface ApiOpenApiDoc {
+export interface ApiOpenApiDoc extends ApiGenericDoc {
     openapi: string
     info?: {
         title?: string
         version?: string
         'x-release-note'?: ApiReleaseNotes
+        ['x-tags']?: string[]
         [otherMetadata: string]: any
     }
     paths: {

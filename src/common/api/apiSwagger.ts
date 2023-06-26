@@ -1,12 +1,13 @@
-import { Api, ApiService, ApiType, type ApiParameterDoc, type ApiReleaseNotes } from "./api"
+import { Api, ApiService, ApiType, type ApiParameterDoc, type ApiReleaseNotes, type ApiGenericDoc } from "./api"
 import type { ApiModelDocMap } from "./apiModel"
 
-export interface ApiSwaggerDoc {
+export interface ApiSwaggerDoc extends ApiGenericDoc {
     swagger: string
     info?: {
         title?: string
         version?: string
         'x-release-note'?: ApiReleaseNotes
+        ['x-tags']?: string[]
         [otherMetadata: string]: any
     }
     paths: {
