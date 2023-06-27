@@ -377,9 +377,9 @@ const methodsVerb: MethodsVerbs = {
         DELETE: (subResourceName: string, resourceId: string, collectionName: string): string => `Delete the ${subResourceName} of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
     },
     controller: {
-        controllerOnCollection: (controllerName: string, collectionName: string): string => `Perform the action of "${controllerName}" on the ${collectionName}`,
-        controllerOnResource: (controllerName: string, resourceId: string, collectionName: string): string => `Perform the action of "${controllerName}" on the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
-        controllerOnSubResource: (controllerName, subResourceName, resourceId, collectionName) => `Perform the action of "${controllerName}" on the ${subResourceName}, of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        controllerOnCollection: (controllerName: string, collectionName: string): string => `Perform the action of "${pluralize.singular(controllerName)}" on the ${collectionName}`,
+        controllerOnResource: (controllerName: string, resourceId: string, collectionName: string): string => `Perform the action of "${pluralize.singular(controllerName)}" on the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
+        controllerOnSubResource: (controllerName, subResourceName, resourceId, collectionName) => `Perform the action of "${pluralize.singular(controllerName)}" on the ${subResourceName}, of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
     },
     middle: {
         resourceAndCollection: (resourceId: string, collectionName: string) => `, of the ${pluralize.singular(collectionName)} with id "${resourceId}"`,
