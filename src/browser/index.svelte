@@ -10,7 +10,7 @@
   import { filterApiIndex } from 'common/search';
   import { globalOptions } from 'common/globalOptions';
   import { getApiIndexPath } from 'common/globals';
-  import type { BrowserFilters } from 'build/buildConfig';
+  import type { BrowserFilters } from 'cli/buildConfig';
 
   let apiIndex: ApiIndex = null;
   let errors: string[] = [];

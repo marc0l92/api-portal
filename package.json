@@ -10,12 +10,12 @@
     "API"
   ],
   "scripts": {
-    "dev": "node src/build/esbuild.config.mjs --configFile=config/config.dev.yaml",
-    "dev:generate": "node src/build/generate.mjs --configFile=config/config.dev.yaml",
-    "generate": "node src/build/generate.mjs",
+    "dev": "node src/cli/esbuild.config.mjs --configFile=config/config.dev.yaml",
+    "dev:generate": "pnpm run build && node dist/api-portal-cli.js --configFile=config/config.dev.yaml",
+    "generate": "node dist/api-portal-cli.js",
     "test": "jest --silent=false",
-    "build": "tsc -noEmit -skipLibCheck && node src/build/esbuild.config.mjs production",
-    "config-schema": "typescript-json-schema --required src/build/buildConfig.ts BuildConfig > src/build/buildConfig.schema.json && typescript-json-schema --required src/build/servicesTags.ts ServicesTags > src/build/servicesTags.schema.json"
+    "build": "tsc -noEmit -skipLibCheck && node src/cli/esbuild.config.mjs production",
+    "config-schema": "typescript-json-schema --required src/cli/buildConfig.ts BuildConfig > dist/buildConfig.schema.json && typescript-json-schema --required src/cli/servicesTags.ts ServicesTags > dist/servicesTags.schema.json"
   },
   "dependencies": {
     "fflate": "^0.7.4",
@@ -52,7 +52,6 @@
     "svelte-preprocess": "^5.0.3",
     "svelte-preprocess-sass": "^2.0.1",
     "ts-jest": "^29.0.5",
-    "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "tslib": "^2.5.0",
     "typescript": "^4.9.5",

@@ -8,7 +8,7 @@ export interface ServicesTags {
      * List of services extracted from the input api processed
      * @additionalProperties false
      */
-    services: {
+    services?: {
         path: string
         method: ServiceMethod
         tags: {

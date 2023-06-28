@@ -2,13 +2,15 @@ import path from 'path'
 import glob from 'glob'
 import yaml from 'js-yaml'
 import objectHash from 'object-hash'
-import { exit } from 'process'
 import fs from 'fs-extra'
-import apiPortal from '../../dist/api-portal.js'
 import { exec } from 'child_process'
-import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
-import process from 'process'
+import type { BuildConfig } from './buildConfig'
+import type { ServicesTags } from './servicesTags'
+import type { ApiIndex, ApiIndexItem } from 'common/api/apiIndex'
+import { compressToArray } from 'common/compress'
+import type { Api } from 'common/api/api'
+import { apiFactory } from 'common/api/apiFactory'
+import { ReferenceNotFoundError } from 'common/api/refParser'
 
 const INPUT_FOLDER = 'inputApi/'
 const OUTPUT_FOLDER = 'public/apis'
@@ -19,38 +21,11 @@ const MAX_VERSION_DIGITS = 5
 const MAX_PARALLEL_VALIDATIONS = 10
 const VALIDATION_TIMEOUT = 300000
 
-/**
- * @typedef {import('../common/api/apiIndex').ApiIndex} ApiIndex
- * @typedef {import('../common/api/apiIndex').ApiIndexItem} ApiIndexItem
- * @typedef {import('./buildConfig').BuildConfig} BuildConfig
- * @typedef {import('./servicesTags').ServicesTags} ServicesTags
- */
-
-const argv = yargs(hideBin(process.argv)).argv
-/** @type {BuildConfig} */
-let appConfig = {}
-if (argv.configFile) {
-    appConfig = yaml.load(fs.readFileSync(argv.configFile))
-    console.log('Config loaded:', JSON.stringify(appConfig))
-}
-/** @type {ServicesTags} */
-let servicesTags = {}
-if (argv.tagsFile) {
-    servicesTags = yaml.load(fs.readFileSync(argv.tagsFile))
-    console.log('Tags loaded.')
-}
-
-/**
- * @returns {string}
- */
-function dateNow() {
+function dateNow(): string {
     return new Date().toISOString()
 }
 
-/**
- * @param {string} fileName
- */
-function deleteFilesByHash(fileName) {
+function deleteFilesByHash(fileName: string): void {
     const apiHashMatches = fileName.match(new RegExp(`^.*\\/([a-z0-9]+)${API_SUFFIX.replace('.', '\\.')}$`))
     if (apiHashMatches) {
         const apiHash = apiHashMatches[1]
@@ -59,11 +34,7 @@ function deleteFilesByHash(fileName) {
     }
 }
 
-/**
- * @param {ApiIndex} apiIndex
- * @param {string[]} fileNames
- */
-function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
+function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex: ApiIndex, fileNames: string[]): void {
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
             for (const versionName in apiIndex[packageName][apiName]) {
@@ -95,50 +66,29 @@ function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames) {
     }
 }
 
-/**
- * @returns {ApiIndex}
- */
-async function loadAndValidateApiIndex() {
-    /** @type {ApiIndex} */
-    let apiIndex = {}
+async function loadAndValidateApiIndex(): Promise<ApiIndex> {
+    let apiIndex: ApiIndex = {}
     if (fs.existsSync(INDEX_FILE_PATH)) {
         apiIndex = fs.readJsonSync(INDEX_FILE_PATH)
     }
-    const fileNames = (await glob.glob(`${OUTPUT_FOLDER}**/*${API_SUFFIX}`)).map(x => x.replace(/\\/g, '/'))
+    const fileNames = await glob.glob(`${OUTPUT_FOLDER}**/*${API_SUFFIX}`, { platform: 'linux' })
     deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames)
     return apiIndex
 }
 
-/**
- * @param {ApiIndex} apiIndex
- * @param {ServicesTags} servicesTags
- * @returns {ServicesTags}
- */
-async function validateServicesTags(apiIndex, servicesTags) {
-
+async function validateServicesTags(apiIndex: ApiIndex, servicesTags: ServicesTags): Promise<ServicesTags> {
+    return servicesTags
 }
 
-/**
- * @param {any} apiDoc
- * @param {string} apiHash
- */
-async function generateApi(apiDoc, apiHash) {
-    await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, apiPortal.compressApiDoc(apiDoc))
+async function generateApi(apiDoc: any, apiHash: string): Promise<void> {
+    await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, compressToArray(JSON.stringify(apiDoc)))
 }
 
-/**
- * @param {string} filename
- */
-async function minifyAndCompressJsonFile(filename) {
-    await fs.outputFile(filename, apiPortal.compressApiDoc(await fs.readJSON(filename)))
+async function minifyAndCompressJsonFile(filename: string): Promise<void> {
+    await fs.outputFile(filename, compressToArray(JSON.stringify(fs.readJSONSync(filename))))
 }
 
-/**
- * @param {string} fileName
- * @param {string} apiHash
- * @returns {Promise<any>}
- */
-async function generateValidation(fileName, apiHash) {
+async function generateValidation(fileName: string, apiHash: string, appConfig: BuildConfig): Promise<any> {
     return new Promise((resolve, reject) => {
         if (appConfig && appConfig.validation && appConfig.validation.spectralRulesFile && appConfig.validation.enable) {
             const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
@@ -161,16 +111,7 @@ async function generateValidation(fileName, apiHash) {
     })
 }
 
-/**
- * @param {ApiIndex} apiIndex
- * @param {string} packageName
- * @param {string} apiName
- * @param {string} apiVersion
- * @param {string} fileName
- * @param {string} apiHash
- * @returns {boolean}
- */
-function hasApiVersion(apiIndex, packageName, apiName, apiVersion, fileName, apiHash) {
+function hasApiVersion(apiIndex: ApiIndex, packageName: string, apiName: string, apiVersion: string, fileName: string, apiHash: string): boolean {
     return apiIndex
         && apiIndex[packageName]
         && apiIndex[packageName][apiName]
@@ -179,15 +120,7 @@ function hasApiVersion(apiIndex, packageName, apiName, apiVersion, fileName, api
         && apiIndex[packageName][apiName][apiVersion][fileName].hash === apiHash
 }
 
-/**
- * @param {ApiIndex} apiIndex
- * @param {string} packageName
- * @param {string} apiName
- * @param {string} apiVersion
- * @param {string} fileName
- * @param {ApiIndexItem} apiIndexItem
- */
-function createApiVersion(apiIndex, packageName, apiName, apiVersion, fileName, apiIndexItem) {
+function createApiVersion(apiIndex: ApiIndex, packageName: string, apiName: string, apiVersion: string, fileName: string, apiIndexItem: ApiIndexItem): void {
     if (!apiIndex[packageName]) {
         apiIndex[packageName] = {}
     }
@@ -200,17 +133,8 @@ function createApiVersion(apiIndex, packageName, apiName, apiVersion, fileName, 
     apiIndex[packageName][apiName][apiVersion][fileName] = apiIndexItem
 }
 
-/**
- * @param {string} v1
- * @param {string} v2
- * @returns {number}
- */
-function isSmallerVersion(v1, v2) {
-    /**
-     * @param {string|null} v
-     * @returns {number}
-     */
-    function versionToNumber(v) {
+function isSmallerVersion(v1: string, v2: string): number {
+    function versionToNumber(v: string | null): number {
         let total = 0;
         let i = 0;
         if (typeof v === 'string') {
@@ -224,22 +148,12 @@ function isSmallerVersion(v1, v2) {
     return versionToNumber(v2) - versionToNumber(v1)
 }
 
-/**
- * @param {string} f1
- * @param {string} f2
- * @returns {number}
- */
-function isSmallerFileName(f1, f2) {
+function isSmallerFileName(f1: string, f2: string): number {
     return f1.length - f2.length
 }
 
-/**
- * @param {ApiIndex} apiIndex
- * @returns {ApiIndex}
- */
-function sortApiIndex(apiIndex) {
-    /** @type {ApiIndex} */
-    const sortedApiIndex = {}
+function sortApiIndex(apiIndex: ApiIndex): ApiIndex {
+    const sortedApiIndex: ApiIndex = {}
     for (const packageName of Object.keys(apiIndex).sort()) {
         sortedApiIndex[packageName] = {}
         for (const apiName of Object.keys(apiIndex[packageName]).sort()) {
@@ -255,24 +169,37 @@ function sortApiIndex(apiIndex) {
     return sortedApiIndex
 }
 
-glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, { platform: 'linux' }).then(async (fileNames) => {
-    /** @type {ApiIndex} */
-    const oldApiIndex = await loadAndValidateApiIndex()
-    /** @type {ApiIndex} */
-    const apiIndex = {}
-    /** @type {Object.<string, boolean>} */
-    const apiIndexHashes = {}
-    /** @type {Promise<any>[]} */
-    let validationPromises = []
+async function parseApi(apiObject: any): Promise<Api> {
+    const api = apiFactory(apiObject)
+    api.setModelsTitle()
+    try {
+        await api.resolveReferences()
+    } catch (e) {
+        if (e instanceof ReferenceNotFoundError) {
+            console.error(e.message)
+        } else {
+            throw e
+        }
+    }
+    return api
+}
+
+export async function generateApiFiles(appConfig: BuildConfig, servicesTags: ServicesTags) {
+    const apiIndex: ApiIndex = {}
+    const apiIndexHashes: { [hash: string]: boolean } = {}
+    let validationPromises: Promise<any>[] = []
+
+    const oldApiIndex: ApiIndex = await loadAndValidateApiIndex()
+
+    const fileNames = await glob.glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, { platform: 'linux' })
     for (const fileName of fileNames) {
         try {
             console.log('>', fileName)
-            /** @type {any} */
-            const apiDoc = yaml.load(await fs.readFile(fileName))
+            const apiDoc: any = yaml.load(fs.readFileSync(fileName, { encoding: 'utf-8' }))
             const apiHash = objectHash(apiDoc)
             const relativeFileName = fileName.replace(INPUT_FOLDER, '').replace(/\.(json|ya?ml)$/, '')
             const packageName = path.dirname(relativeFileName)
-            const api = await apiPortal.parseApi(apiDoc, { ignoreReferenceErrors: true })
+            const api = await parseApi(apiDoc)
 
             if (!(apiHash in apiIndexHashes)) {
                 apiIndexHashes[apiHash] = true
@@ -289,7 +216,7 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, { platform: 'linux' }).then(async (
                     })
 
                     await generateApi(apiDoc, apiHash)
-                    validationPromises.push(generateValidation(fileName, apiHash).catch(reason => {
+                    validationPromises.push(generateValidation(fileName, apiHash, appConfig).catch(reason => {
                         console.warn('!', reason)
                     }))
 
@@ -304,10 +231,8 @@ glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, { platform: 'linux' }).then(async (
             console.error('Error:', e.message || e)
         }
     }
+
     await fs.outputJson(INDEX_FILE_PATH, sortApiIndex(apiIndex))
     await Promise.allSettled(validationPromises)
     loadAndValidateApiIndex() // Delete files that are not part of the new index
-}).catch(error => {
-    console.error(error)
-    exit(1)
-})
+}

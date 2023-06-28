@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BrowserFilters } from 'build/buildConfig';
+    import type { BrowserFilters } from 'cli/buildConfig';
     import { getBrowserFiltersCopy } from 'common/globals';
     import { createEventDispatcher } from 'svelte';
 

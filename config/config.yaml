@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/marc0l92/api-portal/master/src/build/buildConfig.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/marc0l92/api-portal/master/dist/buildConfig.schema.json
 
 name: Api Portal
 basePath: /api-portal

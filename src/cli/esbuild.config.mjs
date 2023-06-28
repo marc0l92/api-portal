@@ -65,13 +65,13 @@ const webOptions = {
 }
 
 /** @type {esbuild.BuildOptions} */
-const moduleOptions = {
+const cliOptions = {
   banner: {
     js: '// Project: https://github.com/marc0l92/api-portal',
   },
   entryPoints: [{
-    in: './src/apiPortalModule.ts',
-    out: './api-portal'
+    in: './src/cli.ts',
+    out: './api-portal-cli'
   }],
   bundle: true,
   external: [...builtins],
@@ -98,13 +98,13 @@ fs.copyFileSync('./node_modules/swagger-ui-flat-model-plugin/dist/swagger-ui-fla
 
 if (prod) {
   esbuild.build(webOptions).catch(() => process.exit(1))
-  esbuild.build(moduleOptions).catch(() => process.exit(1))
+  esbuild.build(cliOptions).catch(() => process.exit(1))
 } else {
   // Web
   const webCtx = await esbuild.context(webOptions)
   webCtx.watch().catch(() => process.exit(1))
   webCtx.serve({ servedir: 'public', port: 9000 }).catch(() => process.exit(1))
-  // Module
-  const moduleCtx = await esbuild.context(moduleOptions)
-  moduleCtx.watch().catch(() => process.exit(1))
+  // CLI
+  const cliCtx = await esbuild.context(cliOptions)
+  cliCtx.watch().catch(() => process.exit(1))
 }

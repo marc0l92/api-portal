@@ -1,4 +1,4 @@
-import type { BrowserFilters, BuildConfig, HomeLink } from "build/buildConfig"
+import type { BrowserFilters, BuildConfig, HomeLink } from "../cli/buildConfig"
 
 declare const IS_TEST: boolean
 declare const APP_CONFIG: BuildConfig
