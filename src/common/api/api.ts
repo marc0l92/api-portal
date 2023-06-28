@@ -82,7 +82,7 @@ export abstract class Api {
                 metadata[name] = JSON.stringify(apiMetadata[name])
             }
         }
-        if (apiTags.length > 0) {
+        if (Array.isArray(apiTags) && apiTags.length > 0) {
             metadata['tags'] = apiTags.join(', ')
         }
         return metadata
