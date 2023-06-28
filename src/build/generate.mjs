@@ -255,7 +255,7 @@ function sortApiIndex(apiIndex) {
     return sortedApiIndex
 }
 
-glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`).then(async (fileNames) => {
+glob(`${INPUT_FOLDER}**/*.+(json|yaml|yml)`, { platform: 'linux' }).then(async (fileNames) => {
     /** @type {ApiIndex} */
     const oldApiIndex = await loadAndValidateApiIndex()
     /** @type {ApiIndex} */
