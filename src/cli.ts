@@ -8,6 +8,12 @@ import type { ServicesTags } from 'cli/servicesTags'
 import fs from 'fs-extra'
 import yaml from 'js-yaml'
 import { generateApiFiles } from 'cli/generateApiFiles'
+import { validateApiFile } from 'cli/validateApiFile'
+
+enum Commands {
+    GENERATE = 'generate',
+    VALIDATE = 'validate',
+}
 
 function exitWithError(error: any) {
     console.error(error)
@@ -15,6 +21,9 @@ function exitWithError(error: any) {
 }
 
 const argv = yargs(hideBin(process.argv)).argv
+
+const command: Commands = 'command' in argv ? argv.command as Commands : Commands.GENERATE
+console.log('Executing command:', command)
 
 let appConfig: BuildConfig = {}
 if ('configFile' in argv) {
@@ -28,4 +37,20 @@ if ('tagsFile' in argv) {
     console.log('Tags loaded')
 }
 
-generateApiFiles(appConfig, servicesTags).catch(exitWithError)
+const fileName: string = 'fileName' in argv ? argv.fileName as string : ''
+const apiHash: string = 'apiHash' in argv ? argv.apiHash as string : ''
+
+switch (command) {
+    case Commands.GENERATE:
+        generateApiFiles(appConfig).catch(exitWithError)
+        break
+    case Commands.VALIDATE:
+        if (!fileName || !apiHash || !appConfig.validation) {
+            exitWithError(`Required parameters not respected for the command "${Commands.VALIDATE}". Please provide: "fileName", "apiHash" and "appConfig"`)
+        }
+        validateApiFile(fileName, apiHash, appConfig)
+        break
+    default:
+        exitWithError(`Command ${command} not found`)
+        break
+}

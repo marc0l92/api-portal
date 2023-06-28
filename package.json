@@ -11,8 +11,9 @@
   ],
   "scripts": {
     "dev": "node src/cli/esbuild.config.mjs --configFile=config/config.dev.yaml",
-    "dev:generate": "pnpm run build && node dist/api-portal-cli.js --configFile=config/config.dev.yaml",
-    "generate": "node dist/api-portal-cli.js",
+    "dev:generate": "pnpm run build && node dist/api-portal-cli.js --configFile=config/config.dev.yaml --command=generate",
+    "generate": "node dist/api-portal-cli.js --command=generate",
+    "validate": "node dist/api-portal-cli.js --command=validate",
     "test": "jest --silent=false",
     "build": "tsc -noEmit -skipLibCheck && node src/cli/esbuild.config.mjs production",
     "config-schema": "typescript-json-schema --required src/cli/buildConfig.ts BuildConfig > dist/buildConfig.schema.json && typescript-json-schema --required src/cli/servicesTags.ts ServicesTags > dist/servicesTags.schema.json"

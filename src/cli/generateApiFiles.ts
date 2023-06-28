@@ -3,23 +3,14 @@ import glob from 'glob'
 import yaml from 'js-yaml'
 import objectHash from 'object-hash'
 import fs from 'fs-extra'
-import { exec } from 'child_process'
 import type { BuildConfig } from './buildConfig'
-import type { ServicesTags } from './servicesTags'
 import type { ApiIndex, ApiIndexItem } from 'common/api/apiIndex'
 import { compressToArray } from 'common/compress'
 import type { Api } from 'common/api/api'
 import { apiFactory } from 'common/api/apiFactory'
 import { ReferenceNotFoundError } from 'common/api/refParser'
-
-const INPUT_FOLDER = 'inputApi/'
-const OUTPUT_FOLDER = 'public/apis'
-const INDEX_FILE_PATH = `${OUTPUT_FOLDER}/_apiIndex.json`
-const API_SUFFIX = '.api.json.gzip'
-const VALIDATION_SUFFIX = '.validation.json.gzip'
-const MAX_VERSION_DIGITS = 5
-const MAX_PARALLEL_VALIDATIONS = 10
-const VALIDATION_TIMEOUT = 300000
+import { API_SUFFIX, INDEX_FILE_PATH, INPUT_FOLDER, MAX_PARALLEL_VALIDATIONS, MAX_VERSION_DIGITS, OUTPUT_FOLDER, VALIDATION_SUFFIX } from './cliConstants'
+import { validateApiFile } from './validateApiFile'
 
 function dateNow(): string {
     return new Date().toISOString()
@@ -76,39 +67,8 @@ async function loadAndValidateApiIndex(): Promise<ApiIndex> {
     return apiIndex
 }
 
-async function validateServicesTags(apiIndex: ApiIndex, servicesTags: ServicesTags): Promise<ServicesTags> {
-    return servicesTags
-}
-
 async function generateApi(apiDoc: any, apiHash: string): Promise<void> {
     await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, compressToArray(JSON.stringify(apiDoc)))
-}
-
-async function minifyAndCompressJsonFile(filename: string): Promise<void> {
-    await fs.outputFile(filename, compressToArray(JSON.stringify(fs.readJSONSync(filename))))
-}
-
-async function generateValidation(fileName: string, apiHash: string, appConfig: BuildConfig): Promise<any> {
-    return new Promise((resolve, reject) => {
-        if (appConfig && appConfig.validation && appConfig.validation.spectralRulesFile && appConfig.validation.enable) {
-            const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
-            const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'
-            const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${fileName} --output ${outputFile}`
-            console.log('Run:', `${executable} ${options}`)
-            exec(`${executable} ${options}`, { timeout: VALIDATION_TIMEOUT }, async (error, stdout, stderr) => {
-                if (stderr) {
-                    return reject(stderr)
-                } if (error && error.killed && error.signal === 'SIGTERM') {
-                    return reject('Execution timeout reached while validating: ' + apiHash)
-                } else {
-                    await minifyAndCompressJsonFile(outputFile)
-                    return resolve(null)
-                }
-            })
-        } else {
-            return resolve(null)
-        }
-    })
 }
 
 function hasApiVersion(apiIndex: ApiIndex, packageName: string, apiName: string, apiVersion: string, fileName: string, apiHash: string): boolean {
@@ -184,7 +144,7 @@ async function parseApi(apiObject: any): Promise<Api> {
     return api
 }
 
-export async function generateApiFiles(appConfig: BuildConfig, servicesTags: ServicesTags) {
+export async function generateApiFiles(appConfig: BuildConfig) {
     const apiIndex: ApiIndex = {}
     const apiIndexHashes: { [hash: string]: boolean } = {}
     let validationPromises: Promise<any>[] = []
@@ -216,7 +176,7 @@ export async function generateApiFiles(appConfig: BuildConfig, servicesTags: Ser
                     })
 
                     await generateApi(apiDoc, apiHash)
-                    validationPromises.push(generateValidation(fileName, apiHash, appConfig).catch(reason => {
+                    validationPromises.push(validateApiFile(fileName, apiHash, appConfig).catch((reason: string) => {
                         console.warn('!', reason)
                     }))
 
