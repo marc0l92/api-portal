@@ -51,7 +51,7 @@ export interface ApiReleaseNotes {
 export abstract class Api {
     protected apiDoc: ApiGenericDoc = null
     constructor(apiDoc: ApiGenericDoc) {
-        this.apiDoc = apiDoc
+        this.apiDoc = JSON.parse(JSON.stringify(apiDoc))
     }
     setModelsTitle(): void {
         const models = this.getModels()

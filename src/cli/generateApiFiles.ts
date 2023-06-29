@@ -67,7 +67,7 @@ async function loadAndValidateApiIndex(): Promise<ApiIndex> {
     return apiIndex
 }
 
-async function generateApi(apiDoc: any, apiHash: string): Promise<void> {
+async function writeApi(apiDoc: any, apiHash: string): Promise<void> {
     await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, compressToArray(JSON.stringify(apiDoc)))
 }
 
@@ -175,7 +175,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
                         updateTime: dateNow(),
                     })
 
-                    await generateApi(apiDoc, apiHash)
+                    await writeApi(apiDoc, apiHash)
                     validationPromises.push(validateApiFile(fileName, apiHash, appConfig).catch((reason: string) => {
                         console.warn('!', reason)
                     }))
