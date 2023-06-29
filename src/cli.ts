@@ -48,7 +48,7 @@ switch (command) {
         if (!fileName || !apiHash || !appConfig.validation) {
             exitWithError(`Required parameters not respected for the command "${Commands.VALIDATE}". Please provide: "fileName", "apiHash" and "appConfig"`)
         }
-        validateApiFile(fileName, apiHash, appConfig)
+        validateApiFile(fileName, apiHash, appConfig).catch(exitWithError)
         break
     default:
         exitWithError(`Command ${command} not found`)

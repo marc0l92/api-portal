@@ -14,7 +14,7 @@ export async function validateApiFile(fileName: string, apiHash: string, appConf
         if (appConfig && appConfig.validation && appConfig.validation.spectralRulesFile && appConfig.validation.enable) {
             const outputFile = `${OUTPUT_FOLDER}/${apiHash}${VALIDATION_SUFFIX}`
             const executable = 'node --max_old_space_size=8192 ./node_modules/@stoplight/spectral-cli/dist/index.js'
-            const options = `lint --quiet --ruleset ${appConfig.validation.spectralRulesFile} --format json ${fileName} --output ${outputFile}`
+            const options = `lint --quiet --ruleset "${appConfig.validation.spectralRulesFile}" --format json "${fileName}" --output "${outputFile}"`
             console.log('Run:', `${executable} ${options}`)
             exec(`${executable} ${options}`, { timeout: VALIDATION_TIMEOUT }, async (error, stdout, stderr) => {
                 if (stderr) {
