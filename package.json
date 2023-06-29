@@ -19,11 +19,17 @@
     "config-schema": "typescript-json-schema --required src/cli/buildConfig.ts BuildConfig > dist/buildConfig.schema.json && typescript-json-schema --required src/cli/servicesTags.ts ServicesTags > dist/servicesTags.schema.json"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/language": "^6.8.0",
+    "@codemirror/view": "^6.14.0",
+    "@uiw/codemirror-theme-github": "^4.21.7",
+    "codemirror": "^6.0.1",
     "fflate": "^0.7.4",
     "js-yaml": "^4.1.0",
     "jszip": "^3.10.1",
     "plantuml-encoder": "^1.4.0",
     "pluralize": "^8.0.0",
+    "svelte-codemirror-editor": "^1.1.0",
     "swagger-ui": "^4.18.2",
     "swagger-ui-flat-model-plugin": "^0.3.0",
     "util": "^0.12.5",
