@@ -135,9 +135,6 @@
       apiHash = urlParams.get('tmp-api');
       await fetchApi('tmp-apis');
       apiSummary = getApiSummaryFlatFromApi(api);
-      if (selectedTab === 'validation') {
-        selectedTab = 'api';
-      }
       fetchValidation('tmp-apis');
     } else {
       showApiInput = true;
