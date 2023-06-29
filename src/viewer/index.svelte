@@ -30,7 +30,6 @@
   let apiSummary: ApiSummaryFlat = null;
   let selectedTab: string = 'api';
   let apiHash: string = null;
-  let apiText: string = null;
   let apiDoc: any = null;
   let api: Api = null;
   let validationData: ApiValidation[] = null;
@@ -49,8 +48,7 @@
     try {
       const response = await fetch(`./${apiDir}/${apiHash}.api.json.gzip`);
       if (response.ok) {
-        apiText = decompressFromArray((await response.arrayBuffer()) as Uint8Array);
-        apiDoc = yaml.load(apiText);
+        apiDoc = yaml.load(decompressFromArray((await response.arrayBuffer()) as Uint8Array));
         api = apiFactory(apiDoc);
         api.setModelsTitle();
         releaseNotes = api.getReleaseNotes();
@@ -104,7 +102,6 @@
       errors = [];
       apiDoc = event.detail.apiObject;
       if (apiDoc) {
-        apiText = JSON.stringify(apiDoc);
         api = apiFactory(apiDoc);
         api.setModelsTitle();
         releaseNotes = api.getReleaseNotes();
@@ -264,7 +261,7 @@
         <ValidationTab {validationData} />
       </LazyLoad>
       <LazyLoad isVisible={selectedTab === 'raw'}>
-        <RawTab {apiText} />
+        <RawTab {apiDoc} />
       </LazyLoad>
     </div>
   {:else if errors.length === 0 && !showApiInput}

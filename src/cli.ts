@@ -8,7 +8,7 @@ import type { ServicesTags } from 'cli/servicesTags'
 import fs from 'fs-extra'
 import yaml from 'js-yaml'
 import { generateApiFiles } from 'cli/generateApiFiles'
-import { validateApiFile } from 'cli/validateApiFile'
+import { validateApiFile } from 'cli/validateApi'
 
 enum Commands {
     GENERATE = 'generate',

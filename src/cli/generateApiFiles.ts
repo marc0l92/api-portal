@@ -10,7 +10,7 @@ import type { Api } from 'common/api/api'
 import { apiFactory } from 'common/api/apiFactory'
 import { ReferenceNotFoundError } from 'common/api/refParser'
 import { API_SUFFIX, INDEX_FILE_PATH, INPUT_FOLDER, MAX_PARALLEL_VALIDATIONS, MAX_VERSION_DIGITS, OUTPUT_FOLDER, VALIDATION_SUFFIX } from './cliConstants'
-import { validateApiFile } from './validateApiFile'
+import { validateApiDoc } from './validateApi'
 
 function dateNow(): string {
     return new Date().toISOString()
@@ -176,7 +176,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
                     })
 
                     await writeApi(apiDoc, apiHash)
-                    validationPromises.push(validateApiFile(fileName, apiHash, appConfig).catch((reason: string) => {
+                    validationPromises.push(validateApiDoc(apiDoc, apiHash, appConfig).catch((reason: string) => {
                         console.warn('!', reason)
                     }))
 

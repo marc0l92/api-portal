@@ -2,11 +2,18 @@ import { compressToArray } from "common/compress"
 import type { BuildConfig } from "./buildConfig"
 import { exec } from 'child_process'
 import fs from 'fs-extra'
-import { OUTPUT_FOLDER, VALIDATION_SUFFIX, VALIDATION_TIMEOUT } from "./cliConstants"
+import { API_TO_VALIDATE_INDENTATION, API_TO_VALIDATE_SUFFIX, OUTPUT_FOLDER, VALIDATION_SUFFIX, VALIDATION_TIMEOUT } from "./cliConstants"
 
 
 async function minifyAndCompressJsonFile(filename: string): Promise<void> {
     await fs.outputFile(filename, compressToArray(JSON.stringify(fs.readJSONSync(filename))))
+}
+
+export async function validateApiDoc(apiDoc: any, apiHash: string, appConfig: BuildConfig) {
+    const fileName = apiHash + API_TO_VALIDATE_SUFFIX
+    fs.outputFileSync(fileName, JSON.stringify(apiDoc, null, API_TO_VALIDATE_INDENTATION))
+    await validateApiFile(fileName, apiHash, appConfig)
+    fs.remove(fileName).catch(() => { })
 }
 
 export async function validateApiFile(fileName: string, apiHash: string, appConfig: BuildConfig): Promise<any> {
