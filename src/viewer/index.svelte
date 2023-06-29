@@ -72,9 +72,9 @@
     }
   }
 
-  async function fetchValidation() {
+  async function fetchValidation(apiDir: string = 'apis') {
     try {
-      const response = await fetch(`./apis/${apiHash}.validation.json.gzip`);
+      const response = await fetch(`./${apiDir}/${apiHash}.validation.json.gzip`);
       if (response.ok) {
         validationData = yaml.load(decompressFromArray((await response.arrayBuffer()) as Uint8Array)) as ApiValidation[];
       } else if (selectedTab === 'validation') {
@@ -138,6 +138,7 @@
       if (selectedTab === 'validation') {
         selectedTab = 'api';
       }
+      fetchValidation('tmp-apis');
     } else {
       showApiInput = true;
       if (selectedTab === 'validation') {
