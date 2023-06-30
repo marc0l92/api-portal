@@ -24,33 +24,33 @@
         <ul>
             {#if hasReleaseNotes}
                 <li class={selectedTab === 'release-notes' ? 'is-active' : ''}>
-                    <a href={'#'} on:click|preventDefault={() => changeTab('release-notes')}>
+                    <a href={''} on:click|preventDefault={() => changeTab('release-notes')}>
                         <span class="icon is-small"><i class="far fa-file-lines" /></span>
                         <span>Release Notes</span>
                     </a>
                 </li>
             {/if}
             <li class={selectedTab === 'api' ? 'is-active' : ''}>
-                <a href={'#'} on:click|preventDefault={() => changeTab('api')}>
+                <a href={''} on:click|preventDefault={() => changeTab('api')}>
                     <span class="icon is-small"><i class="fas fa-circle-nodes" /></span>
                     <span>Api</span>
                 </a>
             </li>
             <li class={selectedTab === 'diagrams' ? 'is-active' : ''}>
-                <a href={'#'} on:click|preventDefault={() => changeTab('diagrams')}>
+                <a href={''} on:click|preventDefault={() => changeTab('diagrams')}>
                     <span class="icon is-small"><i class="fas fa-diagram-project" /></span>
                     <span>Diagrams</span>
                 </a>
             </li>
             <li class={selectedTab === 'tables' ? 'is-active' : ''}>
-                <a href={'#'} on:click|preventDefault={() => changeTab('tables')}>
+                <a href={''} on:click|preventDefault={() => changeTab('tables')}>
                     <span class="icon is-small"><i class="fas fa-table" /></span>
                     <span>Tables</span>
                 </a>
             </li>
             {#if validationErrorsCount > 0}
                 <li class={selectedTab === 'validation' ? 'is-active' : ''}>
-                    <a href={'#'} on:click|preventDefault={() => changeTab('validation')}>
+                    <a href={''} on:click|preventDefault={() => changeTab('validation')}>
                         <span class="icon is-small"><i class="fas fa-list-check" /></span>
                         <span>Validation</span>
                         <span class="tag is-small {validationErrorsCss}">{validationErrorsCount}</span>
@@ -58,7 +58,7 @@
                 </li>
             {/if}
             <li class={selectedTab === 'raw' ? 'is-active' : ''}>
-                <a href={'#'} on:click|preventDefault={() => changeTab('raw')}>
+                <a href={''} on:click|preventDefault={() => changeTab('raw')}>
                     <span class="icon is-small"><i class="fas fa-paragraph" /></span>
                     <span>Raw</span>
                 </a>

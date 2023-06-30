@@ -138,25 +138,25 @@
     <div class="tabs is-boxed is-floating">
         <ul>
             <li class={selectedTab === 'browser' ? 'is-active' : ''}>
-                <a href={'#'} on:click|preventDefault={() => changeTab('browser')}>
+                <a href={''} on:click|preventDefault={() => changeTab('browser')}>
                     <span class="icon is-small"><i class="fas fa-database" /></span>
                     <span>Browser</span>
                 </a>
             </li>
             <li class={selectedTab === 'link' ? 'is-active' : ''}>
-                <a href={'#'} on:click|preventDefault={() => changeTab('link')}>
+                <a href={''} on:click|preventDefault={() => changeTab('link')}>
                     <span class="icon is-small"><i class="fas fa-link" /></span>
                     <span>Link</span>
                 </a>
             </li>
             <li class={selectedTab === 'file' ? 'is-active' : ''}>
-                <a href={'#'} on:click|preventDefault={() => changeTab('file')}>
+                <a href={''} on:click|preventDefault={() => changeTab('file')}>
                     <span class="icon is-small"><i class="fas fa-file-alt" /></span>
                     <span>File</span>
                 </a>
             </li>
             <li class={selectedTab === 'text' ? 'is-active' : ''}>
-                <a href={'#'} on:click|preventDefault={() => changeTab('text')}>
+                <a href={''} on:click|preventDefault={() => changeTab('text')}>
                     <span class="icon is-small"><i class="fas fa-paragraph" /></span>
                     <span>Text</span>
                 </a>
@@ -183,7 +183,7 @@
                 <div class="dropdown-menu">
                     <div class="dropdown-content">
                         {#each browserSearchResults.list as apiSummary}
-                            <a href={'#'} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(apiSummary)}>
+                            <a href={''} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(apiSummary)}>
                                 <p>{apiSummary.apiName}</p>
                                 <p class="subtext">{apiSummary.packageName}</p>
                             </a>
@@ -216,7 +216,7 @@
                             <div class="dropdown-menu" id="dropdown-menu" role="menu">
                                 <div class="dropdown-content">
                                     {#each Object.entries(browserSelectedApi.apiSummary) as [versionName, versionItem]}
-                                        <a href={'#'} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { versionName }))}>
+                                        <a href={''} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { versionName }))}>
                                             {#if versionName === browserSelectedApi.versionName}
                                                 <strong>{versionName}</strong>
                                             {:else}
@@ -253,7 +253,7 @@
                                                         {#if apiItem.status === status}
                                                             <li>
                                                                 <a
-                                                                    href={'#'}
+                                                                    href={''}
                                                                     class="dropdown-item status-{apiItem.status}"
                                                                     on:click|preventDefault={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { fileName }))}>
                                                                     {#if fileName === browserSelectedApi.fileName}

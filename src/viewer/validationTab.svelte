@@ -39,7 +39,7 @@
                         <ul class="menu-list">
                             {#each Object.entries(errorItems) as [errorCode, errorInfo]}
                                 <li>
-                                    <a href={'#'} class={selectedErrorCode === errorCode ? 'is-active' : ''} on:click|preventDefault={() => selectErrorCode(errorCode)}>
+                                    <a href={''} class={selectedErrorCode === errorCode ? 'is-active' : ''} on:click|preventDefault={() => selectErrorCode(errorCode)}>
                                         <span class="tag {severityNames[severityCode].css}">{errorInfo.count}</span>
                                         {errorCode}
                                     </a>
