@@ -12,7 +12,7 @@
         <div class="field">
             <label class="label" for="serverUrl">PlantUML server</label>
             <div class="control">
-                <input class="input" type="text" placeholder={`Default: ${DEFAULT_DIAGRAM_BUILDER_OPTIONS.serverUrl}`} bind:value={$diagramBuilderOptions.serverUrl} />
+                <input class="input" type="text" id="serverUrl" placeholder={`Default: ${DEFAULT_DIAGRAM_BUILDER_OPTIONS.serverUrl}`} bind:value={$diagramBuilderOptions.serverUrl} />
             </div>
         </div>
     {/if}
@@ -20,7 +20,7 @@
         <label class="label" for="format">Format</label>
         <div class="control">
             <div class="select">
-                <select bind:value={$diagramBuilderOptions.format}>
+                <select bind:value={$diagramBuilderOptions.format} id="format">
                     <option value={DiagramBuilderFormat.SVG}>svg</option>
                     <option value={DiagramBuilderFormat.PNG}>png</option>
                     <!-- <option value={DiagramBuilderFormat.TXT}>txt</option> -->
@@ -31,17 +31,17 @@
     <div class="field">
         <label class="label" for="header">Header</label>
         <div class="control">
-            <textarea class="textarea" bind:value={$diagramBuilderOptions.diagramHeader} />
+            <textarea class="textarea" bind:value={$diagramBuilderOptions.diagramHeader} id="header" />
         </div>
     </div>
     <div class="field">
         <div class="control">
-            <label class="checkbox"><input type="checkbox" bind:checked={$diagramBuilderOptions.colors} /> Use colors</label>
+            <label class="checkbox"><input type="checkbox" bind:checked={$diagramBuilderOptions.colors} name="useColor" /> Use colors</label>
         </div>
     </div>
     <div class="field">
         <div class="control">
-            <label class="checkbox"><input type="checkbox" bind:checked={$diagramBuilderOptions.parameters} /> Render parameters</label>
+            <label class="checkbox"><input type="checkbox" bind:checked={$diagramBuilderOptions.parameters} name="renderParameters" /> Render parameters</label>
         </div>
     </div>
     <div class="field">

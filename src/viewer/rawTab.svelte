@@ -18,10 +18,13 @@
 <div class="block">
     <div class="field">
         <div class="control">
-            <CodeMirror theme={githubLight} editable={true} readonly={true} value={apiText} lang={json()} basic={false} extensions={codeMirrorExtensions} />
+            <CodeMirror theme={githubLight} editable={true} readonly={true} value={apiText} lang={json()} basic={false} extensions={codeMirrorExtensions} lineWrapping={true} />
         </div>
     </div>
 </div>
 
 <style>
+    .block {
+        margin: -1.25rem -1rem;
+    }
 </style>
