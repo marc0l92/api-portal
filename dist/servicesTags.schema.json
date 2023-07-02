@@ -25,10 +25,25 @@
             "description": "Patterns to match services and the corresponding tags",
             "items": {
                 "properties": {
+                    "apiName": {
+                        "type": "string"
+                    },
+                    "fileName": {
+                        "type": "string"
+                    },
                     "fullPath": {
                         "type": "string"
                     },
+                    "metadata": {
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "type": "object"
+                    },
                     "method": {
+                        "type": "string"
+                    },
+                    "packageName": {
                         "type": "string"
                     },
                     "tags": {
