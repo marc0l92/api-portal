@@ -23,6 +23,7 @@ export interface ApiIndexItem {
         method: string
         tags: BrowserFilters
     }[]
+    tags: BrowserFilters
 }
 
 export interface ApiSummaryFlat {

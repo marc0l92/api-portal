@@ -10,16 +10,21 @@ export interface ServicesTags {
      * Patterns to match services and the corresponding tags
      * @additionalProperties false
      */
-    services?: {
-        packageName?: string
-        apiName?: string
-        fileName?: string
-        metadata?: {
-            [metadataName: string]: string
-        }
-        versionName?: string
-        fullPath?: string
-        method?: string
-        tags: BrowserFilters
-    }[]
+    rules?: ServicesTagsRule[]
+}
+
+export interface ServiceCriteria {
+    packageName?: string
+    apiName?: string
+    fileName?: string
+    metadata?: {
+        [metadataName: string]: string
+    }
+    versionName?: string
+    fullPath?: string
+    method?: string
+}
+
+export interface ServicesTagsRule extends ServiceCriteria {
+    tags: BrowserFilters
 }

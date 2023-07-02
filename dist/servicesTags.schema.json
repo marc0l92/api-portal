@@ -13,6 +13,41 @@
                 "type": "object"
             },
             "type": "object"
+        },
+        "ServicesTagsRule": {
+            "properties": {
+                "apiName": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "fullPath": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "type": "object"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "packageName": {
+                    "type": "string"
+                },
+                "tags": {
+                    "$ref": "#/definitions/BrowserFilters"
+                },
+                "versionName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tags"
+            ],
+            "type": "object"
         }
     },
     "id": "api-portal-services-tags",
@@ -20,43 +55,11 @@
         "$schema": {
             "type": "string"
         },
-        "services": {
+        "rules": {
             "additionalProperties": false,
             "description": "Patterns to match services and the corresponding tags",
             "items": {
-                "properties": {
-                    "apiName": {
-                        "type": "string"
-                    },
-                    "fileName": {
-                        "type": "string"
-                    },
-                    "fullPath": {
-                        "type": "string"
-                    },
-                    "metadata": {
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "type": "object"
-                    },
-                    "method": {
-                        "type": "string"
-                    },
-                    "packageName": {
-                        "type": "string"
-                    },
-                    "tags": {
-                        "$ref": "#/definitions/BrowserFilters"
-                    },
-                    "versionName": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "tags"
-                ],
-                "type": "object"
+                "$ref": "#/definitions/ServicesTagsRule"
             },
             "type": "array"
         }
