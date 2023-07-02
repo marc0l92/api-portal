@@ -43,19 +43,10 @@ function loadServicesTags(defaultFilters: ServiceTags, servicesTagsFileName: str
             }
         }
     }
-    if (servicesTags === null || !servicesTags.rules || servicesTags.rules.length === 0) {
+    if (servicesTags === null || !servicesTags.rules) {
         servicesTags = {
             '$schema': SERVICES_TAGS_SCHEMA,
-            rules: [{
-                method: '.*',
-                fullPath: '.*',
-                versionName: '.*',
-                apiName: '.*',
-                fileName: '.*',
-                packageName: '.*',
-                metadata: {},
-                tags: defaultFilters,
-            }],
+            rules: [],
         }
         servicesTagsFixed = true
     }
@@ -125,9 +116,10 @@ export async function applyServicesTags(appConfig: BuildConfig, servicesTagsFile
                             service.tags = mergeServiceTags([...matchingRules.map(r => r.tags), service.tags])
                         }
                     }
-                    apiIndexItem.tags = mergeServiceTags([...apiIndexItem.services.map(s => s.tags)])
+                    apiIndexItem.tags = mergeServiceTags([...apiIndexItem.services?.map(s => s.tags) || []])
                 }
             }
         }
     }
+    await fs.outputJson(API_INDEX_FILE_PATH, apiIndex)
 }
