@@ -10,6 +10,7 @@ export interface ApiSwaggerDoc extends ApiGenericDoc {
         ['x-tags']?: string[]
         [otherMetadata: string]: any
     }
+    basePath: string
     paths: {
         [path: string]: {
             parameters?: ApiParameterDoc[]
@@ -53,6 +54,10 @@ export class ApiSwagger extends Api {
         return '0'
     }
 
+    getBasePaths(): string[] {
+        return [this.getApi().basePath]
+    }
+
     getServices(): ApiService[] {
         const services: ApiServiceSwagger[] = []
         for (const path in this.getApi().paths) {
@@ -60,7 +65,7 @@ export class ApiSwagger extends Api {
             globalParam.forEach((p, i) => (p["x-path"] = `/paths["${path}"]/parameters[${i}]`))
             for (const method in this.getApi().paths[path]) {
                 if (method !== 'parameters') {
-                    const apiService = new ApiServiceSwagger(path, method, this.getApi().paths[path][method] as ApiSwaggerServiceDoc)
+                    const apiService = new ApiServiceSwagger(this.getBasePaths(), path, method, this.getApi().paths[path][method] as ApiSwaggerServiceDoc)
                     apiService.addGlobalParameters(globalParam)
                     services.push(apiService)
                 }
@@ -93,8 +98,9 @@ export class ApiServiceSwagger extends ApiService {
         return this.serviceDoc as ApiSwaggerServiceDoc
     }
 
-    constructor(path: string, method: string, serviceDoc: ApiSwaggerServiceDoc) {
+    constructor(basePaths: string[], path: string, method: string, serviceDoc: ApiSwaggerServiceDoc) {
         super()
+        this.basePaths = basePaths
         this.path = path
         this.method = method
         this.serviceDoc = serviceDoc

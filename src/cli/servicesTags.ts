@@ -1,3 +1,4 @@
+import type { ApiMetadata } from "common/api/api"
 import type { BrowserFilters } from "./buildConfig"
 
 /**
@@ -11,6 +12,10 @@ export interface ServicesTags {
      * @additionalProperties false
      */
     services?: {
+        packageName?: string
+        apiName?: string
+        fileName?: string
+        metadata?: ApiMetadata
         versionName?: string
         fullPath?: string
         method?: string

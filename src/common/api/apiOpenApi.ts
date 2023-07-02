@@ -12,6 +12,7 @@ export interface ApiOpenApiDoc extends ApiGenericDoc {
         ['x-tags']?: string[]
         [otherMetadata: string]: any
     }
+    servers: { url: string }[]
     paths: {
         [path: string]: {
             parameters?: ApiParameterDoc[]
@@ -67,6 +68,10 @@ export class ApiOpenApi extends Api {
         return '0'
     }
 
+    getBasePaths(): string[] {
+        return this.getApi().servers.map(s=> new URL(s.url).pathname)
+    }
+
     getServices(): ApiService[] {
         const services: ApiServiceOpenApi[] = []
         for (const path in this.getApi().paths) {
@@ -74,7 +79,7 @@ export class ApiOpenApi extends Api {
             globalParam.forEach((p, i) => (p["x-path"] = `/paths["${path}"]/parameters[${i}]`))
             for (const method in this.getApi().paths[path]) {
                 if (PATH_METHODS.indexOf(method) >= 0) {
-                    const apiService = new ApiServiceOpenApi(path, method, this.getApi().paths[path][method] as ApiOpenApiServiceDoc)
+                    const apiService = new ApiServiceOpenApi(this.getBasePaths(), path, method, this.getApi().paths[path][method] as ApiOpenApiServiceDoc)
                     apiService.addGlobalParameters(globalParam)
                     services.push(apiService)
                 }
@@ -107,8 +112,9 @@ export class ApiServiceOpenApi extends ApiService {
         return this.serviceDoc as ApiOpenApiServiceDoc
     }
 
-    constructor(path: string, method: string, serviceDoc: ApiOpenApiServiceDoc) {
+    constructor(basePaths: string[], path: string, method: string, serviceDoc: ApiOpenApiServiceDoc) {
         super()
+        this.basePaths = basePaths
         this.path = path
         this.method = method
         this.serviceDoc = serviceDoc

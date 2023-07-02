@@ -93,6 +93,7 @@ export abstract class Api {
     abstract getReleaseNotes(): ApiReleaseNotes
     abstract getName(): string
     abstract getVersion(): string
+    abstract getBasePaths(): string[]
     abstract getServices(): ApiService[]
     abstract getModels(): ApiModelDocMap
     abstract getType(): ApiType
@@ -103,11 +104,15 @@ export abstract class ApiService {
     protected requestParameters: ApiParameterDoc[] = []
     protected request: ApiParameterDoc = null
     protected responses: ApiParameterDocMap = {}
+    protected basePaths: string[]
     protected path: string
     protected method: string
 
     getPath() {
         return this.path
+    }
+    getFullPaths() {
+        return this.basePaths.map(bp => bp + this.path)
     }
     getMethod() {
         return this.method

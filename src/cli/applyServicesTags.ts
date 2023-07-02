@@ -50,6 +50,10 @@ function loadServicesTags(defaultFilters: BrowserFilters, servicesTagsFileName: 
                 method: '.*',
                 fullPath: '.*',
                 versionName: '.*',
+                apiName: '.*',
+                fileName: '.*',
+                packageName: '.*',
+                metadata: {},
                 tags: defaultFilters,
             }],
         }
