@@ -24,7 +24,7 @@
 </script>
 
 <div class="block">
-    <div class="field has-addons {showFilters ? 'has-filter' : ''}">
+    <div class="field has-addons search-bar {showFilters ? 'open' : ''}">
         <div class="control is-expanded">
             <input class="input" type="text" placeholder="Search" bind:value={searchText} on:input={onInputChange} />
         </div>
@@ -39,7 +39,7 @@
             </div>
         {/if}
     </div>
-    {#if showFilters}
+    <div class="filters-wrapper {showFilters ? 'open' : ''}">
         <div class="filters">
             {#each Object.entries(filters) as [sectionName, section]}
                 <div class="block">
@@ -65,29 +65,45 @@
             {/each}
             <button class="button is-ghost is-small" on:click={resetFilters}>Reset filters</button>
         </div>
-    {/if}
+    </div>
 </div>
 
 <style>
-    .field.has-filter {
+    .search-bar {
         margin-bottom: 0;
     }
-    .field.has-filter input,
-    .field.has-filter button {
+    .search-bar.open input,
+    .search-bar.open button {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }
-    .filters {
+    .filters-wrapper {
+        display: grid;
+        grid-template-rows: 0fr;
+        overflow: hidden;
+        transition: grid-template-rows 200ms;
+    }
+    .filters-wrapper.open {
+        grid-template-rows: 1fr;
+    }
+    .filters-wrapper .filters {
+        color: #4a4a4a;
+        background-color: #fff;
+        margin-top: 0;
+        min-height: 0;
+        padding-left: 1em;
+        padding-right: 1em;
+        transition: padding-top 200ms;
+    }
+    .filters-wrapper.open .filters {
         border: 1px solid #dbdbdb;
         border-top: 0;
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
-        color: #4a4a4a;
-        background-color: #fff;
-        padding: 1em;
-        margin-top: 0;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
+        padding-top: 1em;
+        padding-bottom: 1em;
     }
     .label {
         text-transform: capitalize;
