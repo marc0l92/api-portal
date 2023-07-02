@@ -11,6 +11,7 @@ import yaml from 'js-yaml'
 
 const argv = yargs(hideBin(process.argv)).argv
 const prod = argv._.indexOf('production') >= 0
+const watch = argv._.indexOf('watch') >= 0
 let appConfig = {}
 if (argv.configFile) {
   appConfig = yaml.load(fs.readFileSync(argv.configFile))
@@ -96,7 +97,7 @@ fs.copyFileSync('./node_modules/swagger-ui/dist/swagger-ui.css', './public/css/s
 fs.copyFileSync('./node_modules/swagger-ui/dist/swagger-ui.css.map', './public/css/swagger-ui.css.map')
 fs.copyFileSync('./node_modules/swagger-ui-flat-model-plugin/dist/swagger-ui-flat-model-plugin.css', './public/css/swagger-ui-flat-model-plugin.css')
 
-if (prod) {
+if (prod || !watch) {
   esbuild.build(webOptions).catch(() => process.exit(1))
   esbuild.build(cliOptions).catch(() => process.exit(1))
 } else {

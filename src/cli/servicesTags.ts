@@ -1,3 +1,5 @@
+import type { BrowserFilters } from "./buildConfig"
+
 /**
  * @id api-portal-services-tags
  * @additionalProperties false
@@ -5,27 +7,13 @@
 export interface ServicesTags {
     $schema?: string
     /**
-     * List of services extracted from the input api processed
+     * Patterns to match services and the corresponding tags
      * @additionalProperties false
      */
     services?: {
-        path: string
-        method: ServiceMethod
-        tags: {
-            [category: string]: {
-                [tag: string]: {
-                    [value: string]: boolean
-                }
-            }
-        }
+        versionName?: string
+        fullPath?: string
+        method?: string
+        tags: BrowserFilters
     }[]
-}
-
-enum ServiceMethod {
-    POST = 'POST',
-    GET = 'GET',
-    PUT = 'PUT',
-    PATCH = 'PATCH',
-    DELETE = 'DELETE',
-    HEAD = 'HEAD'
 }

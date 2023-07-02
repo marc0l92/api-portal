@@ -8,3 +8,4 @@ public/apis/*
 public/tmp-apis/*
 inputApi/*
 !inputApi/.gitkeep
+dist/*.js

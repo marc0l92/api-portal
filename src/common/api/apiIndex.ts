@@ -1,3 +1,4 @@
+import type { BrowserFilters } from "cli/buildConfig"
 import type { Api, ApiMetadata } from "./api"
 
 export interface ApiIndex {
@@ -17,6 +18,11 @@ export interface ApiIndexItem {
     status: number
     metadata: ApiMetadata
     updateTime: string
+    services: {
+        path: string
+        method: string
+        tags: BrowserFilters
+    }[]
 }
 
 export interface ApiSummaryFlat {
@@ -61,6 +67,7 @@ export function getApiSummaryFlatFromApi(api: Api): ApiSummaryFlat {
             status: api.getStatus(),
             metadata: api.getMetadata(),
             updateTime: '',
+            services: [],
         }
     }
     return {

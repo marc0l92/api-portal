@@ -9,7 +9,7 @@ import { compressToArray } from 'common/compress'
 import type { Api } from 'common/api/api'
 import { apiFactory } from 'common/api/apiFactory'
 import { ReferenceNotFoundError } from 'common/api/refParser'
-import { API_SUFFIX, INDEX_FILE_PATH, INPUT_FOLDER, MAX_PARALLEL_VALIDATIONS, MAX_VERSION_DIGITS, OUTPUT_FOLDER, VALIDATION_SUFFIX } from './cliConstants'
+import { API_SUFFIX, API_INDEX_FILE_PATH, INPUT_FOLDER, MAX_PARALLEL_VALIDATIONS, MAX_VERSION_DIGITS, OUTPUT_FOLDER, VALIDATION_SUFFIX } from './cliConstants'
 import { validateApiDoc } from './validateApi'
 
 function dateNow(): string {
@@ -59,8 +59,8 @@ function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex: ApiIndex, fileNames: 
 
 async function loadAndValidateApiIndex(): Promise<ApiIndex> {
     let apiIndex: ApiIndex = {}
-    if (fs.existsSync(INDEX_FILE_PATH)) {
-        apiIndex = fs.readJsonSync(INDEX_FILE_PATH)
+    if (fs.existsSync(API_INDEX_FILE_PATH)) {
+        apiIndex = fs.readJsonSync(API_INDEX_FILE_PATH)
     }
     const fileNames = await glob.glob(`${OUTPUT_FOLDER}**/*${API_SUFFIX}`, { platform: 'linux' })
     deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames)
@@ -173,6 +173,11 @@ export async function generateApiFiles(appConfig: BuildConfig) {
                         status: api.getStatus(),
                         metadata: api.getMetadata(),
                         updateTime: dateNow(),
+                        services: api.getServices().map(s => ({
+                            method: s.getMethod(),
+                            path: s.getPath(),
+                            tags: {}
+                        })),
                     })
 
                     await writeApi(apiDoc, apiHash)
@@ -181,7 +186,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
                     }))
 
                     if (validationPromises.length > MAX_PARALLEL_VALIDATIONS) {
-                        fs.outputJson(INDEX_FILE_PATH, apiIndex)
+                        fs.outputJson(API_INDEX_FILE_PATH, apiIndex)
                         await Promise.allSettled(validationPromises)
                         validationPromises = []
                     }
@@ -192,7 +197,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
         }
     }
 
-    await fs.outputJson(INDEX_FILE_PATH, sortApiIndex(apiIndex))
+    await fs.outputJson(API_INDEX_FILE_PATH, sortApiIndex(apiIndex))
     await Promise.allSettled(validationPromises)
     loadAndValidateApiIndex() // Delete files that are not part of the new index
 }

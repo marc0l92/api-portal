@@ -4,15 +4,17 @@ import { hideBin } from 'yargs/helpers'
 import process from 'process'
 import { exit } from 'process'
 import type { BuildConfig } from 'cli/buildConfig'
-import type { ServicesTags } from 'cli/servicesTags'
 import fs from 'fs-extra'
 import yaml from 'js-yaml'
 import { generateApiFiles } from 'cli/generateApiFiles'
 import { validateApiFile } from 'cli/validateApi'
+import { applyServicesTags } from 'cli/applyServicesTags'
+import { DEFAULT_SERVICES_TAGS_FILE_NAME } from 'cli/cliConstants'
 
 enum Commands {
     GENERATE = 'generate',
     VALIDATE = 'validate',
+    APPLY_TAGS = 'applyTags',
 }
 
 function exitWithError(error: any) {
@@ -31,10 +33,9 @@ if ('configFile' in argv) {
     console.log('Config loaded:', JSON.stringify(appConfig))
 }
 
-let servicesTags: ServicesTags = {}
-if ('tagsFile' in argv) {
-    servicesTags = yaml.load(fs.readFileSync(argv.tagsFile as string, { encoding: 'utf-8' }))
-    console.log('Tags loaded')
+let servicesTagsFileName: string = DEFAULT_SERVICES_TAGS_FILE_NAME
+if ('servicesTagsFile' in argv) {
+    servicesTagsFileName = argv.servicesTagsFile as string
 }
 
 const fileName: string = 'fileName' in argv ? argv.fileName as string : ''
@@ -49,6 +50,9 @@ switch (command) {
             exitWithError(`Required parameters not respected for the command "${Commands.VALIDATE}". Please provide: "fileName", "apiHash" and "appConfig"`)
         }
         validateApiFile(fileName, apiHash, appConfig).catch(exitWithError)
+        break
+    case Commands.APPLY_TAGS:
+        applyServicesTags(appConfig, servicesTagsFileName).catch(exitWithError)
         break
     default:
         exitWithError(`Command ${command} not found`)
