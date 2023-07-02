@@ -20,15 +20,15 @@ function loadServicesTags(defaultFilters: ServiceTags, servicesTagsFileName: str
         if (servicesTags.rules) {
             for (const service of servicesTags.rules) {
                 if (!service.tags) {
-                    service.tags = defaultFilters
+                    service.tags = {}
                     servicesTagsFixed = true
                 }
                 for (const sectionName in service.tags) {
-                    if (sectionName in Object.keys(defaultFilters)) {
+                    if (sectionName in defaultFilters) {
                         for (const categoryName in service.tags[sectionName]) {
-                            if (categoryName in Object.keys(defaultFilters[sectionName])) {
+                            if (categoryName in defaultFilters[sectionName]) {
                                 for (const propertyName in service.tags[sectionName][categoryName]) {
-                                    if (!(propertyName in Object.keys(defaultFilters[sectionName][categoryName]))) {
+                                    if (!(propertyName in defaultFilters[sectionName][categoryName])) {
                                         delete service.tags[sectionName][categoryName][propertyName]
                                     }
                                 }
@@ -65,7 +65,7 @@ function getMatchingServicesTags(servicesTagsRules: ServicesTagsRule[], serviceC
         && (!servicesTagsRule.apiName || serviceCriteria.apiName.match(servicesTagsRule.apiName) !== null)
         && (!servicesTagsRule.versionName || serviceCriteria.versionName.match(servicesTagsRule.versionName) !== null)
         && (!servicesTagsRule.fileName || serviceCriteria.fileName.match(servicesTagsRule.fileName) !== null)
-        && (!servicesTagsRule.fullPath || serviceCriteria.fullPath.match(servicesTagsRule.fullPath) !== null)
+        && (!servicesTagsRule.path || serviceCriteria.path.match(servicesTagsRule.path) !== null)
         && (!servicesTagsRule.method || serviceCriteria.method.match(servicesTagsRule.method) !== null)
         && (!servicesTagsRule.metadata || Object.entries(servicesTagsRule.metadata)
             .map(([ruleKey, ruleValue]) => (ruleKey in serviceCriteria.metadata && serviceCriteria.metadata[ruleKey].match(ruleValue) !== null))
@@ -110,7 +110,7 @@ export async function applyServicesTags(appConfig: BuildConfig, servicesTagsFile
                     if (apiIndexItem.services) {
                         for (const service of apiIndexItem.services) {
                             const matchingRules = getMatchingServicesTags(servicesTagsRules, {
-                                packageName, apiName, versionName, fileName, fullPath: service.path, method: service.method,
+                                packageName, apiName, versionName, fileName, path: service.path, method: service.method,
                                 metadata: apiIndexItem.metadata
                             })
                             service.tags = mergeServiceTags([...matchingRules.map(r => r.tags), service.tags])

@@ -21,7 +21,7 @@ export interface ServiceCriteria {
         [metadataName: string]: string
     }
     versionName?: string
-    fullPath?: string
+    path?: string
     method?: string
 }
 

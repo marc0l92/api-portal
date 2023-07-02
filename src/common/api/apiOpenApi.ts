@@ -69,7 +69,11 @@ export class ApiOpenApi extends Api {
     }
 
     getBasePaths(): string[] {
-        return this.getApi()?.servers.map(s => new URL(s.url).pathname) || ['']
+        try {
+            return this.getApi()?.servers.map(s => new URL(s.url).pathname) || ['']
+        } catch (_) {
+            return ['']
+        }
     }
 
     getServices(): ApiService[] {
