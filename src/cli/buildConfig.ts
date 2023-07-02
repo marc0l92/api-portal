@@ -61,7 +61,7 @@ export interface BuildConfig {
         /**
          * Filters to show in the browser search section and their default value
          */
-        filters?: BrowserFilters
+        filters?: ServiceTags
     }
 }
 
@@ -91,7 +91,7 @@ export interface HomeLink {
     icon?: string
 }
 
-export interface BrowserFilters {
+export interface ServiceTags {
     [sectionName: string]: {
         [categoryName: string]: {
             [propertyName: string]: boolean

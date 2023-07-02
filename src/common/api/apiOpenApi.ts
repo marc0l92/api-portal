@@ -12,7 +12,7 @@ export interface ApiOpenApiDoc extends ApiGenericDoc {
         ['x-tags']?: string[]
         [otherMetadata: string]: any
     }
-    servers: { url: string }[]
+    servers?: { url: string }[]
     paths: {
         [path: string]: {
             parameters?: ApiParameterDoc[]
@@ -69,7 +69,7 @@ export class ApiOpenApi extends Api {
     }
 
     getBasePaths(): string[] {
-        return this.getApi().servers.map(s=> new URL(s.url).pathname)
+        return this.getApi()?.servers.map(s => new URL(s.url).pathname) || ['']
     }
 
     getServices(): ApiService[] {

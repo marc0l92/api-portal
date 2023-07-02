@@ -178,6 +178,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
                             path: s.getPath(),
                             tags: {}
                         })),
+                        tags: {},
                     })
 
                     await writeApi(apiDoc, apiHash)

@@ -10,7 +10,7 @@ export interface ApiSwaggerDoc extends ApiGenericDoc {
         ['x-tags']?: string[]
         [otherMetadata: string]: any
     }
-    basePath: string
+    basePath?: string
     paths: {
         [path: string]: {
             parameters?: ApiParameterDoc[]
@@ -55,7 +55,7 @@ export class ApiSwagger extends Api {
     }
 
     getBasePaths(): string[] {
-        return [this.getApi().basePath]
+        return [this.getApi()?.basePath || '']
     }
 
     getServices(): ApiService[] {

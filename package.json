@@ -19,7 +19,7 @@
     "applyTags": "node dist/api-portal-cli.js --command=applyTags",
     "test": "jest --silent=false",
     "build": "tsc -noEmit -skipLibCheck && node src/cli/esbuild.config.mjs production",
-    "configSchema": "typescript-json-schema --required src/cli/buildConfig.ts BuildConfig > dist/buildConfig.schema.json && typescript-json-schema --required src/cli/servicesTags.ts ServicesTags > dist/servicesTags.schema.json"
+    "configSchema": "typescript-json-schema --required src/cli/buildConfig.ts BuildConfig > dist/buildConfig.schema.json && typescript-json-schema --required src/cli/servicesTagsConfig.ts ServicesTagsConfig > dist/servicesTagsConfig.schema.json"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.1",

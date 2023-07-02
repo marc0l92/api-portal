@@ -2,18 +2,6 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
-        "BrowserFilters": {
-            "additionalProperties": {
-                "additionalProperties": {
-                    "additionalProperties": {
-                        "type": "boolean"
-                    },
-                    "type": "object"
-                },
-                "type": "object"
-            },
-            "type": "object"
-        },
         "HomeLink": {
             "additionalProperties": false,
             "properties": {
@@ -42,6 +30,18 @@
                 "title"
             ],
             "type": "object"
+        },
+        "ServiceTags": {
+            "additionalProperties": {
+                "additionalProperties": {
+                    "additionalProperties": {
+                        "type": "boolean"
+                    },
+                    "type": "object"
+                },
+                "type": "object"
+            },
+            "type": "object"
         }
     },
     "id": "api-portal-build-config",
@@ -59,7 +59,7 @@
             "description": "Browser settings",
             "properties": {
                 "filters": {
-                    "$ref": "#/definitions/BrowserFilters",
+                    "$ref": "#/definitions/ServiceTags",
                     "description": "Filters to show in the browser search section and their default value"
                 }
             },

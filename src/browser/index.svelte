@@ -10,13 +10,13 @@
   import { filterApiIndex } from 'common/search';
   import { globalOptions } from 'common/globalOptions';
   import { getApiIndexPath } from 'common/globals';
-  import type { BrowserFilters } from 'cli/buildConfig';
+  import type { ServiceTags } from 'cli/buildConfig';
 
   let apiIndex: ApiIndex = null;
   let errors: string[] = [];
   let favoriteCount = 0;
   let searchText = '';
-  let filters: BrowserFilters = {};
+  let filters: ServiceTags = {};
   $: {
     favoriteCount = Object.values($browserOptions.favorites).filter((pi) => Object.values(pi).filter((fi) => fi).length).length;
   }
@@ -35,7 +35,7 @@
     $browserOptions.favorites = $browserOptions.favorites;
   }
 
-  function onSearchTextChange(event: CustomEvent<{ searchText: string; filters: BrowserFilters }>) {
+  function onSearchTextChange(event: CustomEvent<{ searchText: string; filters: ServiceTags }>) {
     searchText = event.detail.searchText;
     filters = event.detail.filters;
   }

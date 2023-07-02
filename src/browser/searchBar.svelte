@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { BrowserFilters } from 'cli/buildConfig';
+    import type { ServiceTags } from 'cli/buildConfig';
     import { getBrowserFiltersCopy } from 'common/globals';
     import { createEventDispatcher } from 'svelte';
 
     let searchText: string = '';
     let showFilters: boolean = false;
-    let filters: BrowserFilters = getBrowserFiltersCopy();
+    let filters: ServiceTags = getBrowserFiltersCopy();
     let hasFilters = Object.keys(filters).length > 0;
 
     function resetFilters() {

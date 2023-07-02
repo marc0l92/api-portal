@@ -1,4 +1,4 @@
-import type { BrowserFilters, BuildConfig, HomeLink } from "../cli/buildConfig"
+import type { ServiceTags, BuildConfig, HomeLink } from "../cli/buildConfig"
 
 declare const IS_TEST: boolean
 declare const APP_CONFIG: BuildConfig
@@ -42,7 +42,7 @@ export const getHomeLinks = (): HomeLink[] => {
     return []
 }
 
-export const getBrowserFiltersCopy = (): BrowserFilters => {
+export const getBrowserFiltersCopy = (): ServiceTags => {
     if (APP_CONFIG.browser && APP_CONFIG.browser.filters) {
         return JSON.parse(JSON.stringify(APP_CONFIG.browser.filters))
     }

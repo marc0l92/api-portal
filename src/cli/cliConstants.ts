@@ -10,4 +10,4 @@ export const VALIDATION_SUFFIX = '.validation.json.gzip'
 export const MAX_VERSION_DIGITS = 5
 export const MAX_PARALLEL_VALIDATIONS = 10
 export const VALIDATION_TIMEOUT = 300000
-export const SERVICES_TAGS_SCHEMA = 'https://raw.githubusercontent.com/marc0l92/api-portal/master/dist/servicesTags.schema.json'
+export const SERVICES_TAGS_SCHEMA = 'https://raw.githubusercontent.com/marc0l92/api-portal/master/dist/servicesTagsConfig.schema.json'
