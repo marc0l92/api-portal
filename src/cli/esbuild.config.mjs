@@ -8,6 +8,7 @@ import fs from 'fs-extra'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import yaml from 'js-yaml'
+import { execSync } from 'child_process'
 
 const argv = yargs(hideBin(process.argv)).argv
 const prod = argv._.indexOf('production') >= 0
@@ -17,6 +18,7 @@ if (argv.configFile) {
   appConfig = yaml.load(fs.readFileSync(argv.configFile))
   console.log('Config loaded:', JSON.stringify(appConfig))
 }
+const releaseId = execSync('git rev-parse --short HEAD').toString().replace('\n', '')
 
 /** @type {esbuild.BuildOptions} */
 const webOptions = {
@@ -55,6 +57,7 @@ const webOptions = {
   define: {
     IS_TEST: JSON.stringify(!prod),
     APP_CONFIG: JSON.stringify(appConfig),
+    RELEASE_ID: JSON.stringify(releaseId),
   },
   plugins: [
     sveltePlugin({
@@ -89,6 +92,7 @@ const cliOptions = {
   define: {
     IS_TEST: JSON.stringify(!prod),
     APP_CONFIG: JSON.stringify(appConfig),
+    RELEASE_ID: JSON.stringify(releaseId),
   },
 }
 

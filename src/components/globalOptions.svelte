@@ -3,6 +3,7 @@
     import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
     import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
     import { globalOptions, globalOptionsDestroy, globalOptionsMount } from 'common/globalOptions';
+    import { getReleaseId } from 'common/globals';
 
     let showMenu = false;
     let showDiagramsOptionsModal = false;
@@ -36,6 +37,10 @@
             <a href="https://github.com/marc0l92/api-portal/issues/new/choose" class="dropdown-item" target="_blank" rel="noreferrer">
                 <span>Report issue</span><i class="fa-solid fa-bug" />
             </a>
+            <hr class="dropdown-divider" />
+            <div class="dropdown-item">
+                <span>Release id: {getReleaseId()}</span>
+            </div>
         </div>
     </div>
 </div>

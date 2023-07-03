@@ -2,6 +2,7 @@ import type { ServiceTags, BuildConfig, HomeLink } from "../cli/buildConfig"
 
 declare const IS_TEST: boolean
 declare const APP_CONFIG: BuildConfig
+declare const RELEASE_ID: string
 
 const API_INDEX_PATH = '/apis/_apiIndex.json';
 
@@ -53,4 +54,8 @@ export const setupHotReload = () => {
     if (isTest()) {
         new EventSource('/esbuild').addEventListener('change', () => location.reload())
     }
+}
+
+export const getReleaseId = (): string => {
+    return RELEASE_ID
 }
