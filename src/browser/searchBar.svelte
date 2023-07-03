@@ -32,9 +32,9 @@
             <div class="control">
                 <button class="button {showFilters ? 'is-active' : ''}" on:click={() => (showFilters = !showFilters)}>
                     <span class="icon is-small">
-                        <i class="fas fa-sliders" />
+                        <i class="fas fa-filter" />
                     </span>
-                    <span>Filter</span>
+                    <span>Filters</span>
                 </button>
             </div>
         {/if}

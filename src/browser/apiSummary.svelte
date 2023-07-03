@@ -3,7 +3,7 @@
     import type { ApiIndexItem, ApiSummary } from '../common/api/apiIndex';
     import { browserOptions } from './browserOptions';
 
-    const VERSION_LIMIT = 5;
+    const VERSION_LIMIT = 8;
     const basePath = getBasePath();
 
     export let packageName: string = null;
