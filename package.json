@@ -28,6 +28,7 @@
     "@uiw/codemirror-theme-github": "^4.21.7",
     "codemirror": "^6.0.1",
     "fflate": "^0.7.4",
+    "fuse.js": "^6.6.2",
     "js-yaml": "^4.1.0",
     "jszip": "^3.10.1",
     "plantuml-encoder": "^1.4.0",

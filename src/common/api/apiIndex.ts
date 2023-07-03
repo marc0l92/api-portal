@@ -36,21 +36,30 @@ export interface ApiSummaryFlat {
     updateTime: string
     hash: string
     apiSummary: ApiSummary
+    services: {
+        path: string
+        method: string
+        tags: ServiceTags
+    }[]
 }
+
+export type ApiIndexFlat = ApiSummaryFlat[]
 
 export function getApiSummaryFlatByHash(hash: string, apiIndex: ApiIndex): ApiSummaryFlat {
     for (const packageName in apiIndex) {
         for (const apiName in apiIndex[packageName]) {
             for (const versionName in apiIndex[packageName][apiName]) {
                 for (const fileName in apiIndex[packageName][apiName][versionName]) {
-                    if (apiIndex[packageName][apiName][versionName][fileName].hash === hash) {
+                    const apiIndexItem = apiIndex[packageName][apiName][versionName][fileName]
+                    if (apiIndexItem.hash === hash) {
                         return {
                             packageName, apiName, versionName, fileName,
-                            status: apiIndex[packageName][apiName][versionName][fileName].status,
-                            metadata: apiIndex[packageName][apiName][versionName][fileName].metadata,
-                            updateTime: apiIndex[packageName][apiName][versionName][fileName].updateTime,
-                            hash: apiIndex[packageName][apiName][versionName][fileName].hash,
+                            status: apiIndexItem.status,
+                            metadata: apiIndexItem.metadata,
+                            updateTime: apiIndexItem.updateTime,
+                            hash: apiIndexItem.hash,
                             apiSummary: apiIndex[packageName][apiName],
+                            services: apiIndexItem.services,
                         }
                     }
                 }
@@ -62,14 +71,19 @@ export function getApiSummaryFlatByHash(hash: string, apiIndex: ApiIndex): ApiSu
 
 export function getApiSummaryFlatFromApi(api: Api): ApiSummaryFlat {
     const apiSummary: ApiSummary = {}
+    const services = api.getServices().map(s => ({
+        method: s.getMethod(),
+        path: s.getPath(),
+        tags: {}
+    }))
     apiSummary[api.getVersion()] = {
         '$InputApi': {
             hash: '',
             status: api.getStatus(),
             metadata: api.getMetadata(),
             updateTime: '',
-            services: [],
-            tags:{},
+            services: services,
+            tags: {},
         }
     }
     return {
@@ -82,6 +96,7 @@ export function getApiSummaryFlatFromApi(api: Api): ApiSummaryFlat {
         updateTime: '',
         hash: '',
         apiSummary: apiSummary,
+        services: services,
     }
 }
 
@@ -95,6 +110,7 @@ export function getApiSummaryToFlat(packageName: string, apiName: string, apiSum
         metadata: apiIndexItem.metadata,
         updateTime: apiIndexItem.updateTime,
         hash: apiIndexItem.hash,
+        services: apiIndexItem.services,
     }
 }
 
@@ -111,5 +127,16 @@ export function modifyApiSummaryFlat(apiSummaryFlat: ApiSummaryFlat, changes: { 
         metadata: apiIndexItem.metadata,
         updateTime: apiIndexItem.updateTime,
         hash: apiIndexItem.hash,
+        services: apiIndexItem.services
     }
+}
+
+export function apiIndexToApiIndexFlat(apiIndex: ApiIndex): ApiIndexFlat {
+    const apiIndexFlat: ApiIndexFlat = []
+    for (const packageName in apiIndex) {
+        for (const apiName in apiIndex[packageName]) {
+            apiIndexFlat.push(getApiSummaryToFlat(packageName, apiName, apiIndex[packageName][apiName]))
+        }
+    }
+    return apiIndexFlat
 }

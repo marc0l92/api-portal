@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { getApiSummaryFlatByHash, getApiSummaryToFlat, modifyApiSummaryFlat, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
+    import yaml from 'js-yaml';
+    import { getApiSummaryFlatByHash, modifyApiSummaryFlat, type ApiIndex, type ApiSummaryFlat, apiIndexToApiIndexFlat } from 'common/api/apiIndex';
     import { getApiStatusName } from 'common/api/apiStatus';
     import { decompressFromArray } from 'common/compress';
     import { getApiIndexPath, getBasePath } from 'common/globals';
     import { getOptions, storeOptions } from 'common/localStorage';
-    import { searchInApiIndex, type LimitedSearchResults } from 'common/search';
-    import yaml from 'js-yaml';
     import { createEventDispatcher, onMount } from 'svelte';
     import { readInputFile } from '../common/filesUtils';
+    import { initializeSearch, searchInApiIndexFlat, type SearchResult } from 'common/search';
 
     const LOCAL_STORAGE_SELECTED_TAB_KEY = 'inputApi.selectedTab';
     const LOCAL_STORAGE_BROWSE_KEY = 'inputApi.browse';
@@ -21,7 +21,7 @@
     let browserSearch = '';
     let browserSelectedApi: ApiSummaryFlat = null;
     export let browserHash = '';
-    let browserSearchResults: LimitedSearchResults = { list: [], isLast: true };
+    let browserSearchResults: SearchResult[] = [];
     let isSearchDropdownExpanded = false;
     let isVersionDropdownExpanded = false;
     let isFileNameDropdownExpanded = false;
@@ -41,6 +41,7 @@
             if (selectedTab === 'browser') {
                 if (!apiIndex) {
                     await fetchApiIndex();
+                    initializeSearch(apiIndexToApiIndexFlat(apiIndex));
                     if (apiIndex && browserHash) {
                         browserSelectedApi = getApiSummaryFlatByHash(browserHash, apiIndex);
                         browserSearch = browserSelectedApi.packageName + ' ' + browserSelectedApi.apiName;
@@ -85,7 +86,7 @@
         try {
             const response = await fetch(getBasePath() + `/apis/${apiHash}.api.json.gzip`);
             if (response.ok) {
-                return yaml.load(decompressFromArray(await response.arrayBuffer() as Uint8Array));
+                return yaml.load(decompressFromArray((await response.arrayBuffer()) as Uint8Array));
             } else {
                 inputError = 'Error: ' + response.status;
             }
@@ -114,7 +115,7 @@
 
     function onBrowserSearchChange() {
         isSearchDropdownExpanded = true;
-        browserSearchResults = searchInApiIndex(apiIndex, browserSearch, BROWSER_SEARCH_RESULTS_LIMIT);
+        browserSearchResults = searchInApiIndexFlat(browserSearch);
         browserSelectedApi = null;
     }
 
@@ -177,21 +178,22 @@
                             on:input={onBrowserSearchChange}
                             on:focus={onBrowserSearchChange}
                             on:click|stopPropagation
-                            placeholder="Search api" />
+                            placeholder="Search api"
+                        />
                     </div>
                 </div>
                 <div class="dropdown-menu">
                     <div class="dropdown-content">
-                        {#each browserSearchResults.list as apiSummary}
-                            <a href={''} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(apiSummary)}>
-                                <p>{apiSummary.apiName}</p>
-                                <p class="subtext">{apiSummary.packageName}</p>
+                        {#each browserSearchResults.slice(0, BROWSER_SEARCH_RESULTS_LIMIT) as apiSummary}
+                            <a href={''} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(apiSummary.item)}>
+                                <p>{apiSummary.item.apiName}</p>
+                                <p class="subtext">{apiSummary.item.packageName}</p>
                             </a>
                         {/each}
-                        {#if !browserSearchResults.isLast}
+                        {#if browserSearchResults.length > BROWSER_SEARCH_RESULTS_LIMIT}
                             <p class="dropdown-item">...</p>
                         {/if}
-                        {#if browserSearchResults.list.length === 0}
+                        {#if browserSearchResults.length === 0}
                             <p class="dropdown-item">No API found</p>
                         {/if}
                     </div>
@@ -255,7 +257,8 @@
                                                                 <a
                                                                     href={''}
                                                                     class="dropdown-item status-{apiItem.status}"
-                                                                    on:click|preventDefault={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { fileName }))}>
+                                                                    on:click|preventDefault={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { fileName }))}
+                                                                >
                                                                     {#if fileName === browserSelectedApi.fileName}
                                                                         <strong>{fileName}</strong>
                                                                     {:else}

@@ -1,46 +1,28 @@
-import { getApiSummaryToFlat, type ApiIndex, type ApiSummaryFlat } from "./api/apiIndex"
+import Fuse from 'fuse.js'
+import type { ApiIndexFlat, ApiSummaryFlat } from './api/apiIndex'
 
-export interface LimitedSearchResults {
-    list: ApiSummaryFlat[]
-    isLast: boolean
+const searchOptions: Fuse.IFuseOptions<ApiSummaryFlat> = {
+    includeMatches: true,
+    minMatchCharLength: 2,
+    keys: [
+        'packageName',
+        'apiName',
+        'versionName',
+        'fileName',
+    ],
+}
+let fuse: Fuse<ApiSummaryFlat> = null
+
+export type SearchResult = Fuse.FuseResult<ApiSummaryFlat>
+
+export function initializeSearch(apiIndexFlat: ApiIndexFlat) {
+    fuse = new Fuse(apiIndexFlat, searchOptions)
 }
 
-function escapeRegExp(str: string) {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-}
-
-export function fuzzySearchMatch(searchText: string, item: string) {
-    const searchTextRegex = '.*' + escapeRegExp(searchText).replace(/ /g, '.*[^0-9a-zA-Z]') + '.*'
-    return item.match(new RegExp(searchTextRegex, 'i'))
-}
-
-export function filterApiIndex(apiIndex: ApiIndex, searchText: string) {
-    const apiIndexFiltered: ApiIndex = {}
-    for (const packageName in apiIndex) {
-        for (const apiName in apiIndex[packageName]) {
-            if (fuzzySearchMatch(searchText, `${packageName} - ${apiName}`)) {
-                if (!(packageName in apiIndexFiltered)) {
-                    apiIndexFiltered[packageName] = {}
-                }
-                apiIndexFiltered[packageName][apiName] = apiIndex[packageName][apiName]
-            }
-        }
+export function searchInApiIndexFlat(searchText: string): SearchResult[] {
+    if (fuse) {
+        return fuse.search(searchText)
+    } else {
+        return []
     }
-    return apiIndexFiltered
-}
-
-export function searchInApiIndex(apiIndex: ApiIndex, searchText: string, limit: number = -1): LimitedSearchResults {
-    const results: LimitedSearchResults = { list: [], isLast: true }
-    for (const packageName in apiIndex) {
-        for (const apiName in apiIndex[packageName]) {
-            if (fuzzySearchMatch(searchText, packageName + ' ' + apiName)) {
-                results.list.push(getApiSummaryToFlat(packageName, apiName, apiIndex[packageName][apiName]))
-                if (limit > 0 && results.list.length === limit) {
-                    results.isLast = false
-                    return results
-                }
-            }
-        }
-    }
-    return results
 }

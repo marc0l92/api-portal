@@ -3,22 +3,27 @@
   import Footer from 'components/footer.svelte';
   import { onDestroy, onMount } from 'svelte';
   import Navbar from '../components/navbar.svelte';
-  import type { ApiIndex } from '../common/api/apiIndex';
+  import { apiIndexToApiIndexFlat, type ApiIndex } from '../common/api/apiIndex';
   import ApiSummary from './apiSummary.svelte';
   import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
   import SearchBar from './searchBar.svelte';
-  import { filterApiIndex } from 'common/search';
   import { globalOptions } from 'common/globalOptions';
   import { getApiIndexPath } from 'common/globals';
   import type { ServiceTags } from 'cli/buildConfig';
+  import { initializeSearch, searchInApiIndexFlat, type SearchResult } from 'common/search';
 
   let apiIndex: ApiIndex = null;
+  let searchResults: SearchResult[] = [];
   let errors: string[] = [];
   let favoriteCount = 0;
   let searchText = '';
   let filters: ServiceTags = {};
   $: {
     favoriteCount = Object.values($browserOptions.favorites).filter((pi) => Object.values(pi).filter((fi) => fi).length).length;
+  }
+
+  $: if (searchText.length > 1) {
+    searchResults = searchInApiIndexFlat(searchText);
   }
 
   function cleanFavorite() {
@@ -45,6 +50,7 @@
     const response = await fetch(getApiIndexPath());
     if (response.ok) {
       apiIndex = (await response.json()) as ApiIndex;
+      initializeSearch(apiIndexToApiIndexFlat(apiIndex));
       cleanFavorite();
     } else {
       errors = [...errors, 'Error while fetching api index: ' + response.status];
@@ -66,30 +72,40 @@
   <SearchBar on:searchTextChange={onSearchTextChange} />
   <Errors messages={errors} />
   {#if apiIndex}
-    {#if favoriteCount > 0 && !searchText}
-      <h4 class="subtitle is-4"><i class="fas fa-star" /> Favorites</h4>
-      <div class="columns is-multiline">
-        {#each Object.entries($browserOptions.favorites) as [packageName, packageItem]}
-          {#each Object.entries(packageItem) as [favoriteName, favoriteItem]}
-            {#if favoriteItem}
-              <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                <ApiSummary {packageName} name={favoriteName} apiSummary={apiIndex[packageName][favoriteName]} />
-              </div>
-            {/if}
+    {#if !searchText || searchText.length < 2}
+      {#if favoriteCount > 0}
+        <h4 class="subtitle is-4"><i class="fas fa-star" /> Favorites</h4>
+        <div class="columns is-multiline">
+          {#each Object.entries($browserOptions.favorites) as [packageName, packageItem]}
+            {#each Object.entries(packageItem) as [favoriteName, favoriteItem]}
+              {#if favoriteItem}
+                <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
+                  <ApiSummary {packageName} name={favoriteName} apiSummary={apiIndex[packageName][favoriteName]} />
+                </div>
+              {/if}
+            {/each}
           {/each}
-        {/each}
-      </div>
-    {/if}
-    {#each Object.entries(filterApiIndex(apiIndex, searchText)) as [packageName, packageItem]}
-      <h4 class="subtitle is-4">{packageName}</h4>
+        </div>
+      {/if}
+      {#each Object.entries(apiIndex) as [packageName, packageItem]}
+        <h4 class="subtitle is-4">{packageName}</h4>
+        <div class="columns is-multiline">
+          {#each Object.entries(packageItem) as [apiName, apiItem]}
+            <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
+              <ApiSummary {packageName} name={apiName} apiSummary={apiItem} />
+            </div>
+          {/each}
+        </div>
+      {/each}
+    {:else}
       <div class="columns is-multiline">
-        {#each Object.entries(packageItem) as [apiName, apiItem]}
+        {#each searchResults as searchResult}
           <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-            <ApiSummary {packageName} name={apiName} apiSummary={apiItem} />
+            <ApiSummary packageName={searchResult.item.packageName} name={searchResult.item.apiName} apiSummary={searchResult.item.apiSummary} />
           </div>
         {/each}
       </div>
-    {/each}
+    {/if}
   {:else}
     <div class="box">Fetching api index...</div>
   {/if}
