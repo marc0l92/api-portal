@@ -27,26 +27,16 @@
     }
 </script>
 
-<p class="searchMatchLine">
-    <span class="key">{searchMatch.key}:</span>
-    <span class="value">
-        {#each matchTokens as matchToken}
-            <span class={matchToken.highlight ? 'highlight' : ''}>{matchToken.value}</span>
-        {/each}
-    </span>
-</p>
+{#each matchTokens as matchToken}
+    {#if matchToken.highlight}
+        <span class="search-match-highlight">{matchToken.value}</span>
+    {:else}
+        {matchToken.value}
+    {/if}
+{/each}
 
 <style>
-    .searchMatchLine:not(:last-child) {
-        margin-bottom: 0.5em;
-    }
-    .searchMatchLine {
-        font-size: small;
-    }
-    .searchMatchLine .key {
-        font-weight: bold;
-    }
-    .searchMatchLine .value .highlight {
+    .search-match-highlight {
         background-color: yellow;
     }
 </style>

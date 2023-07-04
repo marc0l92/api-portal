@@ -3,7 +3,7 @@
     import type { ApiIndexItem, ApiSummary } from '../common/api/apiIndex';
     import { browserOptions } from './browserOptions';
     import type { SearchMatch } from 'common/search';
-    import SearchMatchLine from './searchMatchLine.svelte';
+    import SearchMatchLine from '../components/searchMatchLine.svelte';
 
     const VERSION_LIMIT = 8;
     const basePath = getBasePath();
@@ -14,6 +14,7 @@
     export let searchMatches: readonly SearchMatch[] = [];
     let lastApiHash = '';
     let isExpanded = false;
+    let searchMatchApiName: SearchMatch = null;
 
     function onFavoriteToggle() {
         console.log(JSON.stringify($browserOptions));
@@ -28,6 +29,8 @@
         lastApiHash = Object.values(apiSummary[lastApiVersion])[0].hash;
     }
 
+    $: searchMatchApiName = searchMatches.find((m) => m.key === 'apiName');
+
     function getWorstState(versionSummary: { [fileName: string]: ApiIndexItem }) {
         const maxStatus = Object.values(versionSummary)
             .map((x) => x.status)
@@ -40,7 +43,13 @@
     <div class="card">
         <header class="card-header">
             <a class="card-header-body" href="{basePath}/viewer.html?api={lastApiHash}">
-                <p class="card-header-title">{name}</p>
+                <p class="card-header-title">
+                    {#if searchMatchApiName}
+                        <SearchMatchLine searchMatch={searchMatchApiName} />
+                    {:else}
+                        {name}
+                    {/if}
+                </p>
             </a>
             <button class="card-header-icon" on:click={onFavoriteToggle}>
                 <span class="icon">
@@ -66,7 +75,12 @@
                 </div>
                 {#if searchMatches.length > 0}
                     {#each searchMatches as searchMatch}
-                        <SearchMatchLine {searchMatch} />
+                        {#if searchMatch.key !== 'apiName'}
+                            <p class="searchMatchLine">
+                                <span class="key">{searchMatch.key}:</span>
+                                <SearchMatchLine {searchMatch} />
+                            </p>
+                        {/if}
                     {/each}
                 {/if}
             </div>
@@ -97,5 +111,14 @@
     .tag.status-2 {
         background-color: #f14668;
         color: white;
+    }
+    .searchMatchLine:not(:last-child) {
+        margin-bottom: 0.5em;
+    }
+    .searchMatchLine {
+        font-size: small;
+    }
+    .searchMatchLine .key {
+        font-weight: bold;
     }
 </style>
