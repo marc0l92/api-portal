@@ -101,7 +101,7 @@
       <div class="columns is-multiline">
         {#each searchResults as searchResult}
           <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-            <ApiSummary packageName={searchResult.item.packageName} name={searchResult.item.apiName} apiSummary={searchResult.item.apiSummary} />
+            <ApiSummary packageName={searchResult.item.packageName} name={searchResult.item.apiName} apiSummary={searchResult.item.apiSummary} searchMatches={searchResult.matches} />
           </div>
         {/each}
       </div>

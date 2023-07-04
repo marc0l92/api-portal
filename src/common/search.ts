@@ -14,6 +14,7 @@ const searchOptions: Fuse.IFuseOptions<ApiSummaryFlat> = {
 let fuse: Fuse<ApiSummaryFlat> = null
 
 export type SearchResult = Fuse.FuseResult<ApiSummaryFlat>
+export type SearchMatch = Fuse.FuseResultMatch;
 
 export function initializeSearch(apiIndexFlat: ApiIndexFlat) {
     fuse = new Fuse(apiIndexFlat, searchOptions)

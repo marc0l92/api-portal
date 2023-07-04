@@ -21,12 +21,16 @@
     function onInputChange() {
         dispatch('searchTextChange', { searchText, filters });
     }
+
+    function focus(el: HTMLElement) {
+        el.focus();
+    }
 </script>
 
 <div class="block">
     <div class="field has-addons search-bar {showFilters ? 'open' : ''}">
         <div class="control is-expanded">
-            <input class="input" type="text" placeholder="Search: package, api title, version, file name" bind:value={searchText} on:input={onInputChange} />
+            <input class="input" type="text" placeholder="Search: package, api title, version, file name" bind:value={searchText} on:input={onInputChange} use:focus />
         </div>
         {#if hasFilters}
             <div class="control">

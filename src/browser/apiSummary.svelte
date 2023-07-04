@@ -2,6 +2,8 @@
     import { getBasePath } from 'common/globals';
     import type { ApiIndexItem, ApiSummary } from '../common/api/apiIndex';
     import { browserOptions } from './browserOptions';
+    import type { SearchMatch } from 'common/search';
+    import SearchMatchLine from './searchMatchLine.svelte';
 
     const VERSION_LIMIT = 8;
     const basePath = getBasePath();
@@ -9,6 +11,7 @@
     export let packageName: string = null;
     export let name: string = null;
     export let apiSummary: ApiSummary = null;
+    export let searchMatches: readonly SearchMatch[] = [];
     let lastApiHash = '';
     let isExpanded = false;
 
@@ -61,6 +64,11 @@
                         {/if}
                     </div>
                 </div>
+                {#if searchMatches.length > 0}
+                    {#each searchMatches as searchMatch}
+                        <SearchMatchLine {searchMatch} />
+                    {/each}
+                {/if}
             </div>
         </div>
     </div>
