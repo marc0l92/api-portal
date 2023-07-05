@@ -40,11 +40,6 @@
     $browserOptions.favorites = $browserOptions.favorites;
   }
 
-  function onSearchTextChange(event: CustomEvent<{ searchText: string; filters: ServiceTags }>) {
-    searchText = event.detail.searchText;
-    filters = event.detail.filters;
-  }
-
   onMount(async () => {
     browserOptionsMount();
     const response = await fetch(getApiIndexPath());
@@ -69,7 +64,7 @@
     </div>
   </section>
 
-  <SearchBar on:searchTextChange={onSearchTextChange} />
+  <SearchBar bind:searchText bind:filters />
   <Errors messages={errors} />
   {#if apiIndex}
     {#if !searchText || searchText.length < 2}

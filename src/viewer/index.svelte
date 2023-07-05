@@ -39,10 +39,7 @@
   let isFileNameDropdownExpanded = false;
   let showApiInput = false;
 
-  function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
-    selectedTab = event.detail.selectedTab;
-    storeOptions(LOCAL_STORAGE_SELECTED_TAB_KEY, selectedTab);
-  }
+  $: storeOptions(LOCAL_STORAGE_SELECTED_TAB_KEY, selectedTab);
 
   async function fetchApi(apiDir: string = 'apis') {
     try {
@@ -243,7 +240,7 @@
   {/if}
   <Errors messages={errors} />
   {#if api}
-    <Tabs on:tabChange={onTabChange} {selectedTab} hasReleaseNotes={!!releaseNotes} {validationData} />
+    <Tabs bind:selectedTab hasReleaseNotes={!!releaseNotes} {validationData} />
     <div class="box flat-top">
       <LazyLoad isVisible={selectedTab === 'release-notes'}>
         <ReleaseNotesTab {releaseNotes} />

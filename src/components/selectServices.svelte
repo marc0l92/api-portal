@@ -1,15 +1,12 @@
 <script lang="ts">
-    import type { ApiService } from 'common/api';
-    import { createEventDispatcher, afterUpdate } from 'svelte';
+    import type { ApiService } from '../common/api/api';
 
     export let services: ApiService[] = [];
     export let servicesSelectSize: number = 8;
+    export let selectedService: ApiService = null;
     let selectedServiceIndex = 0;
 
-    const dispatch = createEventDispatcher();
-    afterUpdate(() => {
-        dispatch('serviceSelect', { selectedServiceIndex });
-    });
+    $: selectedService = services[selectedServiceIndex];
 </script>
 
 <p class="subtitle"><strong>Services</strong></p>

@@ -9,17 +9,15 @@
     let services: ApiService[] = [];
     let workbook: TablesMap = null;
     let selectedSheet: string = null;
+    let selectedService: ApiService = null;
 
-    function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
-        const selectedService = services[event.detail.selectedServiceIndex];
-        if (selectedService) {
-            const itemMap = generateServiceWorkbook(selectedService);
-            workbook = modelPropertiesToTables(itemMap);
-            selectedSheet = Object.keys(workbook)[0];
-        } else {
-            workbook = null;
-            selectedSheet = null;
-        }
+    $: if (selectedService) {
+        const itemMap = generateServiceWorkbook(selectedService);
+        workbook = modelPropertiesToTables(itemMap);
+        selectedSheet = Object.keys(workbook)[0];
+    } else {
+        workbook = null;
+        selectedSheet = null;
     }
 
     $: if (api) {
@@ -27,7 +25,7 @@
     }
 </script>
 
-<SelectServices servicesSelectSize={1} {services} on:serviceSelect={onServiceSelect} />
+<SelectServices servicesSelectSize={1} {services} bind:selectedService />
 {#if workbook && selectedSheet && workbook[selectedSheet]}
     <div class="tabs is-toggle">
         <ul>

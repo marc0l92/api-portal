@@ -61,10 +61,6 @@
     };
   }
 
-  function onTabChange(event: CustomEvent<{ selectedTab: string }>) {
-    selectedTab = event.detail.selectedTab;
-  }
-
   onMount(() => {
     const urlParams = new URLSearchParams(window.location.search);
     leftItem.hash = urlParams.get('leftApi');
@@ -95,7 +91,7 @@
     </div>
   </div>
   {#if leftItem.api && rightItem.api}
-    <Tabs on:tabChange={onTabChange} {selectedTab} />
+    <Tabs bind:selectedTab />
     <div class="box flat-top">
       <LazyLoad isVisible={selectedTab === 'api-diff'}><ApiDiff leftApi={leftItem.api} rightApi={rightItem.api} /></LazyLoad>
       <LazyLoad isVisible={selectedTab === 'diagrams-diff'}><DiagramsDiff leftApi={leftItem.api} rightApi={rightItem.api} /></LazyLoad>

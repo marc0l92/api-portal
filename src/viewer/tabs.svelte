@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
     import { getValidationBadgeCss, type ApiValidation } from './validation';
 
     export let selectedTab = 'api';
@@ -8,11 +7,6 @@
     let validationErrorsCount = 0;
     let validationErrorsCss = '';
 
-    const dispatch = createEventDispatcher();
-    async function changeTab(newTab: string) {
-        selectedTab = newTab;
-        dispatch('tabChange', { selectedTab });
-    }
     $: if (validationData) {
         validationErrorsCount = validationData.length;
         validationErrorsCss = getValidationBadgeCss(validationData);
@@ -24,33 +18,33 @@
         <ul>
             {#if hasReleaseNotes}
                 <li class={selectedTab === 'release-notes' ? 'is-active' : ''}>
-                    <a href={''} on:click|preventDefault={() => changeTab('release-notes')}>
+                    <a href={''} on:click|preventDefault={() => (selectedTab = 'release-notes')}>
                         <span class="icon is-small"><i class="far fa-file-lines" /></span>
                         <span>Release Notes</span>
                     </a>
                 </li>
             {/if}
             <li class={selectedTab === 'api' ? 'is-active' : ''}>
-                <a href={''} on:click|preventDefault={() => changeTab('api')}>
+                <a href={''} on:click|preventDefault={() => (selectedTab = 'api')}>
                     <span class="icon is-small"><i class="fas fa-circle-nodes" /></span>
                     <span>Api</span>
                 </a>
             </li>
             <li class={selectedTab === 'diagrams' ? 'is-active' : ''}>
-                <a href={''} on:click|preventDefault={() => changeTab('diagrams')}>
+                <a href={''} on:click|preventDefault={() => (selectedTab = 'diagrams')}>
                     <span class="icon is-small"><i class="fas fa-diagram-project" /></span>
                     <span>Diagrams</span>
                 </a>
             </li>
             <li class={selectedTab === 'tables' ? 'is-active' : ''}>
-                <a href={''} on:click|preventDefault={() => changeTab('tables')}>
+                <a href={''} on:click|preventDefault={() => (selectedTab = 'tables')}>
                     <span class="icon is-small"><i class="fas fa-table" /></span>
                     <span>Tables</span>
                 </a>
             </li>
             {#if validationErrorsCount > 0}
                 <li class={selectedTab === 'validation' ? 'is-active' : ''}>
-                    <a href={''} on:click|preventDefault={() => changeTab('validation')}>
+                    <a href={''} on:click|preventDefault={() => (selectedTab = 'validation')}>
                         <span class="icon is-small"><i class="fas fa-list-check" /></span>
                         <span>Validation</span>
                         <span class="tag is-small {validationErrorsCss}">{validationErrorsCount}</span>
@@ -58,7 +52,7 @@
                 </li>
             {/if}
             <li class={selectedTab === 'raw' ? 'is-active' : ''}>
-                <a href={''} on:click|preventDefault={() => changeTab('raw')}>
+                <a href={''} on:click|preventDefault={() => (selectedTab = 'raw')}>
                     <span class="icon is-small"><i class="fas fa-paragraph" /></span>
                     <span>Raw</span>
                 </a>

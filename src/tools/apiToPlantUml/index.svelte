@@ -7,7 +7,6 @@
   import SelectServices from 'components/selectServices.svelte';
   import Footer from 'components/footer.svelte';
   import Diagrams from './diagrams.svelte';
-  import DiagramsOption from './diagramsOption.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from './diagramBuilderOptions';
   import DownloadBar from './downloadBar.svelte';
@@ -39,10 +38,6 @@
     }
   }
 
-  function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
-    selectedService = services[event.detail.selectedServiceIndex];
-  }
-
   onMount(() => {
     diagramBuilderOptionsMount();
   });
@@ -62,7 +57,7 @@
   <InputApi on:apiChange={onApiChange} />
   {#if services.length > 0}
     <div class="box">
-      <SelectServices {services} servicesSelectSize={1} on:serviceSelect={onServiceSelect} />
+      <SelectServices {services} servicesSelectSize={1} bind:selectedService />
     </div>
   {/if}
   <Errors messages={errors} />

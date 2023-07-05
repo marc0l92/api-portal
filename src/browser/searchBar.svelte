@@ -1,25 +1,17 @@
 <script lang="ts">
     import type { ServiceTags } from 'cli/buildConfig';
     import { getBrowserFiltersCopy } from 'common/globals';
-    import { createEventDispatcher } from 'svelte';
 
-    let searchText: string = '';
+    export let searchText: string = '';
+    export let filters: ServiceTags = getBrowserFiltersCopy();
     let showFilters: boolean = false;
-    let filters: ServiceTags = getBrowserFiltersCopy();
     let hasFilters = Object.keys(filters).length > 0;
 
     function resetFilters() {
         filters = getBrowserFiltersCopy();
-        onInputChange();
     }
     function toggleFilter(sectionName: string, categoryName: string, propertyName: string) {
         filters[sectionName][categoryName][propertyName] = !filters[sectionName][categoryName][propertyName];
-        onInputChange();
-    }
-
-    const dispatch = createEventDispatcher();
-    function onInputChange() {
-        dispatch('searchTextChange', { searchText, filters });
     }
 
     function focus(el: HTMLElement) {
@@ -30,7 +22,7 @@
 <div class="block">
     <div class="field has-addons search-bar {showFilters ? 'open' : ''}">
         <div class="control is-expanded">
-            <input class="input" type="text" placeholder="Search: package, api title, version, file name" bind:value={searchText} on:input={onInputChange} use:focus />
+            <input class="input" type="text" placeholder="Search: package, api title, version, file name" bind:value={searchText} use:focus />
         </div>
         {#if hasFilters}
             <div class="control">

@@ -33,10 +33,6 @@
       errors = [...errors, 'Error: ' + e.message];
     }
   }
-
-  function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
-    selectedService = services[event.detail.selectedServiceIndex];
-  }
 </script>
 
 <Navbar activePage="apiToSpreadsheet" />
@@ -50,7 +46,7 @@
   <InputApi on:apiChange={onApiChange} />
   {#if services.length > 0}
     <div class="box">
-      <SelectServices {services} servicesSelectSize={8} on:serviceSelect={onServiceSelect} />
+      <SelectServices {services} servicesSelectSize={8} bind:selectedService />
     </div>
   {/if}
   <Errors messages={errors} />

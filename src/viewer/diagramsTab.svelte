@@ -9,10 +9,6 @@
     let selectedService: ApiService = null;
     let diagrams: DiagramData[] = [];
 
-    function onServiceSelect(event: CustomEvent<{ selectedServiceIndex: number }>) {
-        selectedService = services[event.detail.selectedServiceIndex];
-    }
-
     $: if (api) {
         services = api.getServices();
     }
@@ -21,7 +17,7 @@
     }
 </script>
 
-<SelectServices servicesSelectSize={1} {services} on:serviceSelect={onServiceSelect} />
+<SelectServices servicesSelectSize={1} {services} bind:selectedService />
 {#each diagrams as diagram}
     <p>
         <strong>{diagram.name}</strong>
