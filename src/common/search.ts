@@ -3,6 +3,8 @@ import type { ApiIndexFlat, ApiSummaryFlat } from './api/apiIndex'
 
 const searchOptions: Fuse.IFuseOptions<ApiSummaryFlat> = {
     includeMatches: true,
+    ignoreLocation: false,
+    threshold: 0.4,
     minMatchCharLength: 2,
     keys: [
         'packageName',
