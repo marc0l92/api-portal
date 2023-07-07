@@ -82,10 +82,10 @@ const cliOptions = {
   mainFields: ["module", "main"],
   format: 'cjs',
   logLevel: 'info',
-  sourcemap: prod ? false : 'inline',
+  sourcemap: 'inline',
   treeShaking: true,
   outdir: './dist',
-  minify: prod,
+  minify: false,
   target: [
     'node16',
   ],

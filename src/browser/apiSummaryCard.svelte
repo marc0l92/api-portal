@@ -9,7 +9,7 @@
     const basePath = getBasePath();
 
     export let packageName: string = null;
-    export let name: string = null;
+    export let apiName: string = null;
     export let apiSummary: ApiSummary = null;
     export let searchMatches: readonly SearchMatch[] = [];
     let lastApiHash = '';
@@ -21,7 +21,7 @@
         if (!$browserOptions.favorites[packageName]) {
             $browserOptions.favorites[packageName] = {};
         }
-        $browserOptions.favorites[packageName][name] = !$browserOptions.favorites[packageName][name];
+        $browserOptions.favorites[packageName][apiName] = !$browserOptions.favorites[packageName][apiName];
     }
 
     $: if (apiSummary) {
@@ -47,13 +47,13 @@
                     {#if searchMatchApiName}
                         <SearchMatchLine searchMatch={searchMatchApiName} />
                     {:else}
-                        {name}
+                        {apiName}
                     {/if}
                 </p>
             </a>
             <button class="card-header-icon" on:click={onFavoriteToggle}>
                 <span class="icon">
-                    <i class="{$browserOptions.favorites[packageName] && $browserOptions.favorites[packageName][name] ? 'fas' : 'far'} fa-star" />
+                    <i class="{$browserOptions.favorites[packageName] && $browserOptions.favorites[packageName][apiName] ? 'fas' : 'far'} fa-star" />
                 </span>
             </button>
         </header>

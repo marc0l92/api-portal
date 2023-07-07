@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js'
-import type { ApiIndexFlat, ApiSummaryFlat } from './api/apiIndex'
+import type { ApiIndexFlat, ApiSummary, ApiSummaryFlat } from './api/apiIndex'
+import type { ServiceTags } from 'cli/buildConfig'
 
 const searchOptions: Fuse.IFuseOptions<ApiSummaryFlat> = {
     includeMatches: true,
@@ -28,4 +29,32 @@ export function searchInApiIndexFlat(searchText: string): SearchResult[] {
     } else {
         return []
     }
+}
+
+export function tagsMatchFilters(tags: ServiceTags, filters: ServiceTags): boolean {
+    for (const sectionName in filters) {
+        for (const categoryName in filters[sectionName]) {
+            for (const propertyName in filters[sectionName][categoryName]) {
+                if (filters[sectionName][categoryName][propertyName]) {
+                    const matchingTagsPosition = tags?.[sectionName]?.[categoryName]?.[propertyName] || false
+                    if (!matchingTagsPosition) {
+                        return false
+                    }
+                }
+            }
+        }
+    }
+    return true
+}
+
+export function apiSummaryMatchFilters(apiSummary: ApiSummary, filters: ServiceTags, version: string = null): boolean {
+    const versions = version ? [version] : Object.keys(apiSummary)
+    for (const versionName of versions) {
+        for (const fileName in apiSummary[versionName]) {
+            if (tagsMatchFilters(apiSummary[versionName][fileName].tags, filters)) {
+                return true
+            }
+        }
+    }
+    return false
 }

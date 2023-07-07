@@ -23,31 +23,19 @@ export const getApiIndexPath = (): string => {
 }
 
 export const getDiagramsDefaultServer = (): string => {
-    if (APP_CONFIG.diagrams && APP_CONFIG.diagrams.defaultServer) {
-        return APP_CONFIG.diagrams.defaultServer
-    }
-    return 'https://www.plantuml.com/plantuml'
+    return APP_CONFIG?.diagrams?.defaultServer || 'https://www.plantuml.com/plantuml'
 }
 
 export const isChangeDiagramServerAllowed = (): boolean => {
-    if (APP_CONFIG.diagrams && APP_CONFIG.diagrams.allowServerChange) {
-        return !!APP_CONFIG.diagrams.allowServerChange
-    }
-    return true
+    return APP_CONFIG?.diagrams?.allowServerChange || true
 }
 
 export const getHomeLinks = (): HomeLink[] => {
-    if (APP_CONFIG.home && APP_CONFIG.home.links) {
-        return APP_CONFIG.home.links
-    }
-    return []
+    return APP_CONFIG?.home?.links || []
 }
 
 export const getBrowserFiltersCopy = (): ServiceTags => {
-    if (APP_CONFIG.browser && APP_CONFIG.browser.filters) {
-        return JSON.parse(JSON.stringify(APP_CONFIG.browser.filters))
-    }
-    return {}
+    return JSON.parse(JSON.stringify(APP_CONFIG?.browser?.filters || {}))
 }
 
 export const setupHotReload = () => {

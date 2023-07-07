@@ -21,28 +21,27 @@ browser:
   filters:
     producers:
       product:
-        Product1: true
-        Product2: true
-        Product3: true
+        tapy: false
+        truckertools: false
       team:
-        Team1: true
-        Team2: true
-        Team3: true
+        Team1: false
+        Team2: false
+        Team3: false
     consumers:
       internal:
-        Team1: true
-        Team2: true
-        Team3: true
+        Team1: false
+        Team2: false
+        Team3: false
       external:
-        Client1: true
-        Client2: true
-        Client3: true
+        Client1: false
+        Client2: false
+        Client3: false
     other:
       status:
-        status0: true
+        status0: false
         status1: false
         status2: false
       tags:
-        tag0: true
-        tag1: true
-        tag2: true
+        tag0: false
+        tag1: false
+        tag2: false

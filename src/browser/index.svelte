@@ -4,13 +4,13 @@
   import { onDestroy, onMount } from 'svelte';
   import Navbar from '../components/navbar.svelte';
   import { apiIndexToApiIndexFlat, type ApiIndex } from '../common/api/apiIndex';
-  import ApiSummary from './apiSummary.svelte';
+  import ApiSummaryCard from './apiSummaryCard.svelte';
   import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
   import SearchBar from './searchBar.svelte';
   import { globalOptions } from 'common/globalOptions';
   import { getApiIndexPath } from 'common/globals';
   import type { ServiceTags } from 'cli/buildConfig';
-  import { initializeSearch, searchInApiIndexFlat, type SearchResult } from 'common/search';
+  import { apiSummaryMatchFilters, initializeSearch, searchInApiIndexFlat, type SearchResult } from 'common/search';
 
   let apiIndex: ApiIndex = null;
   let searchResults: SearchResult[] = [];
@@ -69,34 +69,39 @@
   {#if apiIndex}
     {#if !searchText || searchText.length < 2}
       {#if favoriteCount > 0}
+        <!-- Favorite items -->
         <h4 class="subtitle is-4"><i class="fas fa-star" /> Favorites</h4>
         <div class="columns is-multiline">
           {#each Object.entries($browserOptions.favorites) as [packageName, packageItem]}
             {#each Object.entries(packageItem) as [favoriteName, favoriteItem]}
               {#if favoriteItem}
                 <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                  <ApiSummary {packageName} name={favoriteName} apiSummary={apiIndex[packageName][favoriteName]} />
+                  <ApiSummaryCard {packageName} apiName={favoriteName} apiSummary={apiIndex[packageName][favoriteName]} />
                 </div>
               {/if}
             {/each}
           {/each}
         </div>
       {/if}
+      <!-- All items -->
       {#each Object.entries(apiIndex) as [packageName, packageItem]}
         <h4 class="subtitle is-4">{packageName}</h4>
         <div class="columns is-multiline">
-          {#each Object.entries(packageItem) as [apiName, apiItem]}
-            <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-              <ApiSummary {packageName} name={apiName} apiSummary={apiItem} />
-            </div>
+          {#each Object.entries(packageItem) as [apiName, apiSummary]}
+            {#if apiSummaryMatchFilters(apiSummary, filters)}
+              <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
+                <ApiSummaryCard {packageName} {apiName} {apiSummary} />
+              </div>
+            {/if}
           {/each}
         </div>
       {/each}
     {:else}
+      <!-- Search results items -->
       <div class="columns is-multiline">
         {#each searchResults as searchResult}
           <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-            <ApiSummary packageName={searchResult.item.packageName} name={searchResult.item.apiName} apiSummary={searchResult.item.apiSummary} searchMatches={searchResult.matches} />
+            <ApiSummaryCard packageName={searchResult.item.packageName} apiName={searchResult.item.apiName} apiSummary={searchResult.item.apiSummary} searchMatches={searchResult.matches} />
           </div>
         {/each}
       </div>

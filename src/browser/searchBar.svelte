@@ -1,11 +1,12 @@
 <script lang="ts">
-    import type { ServiceTags } from 'cli/buildConfig';
-    import { getBrowserFiltersCopy } from 'common/globals';
+    import { onMount } from 'svelte';
+    import type { ServiceTags } from '../cli/buildConfig';
+    import { getBrowserFiltersCopy } from '../common/globals';
 
     export let searchText: string = '';
-    export let filters: ServiceTags = getBrowserFiltersCopy();
+    export let filters: ServiceTags;
     let showFilters: boolean = false;
-    let hasFilters = Object.keys(filters).length > 0;
+    let hasFilters = false;
 
     function resetFilters() {
         filters = getBrowserFiltersCopy();
@@ -17,6 +18,11 @@
     function focus(el: HTMLElement) {
         el.focus();
     }
+
+    onMount(() => {
+        filters = getBrowserFiltersCopy();
+        hasFilters = Object.keys(filters).length > 0;
+    });
 </script>
 
 <div class="block">
