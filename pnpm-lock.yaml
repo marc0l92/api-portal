@@ -82,6 +82,9 @@ devDependencies:
   '@types/plantuml-encoder':
     specifier: ^1.4.0
     version: 1.4.0
+  '@types/pluralize':
+    specifier: ^0.0.30
+    version: 0.0.30
   '@types/swagger-ui':
     specifier: ^3.52.0
     version: 3.52.0
@@ -1981,6 +1984,10 @@ packages:
     resolution: {integrity: sha512-d9HnMblRI20DP/KLa95DRxYFF6qjXc4/VfRP5XW7+wkkmWp0JQnRSbEiSz9YoF9hV/9npifohpfioMIvYmMrvw==}
     dependencies:
       '@types/node': 18.15.11
+    dev: true
+
+  /@types/pluralize@0.0.30:
+    resolution: {integrity: sha512-kVww6xZrW/db5BR9OqiT71J9huRdQ+z/r+LbDuT7/EK50mCmj5FoaIARnVv0rvjUS/YpDox0cDU9lpQT011VBA==}
     dev: true
 
   /@types/prettier@2.7.2:

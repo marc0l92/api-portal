@@ -1,4 +1,4 @@
-const pluralize = require('pluralize')
+import * as pluralize from 'pluralize'
 import { queryDictionary } from './dictionaryApi'
 
 export enum ApiTokenType {

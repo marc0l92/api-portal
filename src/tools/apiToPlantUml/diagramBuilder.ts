@@ -101,11 +101,10 @@ export default class DiagramBuilder {
         }
         switch (property.type) {
             case ModelType.Array:
-                const arrayItems = property.items
-                this.buildField(name, `[${this.getDefName(arrayItems)}]`, mandatory)
-                if (arrayItems.type === ModelType.Object) {
-                    if (isDefinition(arrayItems)) {
-                        usedDefinitions[this.getDefName(arrayItems)] = arrayItems
+                this.buildField(name, `[${this.getDefName(property.items)}]`, mandatory)
+                if (property.items.type === ModelType.Object) {
+                    if (isDefinition(property.items)) {
+                        usedDefinitions[this.getDefName(property.items)] = property.items
                     }
                 }
                 break

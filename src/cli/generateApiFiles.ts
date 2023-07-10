@@ -8,15 +8,10 @@ import { compressToArray } from '../common/compress'
 import type { Api } from '../common/api/api'
 import { apiFactory } from '../common/api/apiFactory'
 import { ReferenceNotFoundError } from '../common/api/refParser'
-import { API_SUFFIX, API_INDEX_FILE_PATH, INPUT_FOLDER, MAX_PARALLEL_VALIDATIONS, MAX_VERSION_DIGITS, OUTPUT_FOLDER, VALIDATION_SUFFIX } from './cliConstants'
+import { API_SUFFIX, API_INDEX_FILE_PATH, INPUT_FOLDER, MAX_PARALLEL_VALIDATIONS, OUTPUT_FOLDER, VALIDATION_SUFFIX } from './cliConstants'
 import { validateApiDoc } from './validateApi'
-import { getEmptyApiIndex, type ApiIndex, type ApiIndexItem, CURRENT_API_INDEX_VERSION } from '../common/api/apiIndex'
-
-interface ApiRelationships {
-    [path: string]: {
-        [key: string]: string
-    }
-}
+import { ApiIndex } from 'common/api/apiIndex'
+import { apiIndexFromFile } from './cliCommon'
 
 function dateNow(): string {
     return new Date().toISOString()
@@ -32,11 +27,11 @@ function deleteFilesByHash(fileName: string): void {
 }
 
 function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex: ApiIndex, fileNames: string[]): void {
-    for (const apiHash in apiIndex.apis) {
+    for (const apiHash of apiIndex.getApisHash()) {
         const position = fileNames.indexOf(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`)
         if (position === -1) {
             console.warn('File not found on disk, deleting index entry:', `${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`)
-            delete apiIndex.apis[apiHash]
+            apiIndex.deleteApiRaw(apiHash)
         } else {
             fileNames.splice(position, 1)
         }
@@ -48,13 +43,7 @@ function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex: ApiIndex, fileNames: 
 }
 
 async function loadAndValidateApiIndex(): Promise<ApiIndex> {
-    let apiIndex: ApiIndex = getEmptyApiIndex()
-    if (fs.existsSync(API_INDEX_FILE_PATH)) {
-        const apiIndexFromFile: ApiIndex = fs.readJsonSync(API_INDEX_FILE_PATH)
-        if (apiIndexFromFile.indexVersion === CURRENT_API_INDEX_VERSION) {
-            apiIndex = apiIndexFromFile
-        }
-    }
+    const apiIndex = apiIndexFromFile()
     const fileNames = await glob.glob(`${OUTPUT_FOLDER}**/*${API_SUFFIX}`, { platform: 'linux' })
     deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames)
     return apiIndex
@@ -62,89 +51,6 @@ async function loadAndValidateApiIndex(): Promise<ApiIndex> {
 
 async function writeApi(apiDoc: any, apiHash: string): Promise<void> {
     await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, compressToArray(JSON.stringify(apiDoc)))
-}
-
-function isSmallerVersion(v1: string, v2: string): number {
-    function versionToNumber(v: string | null): number {
-        let total = 0
-        let i = 0
-        if (typeof v === 'string') {
-            for (const split of v.split('.').reverse()) {
-                total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS)
-                i++
-            }
-        }
-        return total
-    }
-    return versionToNumber(v2) - versionToNumber(v1)
-}
-
-function isSmallerFileName(f1: string, f2: string): number {
-    return f1.length - f2.length
-}
-
-function isNewerApiIndexItem(currentItem: ApiIndexItem, newItem: ApiIndexItem) {
-    return isSmallerVersion(currentItem.versionName, newItem.versionName) || (
-        currentItem.versionName === newItem.versionName && isSmallerFileName(currentItem.fileName, newItem.fileName)
-    )
-}
-
-function generateRelationships(apiIndex: ApiIndex): ApiIndex {
-    const relationships: ApiRelationships = {}
-    for (const apiHash in apiIndex.apis) {
-        const apiIndexItem = apiIndex.apis[apiHash]
-        const apiPath = objectHash(apiIndexItem.packageName + apiIndexItem.apiName)
-        const apiVersionPath = objectHash(apiIndexItem.packageName + apiIndexItem.apiName + apiIndexItem.versionName)
-        if (!(apiPath in relationships)) {
-            relationships[apiPath] = {}
-        }
-        if (!(apiVersionPath in relationships)) {
-            relationships[apiVersionPath] = {}
-        }
-        relationships[apiPath][apiIndexItem.versionName] = apiHash
-        relationships[apiVersionPath][apiIndexItem.fileName] = apiHash
-
-        if (!(apiIndexItem.packageName in apiIndex.packages)) {
-            apiIndex.packages[apiIndexItem.packageName] = {}
-        }
-        if (!(apiIndexItem.apiName in apiIndex.packages[apiIndexItem.packageName])) {
-            apiIndex.packages[apiIndexItem.packageName][apiIndexItem.apiName] = apiHash
-        } else {
-            const currentApiHash = apiIndex.packages[apiIndexItem.packageName][apiIndexItem.apiName]
-            if (isNewerApiIndexItem(apiIndex.apis[currentApiHash], apiIndexItem)) {
-                apiIndex.packages[apiIndexItem.packageName][apiIndexItem.apiName] = apiHash
-            }
-        }
-    }
-
-    for (const apiHash in apiIndex.apis) {
-        const apiIndexItem = apiIndex.apis[apiHash]
-        const apiPath = objectHash(apiIndexItem.packageName + apiIndexItem.apiName)
-        const apiVersionPath = objectHash(apiIndexItem.packageName + apiIndexItem.apiName + apiIndexItem.versionName)
-        apiIndexItem.otherVersions = relationships[apiPath]
-        apiIndexItem.otherFiles = relationships[apiVersionPath]
-    }
-    return apiIndex
-}
-
-function sortRelationship(apiIndex: ApiIndex): ApiIndex {
-    const sortedApiIndex: ApiIndex = getEmptyApiIndex()
-    for (const packageName of Object.keys(apiIndex.packages).sort()) {
-        sortedApiIndex.packages[packageName] = {}
-        for (const apiName of Object.keys(apiIndex.packages[packageName]).sort()) {
-            sortedApiIndex.packages[packageName][apiName] = apiIndex.packages[packageName][apiName]
-        }
-    }
-    for (const apiHash in apiIndex.apis) {
-        sortedApiIndex.apis[apiHash] = apiIndex.apis[apiHash]
-        sortedApiIndex.apis[apiHash].otherVersions = Object.fromEntries(
-            Object.entries(apiIndex.apis[apiHash].otherVersions).sort(([k1, v1], [k2, v2]) => isSmallerVersion(k1, k2))
-        )
-        sortedApiIndex.apis[apiHash].otherFiles = Object.fromEntries(
-            Object.entries(apiIndex.apis[apiHash].otherFiles).sort(([k1, v1], [k2, v2]) => isSmallerFileName(k1, k2))
-        )
-    }
-    return sortedApiIndex
 }
 
 async function parseApi(apiObject: any): Promise<Api> {
@@ -163,7 +69,7 @@ async function parseApi(apiObject: any): Promise<Api> {
 }
 
 export async function generateApiFiles(appConfig: BuildConfig) {
-    const apiIndex: ApiIndex = getEmptyApiIndex()
+    const apiIndex = new ApiIndex()
     const apiIndexHashes: { [hash: string]: boolean } = {}
     let validationPromises: Promise<any>[] = []
 
@@ -182,10 +88,10 @@ export async function generateApiFiles(appConfig: BuildConfig) {
             if (!(apiHash in apiIndexHashes)) {
                 apiIndexHashes[apiHash] = true
 
-                if (apiHash in oldApiIndex.apis) {
-                    apiIndex.apis[apiHash] = oldApiIndex.apis[apiHash]
+                if (oldApiIndex.getApi(apiHash)) {
+                    apiIndex.addApi(oldApiIndex.getApi(apiHash))
                 } else {
-                    apiIndex.apis[apiHash] = {
+                    apiIndex.addApi({
                         packageName,
                         apiName: api.getName(),
                         versionName: api.getVersion(),
@@ -202,7 +108,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
                             tags: [],
                         })),
                         tags: [],
-                    }
+                    })
 
                     await writeApi(apiDoc, apiHash)
                     validationPromises.push(validateApiDoc(apiDoc, apiHash, appConfig).catch((reason: string) => {
@@ -221,7 +127,9 @@ export async function generateApiFiles(appConfig: BuildConfig) {
         }
     }
 
-    await fs.outputJson(API_INDEX_FILE_PATH, sortRelationship(generateRelationships(apiIndex)))
+    apiIndex.generateRelationships()
+    apiIndex.sortRelationship()
+    await fs.outputJson(API_INDEX_FILE_PATH, apiIndex)
     await Promise.allSettled(validationPromises)
     loadAndValidateApiIndex() // Delete files that are not part of the new index
 }

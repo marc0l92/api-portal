@@ -59,19 +59,19 @@ export function compareApis(leftApi: Api, rightApi: Api) {
 
 function extractMetadataFromApi(api: Api) {
     return Object.fromEntries(Object.entries(api.toJson())
-        .filter(([key, _]) => ['paths', 'definitions', 'responses', 'parameters', 'components'].indexOf(key) === -1)
+        .filter(([key]) => ['paths', 'definitions', 'responses', 'parameters', 'components'].indexOf(key) === -1)
     )
 }
 
 function extractMetadataFromService(service: ApiService) {
     return Object.fromEntries(Object.entries(service.toJson())
-        .filter(([key, _]) => ['parameters', 'responses', 'requestBody'].indexOf(key) === -1)
+        .filter(([key]) => ['parameters', 'responses', 'requestBody'].indexOf(key) === -1)
     )
 }
 
 function extractMetadataFromApiParameter(apiParameter: ApiParameterDoc) {
     return Object.fromEntries(Object.entries(apiParameter)
-        .filter(([key, _]) => ['schema'].indexOf(key) === -1)
+        .filter(([key]) => ['schema'].indexOf(key) === -1)
     )
 }
 

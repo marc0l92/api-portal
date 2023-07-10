@@ -20,7 +20,7 @@ export type SearchResult = Fuse.FuseResult<ApiIndexItem>
 export type SearchMatch = Fuse.FuseResultMatch;
 
 export function initializeSearch(apiIndex: ApiIndex) {
-    fuse = new Fuse(Object.values(apiIndex.apis), searchOptions)
+    fuse = new Fuse(Object.values(apiIndex.getUniqueApis()), searchOptions)
 }
 
 export function searchInApiIndexFlat(searchText: string): SearchResult[] {

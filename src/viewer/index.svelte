@@ -16,18 +16,18 @@
   import Errors from '../components/errors.svelte';
   import { getOptions, storeOptions } from '../common/localStorage';
   import LazyLoad from '../components/lazyLoad.svelte';
-  import { getApiIndexPath, getBasePath } from '../common/globals';
+  import { getBasePath } from '../common/globals';
   import type { ApiValidation } from './validation';
   import Metadata from './metadata.svelte';
   import { getApiStatusName } from '../common/api/apiStatus';
   import InputApi from '../components/inputApi.svelte';
   import { decompressFromArray } from '../common/compress';
-  import { getApiIndexItemFromApi, type ApiIndex, type ApiIndexItem, getEmptyApiIndex } from '../common/api/apiIndex';
+  import { ApiIndex, ApiIndexItem } from '../common/api/apiIndex';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const basePath = getBasePath();
 
-  let apiIndex: ApiIndex = getEmptyApiIndex();
+  let apiIndex: ApiIndex = new ApiIndex();
   let apiIndexItem: ApiIndexItem = null;
   let selectedTab: string = 'api';
   let apiHash: string = null;
@@ -84,12 +84,11 @@
   }
 
   async function fetchApiIndex() {
-    const response = await fetch(getApiIndexPath());
-    if (response.ok) {
-      apiIndex = (await response.json()) as ApiIndex;
-      apiIndexItem = apiIndex.apis[apiHash];
-    } else {
-      errors = [...errors, 'Error while fetching api index: ' + response.status];
+    try {
+      apiIndex = await ApiIndex.fetch();
+      apiIndexItem = apiIndex.getApi(apiHash);
+    } catch (e) {
+      errors = [...errors, e];
     }
   }
 
@@ -103,7 +102,7 @@
         api = apiFactory(apiDoc);
         api.setModelsTitle();
         releaseNotes = api.getReleaseNotes();
-        apiIndexItem = getApiIndexItemFromApi(api);
+        apiIndexItem = ApiIndexItem.fromApi(api);
       }
     } catch (e) {
       errors = [...errors, 'Error: ' + e.message];
@@ -129,7 +128,7 @@
     } else if (urlParams.has('tmp-api')) {
       apiHash = urlParams.get('tmp-api');
       await fetchApi('tmp-apis');
-      apiIndexItem = getApiIndexItemFromApi(api);
+      apiIndexItem = ApiIndexItem.fromApi(api);
       fetchValidation('tmp-apis');
     } else {
       showApiInput = true;
@@ -204,9 +203,9 @@
                         <p class="menu-label dropdown-item">{getApiStatusName(status)}</p>
                         <ul class="menu-list">
                           {#each Object.entries(apiIndexItem.otherFiles) as [fileName, fileNameApiHash]}
-                            {#if apiIndex.apis[fileNameApiHash].status === status}
+                            {#if apiIndex.getApi(fileNameApiHash).status === status}
                               <li>
-                                <a href="{basePath}/viewer.html?api={fileNameApiHash}" class="dropdown-item status-{apiIndex.apis[fileNameApiHash].status}">
+                                <a href="{basePath}/viewer.html?api={fileNameApiHash}" class="dropdown-item status-{apiIndex.getApi(fileNameApiHash).status}">
                                   {#if fileName === apiIndexItem.fileName}
                                     <strong>{fileName}</strong>
                                   {:else}

@@ -2,15 +2,7 @@ import type { ServiceTags, BuildConfig } from './buildConfig'
 import fs from 'fs-extra'
 import { API_INDEX_FILE_PATH, BACKUP_SUFFIX, SERVICES_TAGS_SCHEMA } from './cliConstants'
 import type { ServiceCriteria, ServicesTagsConfig, ServicesTagsRule } from './servicesTagsConfig'
-import { getEmptyApiIndex, type ApiIndex, type ApiIndexItem } from '../common/api/apiIndex'
-
-function loadApiIndex(): ApiIndex {
-    let apiIndex: ApiIndex = getEmptyApiIndex()
-    if (fs.existsSync(API_INDEX_FILE_PATH)) {
-        apiIndex = fs.readJsonSync(API_INDEX_FILE_PATH)
-    }
-    return apiIndex
-}
+import { apiIndexFromFile } from './cliCommon'
 
 function loadServicesTags(defaultFilters: ServiceTags, servicesTagsFileName: string): ServicesTagsConfig {
     let servicesTags: ServicesTagsConfig = null
@@ -92,12 +84,11 @@ function stringifyServiceTags(servicesTagsList: ServiceTags[]): string[] {
 
 export async function applyServicesTags(appConfig: BuildConfig, servicesTagsFileName: string) {
     const defaultFilters: ServiceTags = appConfig?.browser?.filters || {}
-    const apiIndex: ApiIndex = loadApiIndex()
+    const apiIndex = apiIndexFromFile()
     const servicesTagsConfig: ServicesTagsConfig = loadServicesTags(defaultFilters, servicesTagsFileName)
     const servicesTagsRules: ServicesTagsRule[] = servicesTagsConfig?.rules || []
 
-    for (const apiHash in apiIndex.apis) {
-        const apiIndexItem: ApiIndexItem = apiIndex.apis[apiHash]
+    for (const apiIndexItem of apiIndex.getApis()) {
         for (const service of apiIndexItem.services) {
             const matchingRules = getMatchingServicesTags(servicesTagsRules, apiIndexItem)
             service.tags = stringifyServiceTags([...matchingRules.map(r => r.tags)])

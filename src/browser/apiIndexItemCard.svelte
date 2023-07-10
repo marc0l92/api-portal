@@ -24,9 +24,9 @@
     $: searchMatchApiName = searchMatches.find((m) => m.key === 'apiName') || null;
 
     function getWorstStateForVersion(apiHash: string): string {
-        const apiIndexItemOfVersion = apiIndex.apis[apiHash];
+        const apiIndexItemOfVersion = apiIndex.getApi(apiHash);
         const maxStatus = Object.values(apiIndexItemOfVersion.otherFiles)
-            .map((otherFileApiHash) => apiIndex.apis[otherFileApiHash].status)
+            .map((otherFileApiHash) => apiIndex.getApi(otherFileApiHash).status)
             .reduce((prev, curr) => Math.max(prev, curr));
         return `status-${maxStatus}`;
     }

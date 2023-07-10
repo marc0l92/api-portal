@@ -43,7 +43,7 @@
                     await fetchApiIndex();
                     initializeSearch(apiIndex);
                     if (apiIndex && browserHash) {
-                        browserSelectedApi = apiIndex.apis[browserHash];
+                        browserSelectedApi = apiIndex.getApi(browserHash);
                         browserSearch = browserSelectedApi.packageName + ' ' + browserSelectedApi.apiName;
                     }
                 }
@@ -218,7 +218,7 @@
                             <div class="dropdown-menu" id="dropdown-menu" role="menu">
                                 <div class="dropdown-content">
                                     {#each Object.entries(browserSelectedApi.otherVersions) as [versionName, versionApiHash]}
-                                        <a href={''} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(apiIndex.apis[versionApiHash])}>
+                                        <a href={''} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(apiIndex.getApi(versionApiHash))}>
                                             {#if versionName === browserSelectedApi.versionName}
                                                 <strong>{versionName}</strong>
                                             {:else}
@@ -252,12 +252,12 @@
                                                 <p class="menu-label dropdown-item">{getApiStatusName(status)}</p>
                                                 <ul class="menu-list">
                                                     {#each Object.entries(browserSelectedApi.otherFiles) as [fileName, fileNameApiHash]}
-                                                        {#if apiIndex.apis[fileNameApiHash].status === status}
+                                                        {#if apiIndex.getApi(fileNameApiHash).status === status}
                                                             <li>
                                                                 <a
                                                                     href={''}
-                                                                    class="dropdown-item status-{apiIndex.apis[fileNameApiHash].status}"
-                                                                    on:click|preventDefault={() => onBrowserSearchResultsSelect(apiIndex.apis[fileNameApiHash])}
+                                                                    class="dropdown-item status-{apiIndex.getApi(fileNameApiHash).status}"
+                                                                    on:click|preventDefault={() => onBrowserSearchResultsSelect(apiIndex.getApi(fileNameApiHash))}
                                                                 >
                                                                     {#if fileName === browserSelectedApi.fileName}
                                                                         <strong>{fileName}</strong>

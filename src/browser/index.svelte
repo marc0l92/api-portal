@@ -6,10 +6,9 @@
   import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
   import SearchBar from './searchBar.svelte';
   import { globalOptions } from '../common/globalOptions';
-  import { getApiIndexPath } from '../common/globals';
   import type { ServiceTags } from '../cli/buildConfig';
   import { apiIndexItemMatchFilters, initializeSearch, searchInApiIndexFlat, type SearchResult } from '../common/search';
-  import type { ApiIndex } from '../common/api/apiIndex';
+  import { ApiIndex } from '../common/api/apiIndex';
   import ApiIndexItemCard from './apiIndexItemCard.svelte';
 
   let apiIndex: ApiIndex = null;
@@ -29,7 +28,7 @@
   function cleanFavorite() {
     for (const packageName in $browserOptions.favorites) {
       for (const apiName in $browserOptions.favorites[packageName]) {
-        if (!$browserOptions.favorites[packageName][apiName] || !apiIndex.packages[packageName] || !apiIndex.packages[packageName][apiName]) {
+        if (!$browserOptions.favorites[packageName][apiName] || !apiIndex.getApiByName(packageName, apiName)) {
           delete $browserOptions.favorites[packageName][apiName];
         }
       }
@@ -42,13 +41,12 @@
 
   onMount(async () => {
     browserOptionsMount();
-    const response = await fetch(getApiIndexPath());
-    if (response.ok) {
-      apiIndex = (await response.json()) as ApiIndex;
+    try {
+      apiIndex = await ApiIndex.fetch();
       initializeSearch(apiIndex);
       cleanFavorite();
-    } else {
-      errors = [...errors, 'Error while fetching api index: ' + response.status];
+    } catch (e) {
+      errors = [...errors, e];
     }
   });
   onDestroy(() => {
@@ -76,7 +74,7 @@
             {#each Object.entries(packageItem) as [favoriteName, favoriteItem]}
               {#if favoriteItem}
                 <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                  <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.apis[apiIndex.packages[packageName][favoriteName]]} />
+                  <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.getApiByName(packageName, favoriteName)} />
                 </div>
               {/if}
             {/each}
@@ -84,13 +82,13 @@
         </div>
       {/if}
       <!-- All items -->
-      {#each Object.entries(apiIndex.packages) as [packageName, packageItem]}
+      {#each Object.entries(apiIndex.getPackages()) as [packageName, packageItem]}
         <h4 class="subtitle is-4">{packageName}</h4>
         <div class="columns is-multiline">
           {#each Object.entries(packageItem) as [apiName, apiHash]}
-            {#if apiIndexItemMatchFilters(apiIndex.apis[apiHash], filters)}
+            {#if apiIndexItemMatchFilters(apiIndex.getApi(apiHash), filters)}
               <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.apis[apiHash]} />
+                <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.getApi(apiHash)} />
               </div>
             {/if}
           {/each}
