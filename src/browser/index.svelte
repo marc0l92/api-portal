@@ -65,7 +65,7 @@
   </section>
 
   <SearchBar bind:searchText bind:filters />
-  <Errors messages={errors} />
+  <Errors {errors} />
   {#if apiIndex}
     {#if !searchText || searchText.length < 2}
       {#if favoriteCount > 0}

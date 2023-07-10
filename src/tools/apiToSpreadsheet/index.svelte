@@ -49,7 +49,7 @@
       <SelectServices {services} servicesSelectSize={8} bind:selectedService />
     </div>
   {/if}
-  <Errors messages={errors} />
+  <Errors {errors} />
   {#if selectedService}
     <DownloadBar {selectedService} {services} apiName={api.getName()} />
   {/if}

@@ -70,7 +70,7 @@
 
 <Navbar activePage="compare" />
 <div class="container {$globalOptions.fluidLayout ? 'is-fluid' : ''}">
-  <Errors messages={['This feature is not completed yet']} />
+  <Errors errors={['This feature is not completed yet']} />
   <section class="hero is-small">
     <div class="hero-body">
       <h1 class="title">Api Compare</h1>
@@ -80,14 +80,14 @@
   <div class="columns">
     <div class="column">
       <InputApi on:apiChange={onApiChange(leftItem)} browserHash={leftItem.hash} storagePrefix={'left'} />
-      <Errors messages={leftItem.errors} />
+      <Errors errors={leftItem.errors} />
     </div>
     <div class="column is-center is-narrow">
       <p class="title is-2"><i class="fa-solid fa-right-long" /></p>
     </div>
     <div class="column">
       <InputApi on:apiChange={onApiChange(rightItem)} browserHash={rightItem.hash} storagePrefix={'right'} />
-      <Errors messages={rightItem.errors} />
+      <Errors errors={rightItem.errors} />
     </div>
   </div>
   {#if leftItem.api && rightItem.api}

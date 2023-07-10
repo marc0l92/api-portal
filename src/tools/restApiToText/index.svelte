@@ -45,7 +45,7 @@
     </div>
   </section>
   <InputUri on:uriChange={onUriChange} />
-  <Errors messages={apiTokens.errors} />
+  <Errors errors={apiTokens.errors} />
   {#if apiTokens.tokens.length > 0}
     <Result tokens={apiTokens.tokens} text={apiText} on:changeTokenType={onChangeTokenType} />
   {/if}

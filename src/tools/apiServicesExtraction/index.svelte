@@ -56,7 +56,7 @@
       </ul>
     </div>
   {/if}
-  <Errors messages={errors} />
+  <Errors {errors} />
   {#if api && servicesFilter.length > 0}
     <DownloadBar {api} {servicesFilter} />
   {/if}

@@ -4,19 +4,28 @@
     import { DiagramBuilderFormat, diagramBuilderOptions } from './diagramBuilderOptions';
     import { parseServiceDiagrams, type DiagramData } from './serviceDiagrams';
     import { generateAndDownloadZip, sanitizeFilename } from '../../common/filesUtils';
+    import Errors from 'components/errors.svelte';
 
     export let apiName: string = '';
     export let services: ApiService[] = [];
     export let selectedService: ApiService = null;
+    let errors: string[] = [];
     let isProcessing = false;
     let processingIndex = -1;
 
     async function addDiagramsDataToZip(zip: JSZip, diagramsData: DiagramData[], format: DiagramBuilderFormat) {
         for (const diagramData of diagramsData) {
             zip.file(sanitizeFilename(`${diagramData.name}.plantuml`), diagramData.uml);
-            const response = await fetch(diagramData.image);
-            if (response.ok) {
-                zip.file(sanitizeFilename(`${diagramData.name}.${format}`), await response.blob());
+            try {
+                const response = await fetch(diagramData.image);
+                if (response.ok) {
+                    zip.file(sanitizeFilename(`${diagramData.name}.${format}`), await response.blob());
+                } else {
+                    errors = [...errors, `${response.status} - ${response.statusText}`];
+                }
+            } catch (e) {
+                console.error(e);
+                errors = [...errors, e];
             }
         }
     }
@@ -24,6 +33,7 @@
     async function downloadSelectedService() {
         isProcessing = true;
         processingIndex = -1;
+        errors = [];
         if (selectedService) {
             const diagramsData = parseServiceDiagrams(selectedService, $diagramBuilderOptions);
             const zip = new JSZip();
@@ -36,6 +46,7 @@
     async function downloadAllServices() {
         isProcessing = true;
         processingIndex = 0;
+        errors = [];
         if (services.length > 0) {
             const zip = new JSZip();
             for (const service of services) {
@@ -60,6 +71,7 @@
         </div>
     {/if}
 </div>
+<Errors {errors} level="warning" />
 
 <style>
 </style>

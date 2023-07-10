@@ -239,7 +239,7 @@
       </div>
     </section>
   {/if}
-  <Errors messages={errors} />
+  <Errors {errors} />
   {#if api}
     <Tabs bind:selectedTab hasReleaseNotes={!!releaseNotes} {validationData} />
     <div class="box flat-top">
