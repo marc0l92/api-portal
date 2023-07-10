@@ -1,5 +1,5 @@
-import { ApiType, type Api, type ApiService } from "common/api/api";
-import { getApiDocumentationVersion } from "common/api/apiFactory";
+import { ApiType, type Api, type ApiService } from '../../common/api/api'
+import { getApiDocumentationVersion } from '../../common/api/apiFactory'
 
 
 export interface ApiServiceFilterItem {

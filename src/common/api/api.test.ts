@@ -1,7 +1,7 @@
-import { ApiSwagger, type ApiSwaggerDoc } from "./apiSwagger"
-import { ApiOpenApi, type ApiOpenApiDoc } from "./apiOpenApi"
-import type { ApiGenericDoc, ApiParameterDoc } from "./api"
-import { apiFactory } from "./apiFactory"
+import { ApiSwagger, type ApiSwaggerDoc } from './apiSwagger'
+import { ApiOpenApi, type ApiOpenApiDoc } from './apiOpenApi'
+import type { ApiGenericDoc, ApiParameterDoc } from './api'
+import { apiFactory } from './apiFactory'
 
 const kPathParameter1: ApiParameterDoc = {
     in: 'path',

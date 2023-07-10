@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { Api } from 'common/api/api';
-    import { downloadFile, objToBlob } from 'common/filesUtils';
+    import type { Api } from '../../common/api/api';
+    import { downloadFile, objToBlob } from '../../common/filesUtils';
     import { filterApiServices, type ApiServiceFilterItem } from './apiFilter';
 
     export let api: Api = null;

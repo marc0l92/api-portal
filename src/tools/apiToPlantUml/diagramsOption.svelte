@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { isChangeDiagramServerAllowed } from 'common/globals';
+    import { isChangeDiagramServerAllowed } from '../../common/globals';
     import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, DiagramBuilderFormat, diagramBuilderOptions } from './diagramBuilderOptions';
 
     function resetToDefaultValue() {

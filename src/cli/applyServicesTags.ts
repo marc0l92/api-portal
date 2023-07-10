@@ -1,11 +1,11 @@
-import type { ApiIndex } from "common/api/apiIndex"
-import type { ServiceTags, BuildConfig } from "./buildConfig"
+import type { ServiceTags, BuildConfig } from './buildConfig'
 import fs from 'fs-extra'
-import { API_INDEX_FILE_PATH, BACKUP_SUFFIX, SERVICES_TAGS_SCHEMA } from "./cliConstants"
-import type { ServiceCriteria, ServicesTagsConfig, ServicesTagsRule } from "./servicesTagsConfig"
+import { API_INDEX_FILE_PATH, BACKUP_SUFFIX, SERVICES_TAGS_SCHEMA } from './cliConstants'
+import type { ServiceCriteria, ServicesTagsConfig, ServicesTagsRule } from './servicesTagsConfig'
+import { getEmptyApiIndex, type ApiIndex, type ApiIndexItem } from '../common/api/apiIndex'
 
 function loadApiIndex(): ApiIndex {
-    let apiIndex: ApiIndex = {}
+    let apiIndex: ApiIndex = getEmptyApiIndex()
     if (fs.existsSync(API_INDEX_FILE_PATH)) {
         apiIndex = fs.readJsonSync(API_INDEX_FILE_PATH)
     }
@@ -74,26 +74,20 @@ function getMatchingServicesTags(servicesTagsRules: ServicesTagsRule[], serviceC
     ))
 }
 
-function mergeServiceTags(servicesTagsList: ServiceTags[]): ServiceTags {
-    const mergedServiceTags: ServiceTags = {}
+function stringifyServiceTags(servicesTagsList: ServiceTags[]): string[] {
+    const stringified: string[] = []
     for (const servicesTags of servicesTagsList) {
         for (const sectionName in servicesTags) {
             for (const categoryName in servicesTags[sectionName]) {
                 for (const propertyName in servicesTags[sectionName][categoryName]) {
                     if (servicesTags[sectionName][categoryName][propertyName]) {
-                        if (!(sectionName in mergedServiceTags)) {
-                            mergedServiceTags[sectionName] = {}
-                        }
-                        if (!(categoryName in mergedServiceTags[sectionName])) {
-                            mergedServiceTags[sectionName][categoryName] = {}
-                        }
-                        mergedServiceTags[sectionName][categoryName][propertyName] = true
+                        stringified.push(`${sectionName}/${categoryName}/${propertyName}`)
                     }
                 }
             }
         }
     }
-    return mergedServiceTags
+    return stringified
 }
 
 export async function applyServicesTags(appConfig: BuildConfig, servicesTagsFileName: string) {
@@ -102,24 +96,14 @@ export async function applyServicesTags(appConfig: BuildConfig, servicesTagsFile
     const servicesTagsConfig: ServicesTagsConfig = loadServicesTags(defaultFilters, servicesTagsFileName)
     const servicesTagsRules: ServicesTagsRule[] = servicesTagsConfig?.rules || []
 
-    for (const packageName in apiIndex) {
-        for (const apiName in apiIndex[packageName]) {
-            for (const versionName in apiIndex[packageName][apiName]) {
-                for (const fileName in apiIndex[packageName][apiName][versionName]) {
-                    const apiIndexItem = apiIndex[packageName][apiName][versionName][fileName]
-                    if (apiIndexItem.services) {
-                        for (const service of apiIndexItem.services) {
-                            const matchingRules = getMatchingServicesTags(servicesTagsRules, {
-                                packageName, apiName, versionName, fileName, path: service.path, method: service.method,
-                                metadata: apiIndexItem.metadata
-                            })
-                            service.tags = mergeServiceTags([...matchingRules.map(r => r.tags), service.tags])
-                        }
-                    }
-                    apiIndexItem.tags = mergeServiceTags([...apiIndexItem.services?.map(s => s.tags) || []])
-                }
-            }
+    for (const apiHash in apiIndex.apis) {
+        const apiIndexItem: ApiIndexItem = apiIndex.apis[apiHash]
+        for (const service of apiIndexItem.services) {
+            const matchingRules = getMatchingServicesTags(servicesTagsRules, apiIndexItem)
+            service.tags = stringifyServiceTags([...matchingRules.map(r => r.tags)])
         }
+        apiIndexItem.tags = [...(new Set([...apiIndexItem.services.map(s => s.tags)].flat()))]
     }
+
     await fs.outputJson(API_INDEX_FILE_PATH, apiIndex)
 }

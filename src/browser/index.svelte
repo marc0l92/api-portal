@@ -1,16 +1,16 @@
 <script lang="ts">
-  import Errors from 'components/errors.svelte';
-  import Footer from 'components/footer.svelte';
+  import Errors from '../components/errors.svelte';
+  import Footer from '../components/footer.svelte';
   import { onDestroy, onMount } from 'svelte';
   import Navbar from '../components/navbar.svelte';
-  import { apiIndexToApiIndexFlat, type ApiIndex } from '../common/api/apiIndex';
-  import ApiSummaryCard from './apiSummaryCard.svelte';
   import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
   import SearchBar from './searchBar.svelte';
-  import { globalOptions } from 'common/globalOptions';
-  import { getApiIndexPath } from 'common/globals';
-  import type { ServiceTags } from 'cli/buildConfig';
-  import { apiSummaryMatchFilters, initializeSearch, searchInApiIndexFlat, type SearchResult } from 'common/search';
+  import { globalOptions } from '../common/globalOptions';
+  import { getApiIndexPath } from '../common/globals';
+  import type { ServiceTags } from '../cli/buildConfig';
+  import { apiIndexItemMatchFilters, initializeSearch, searchInApiIndexFlat, type SearchResult } from '../common/search';
+  import type { ApiIndex } from '../common/api/apiIndex';
+  import ApiIndexItemCard from './apiIndexItemCard.svelte';
 
   let apiIndex: ApiIndex = null;
   let searchResults: SearchResult[] = [];
@@ -29,7 +29,7 @@
   function cleanFavorite() {
     for (const packageName in $browserOptions.favorites) {
       for (const apiName in $browserOptions.favorites[packageName]) {
-        if (!$browserOptions.favorites[packageName][apiName] || !apiIndex[packageName] || !apiIndex[packageName][apiName]) {
+        if (!$browserOptions.favorites[packageName][apiName] || !apiIndex.packages[packageName] || !apiIndex.packages[packageName][apiName]) {
           delete $browserOptions.favorites[packageName][apiName];
         }
       }
@@ -45,7 +45,7 @@
     const response = await fetch(getApiIndexPath());
     if (response.ok) {
       apiIndex = (await response.json()) as ApiIndex;
-      initializeSearch(apiIndexToApiIndexFlat(apiIndex));
+      initializeSearch(apiIndex);
       cleanFavorite();
     } else {
       errors = [...errors, 'Error while fetching api index: ' + response.status];
@@ -76,7 +76,7 @@
             {#each Object.entries(packageItem) as [favoriteName, favoriteItem]}
               {#if favoriteItem}
                 <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                  <ApiSummaryCard {packageName} apiName={favoriteName} apiSummary={apiIndex[packageName][favoriteName]} />
+                  <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.apis[apiIndex.packages[packageName][favoriteName]]} />
                 </div>
               {/if}
             {/each}
@@ -84,13 +84,13 @@
         </div>
       {/if}
       <!-- All items -->
-      {#each Object.entries(apiIndex) as [packageName, packageItem]}
+      {#each Object.entries(apiIndex.packages) as [packageName, packageItem]}
         <h4 class="subtitle is-4">{packageName}</h4>
         <div class="columns is-multiline">
-          {#each Object.entries(packageItem) as [apiName, apiSummary]}
-            {#if apiSummaryMatchFilters(apiSummary, filters)}
+          {#each Object.entries(packageItem) as [apiName, apiHash]}
+            {#if apiIndexItemMatchFilters(apiIndex.apis[apiHash], filters)}
               <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                <ApiSummaryCard {packageName} {apiName} {apiSummary} />
+                <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.apis[apiHash]} />
               </div>
             {/if}
           {/each}
@@ -101,7 +101,7 @@
       <div class="columns is-multiline">
         {#each searchResults as searchResult}
           <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-            <ApiSummaryCard packageName={searchResult.item.packageName} apiName={searchResult.item.apiName} apiSummary={searchResult.item.apiSummary} searchMatches={searchResult.matches} />
+            <ApiIndexItemCard {apiIndex} apiIndexItem={searchResult.item} searchMatches={searchResult.matches} />
           </div>
         {/each}
       </div>

@@ -1,7 +1,7 @@
 <script lang="ts">
     import JSZip from 'jszip';
-    import type { ApiService } from 'common/api/api';
-    import { downloadFile, generateAndDownloadZip, sanitizeFilename, bufferToBlob } from 'common/filesUtils';
+    import type { ApiService } from '../../common/api/api';
+    import { downloadFile, generateAndDownloadZip, sanitizeFilename, bufferToBlob } from '../../common/filesUtils';
     import { generateServiceWorkbook } from './swaggerParsing';
     import { modelPropertiesToTables, tablesMapToXLSX } from './xlsxUtils';
 

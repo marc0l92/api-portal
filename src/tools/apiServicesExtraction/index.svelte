@@ -2,12 +2,12 @@
   import Navbar from '../../components/navbar.svelte';
   import InputApi from '../../components/inputApi.svelte';
   import Errors from 'components/errors.svelte';
-  import type { Api } from 'common/api/api';
-  import { apiFactory } from 'common/api/apiFactory';
+  import type { Api } from '../../common/api/api';
+  import { apiFactory } from '../../common/api/apiFactory';
   import Footer from 'components/footer.svelte';
   import DownloadBar from './downloadBar.svelte';
   import type { ApiServiceFilterItem } from './apiFilter';
-  import { globalOptions } from 'common/globalOptions';
+  import { globalOptions } from '../../common/globalOptions';
 
   let api: Api = null;
   let servicesFilter: ApiServiceFilterItem[] = [];

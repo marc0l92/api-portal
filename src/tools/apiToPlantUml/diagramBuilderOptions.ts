@@ -1,6 +1,6 @@
-import { getDiagramsDefaultServer } from "common/globals"
-import { getOptions, storeOptions } from "common/localStorage"
-import { writable, type Unsubscriber } from "svelte/store"
+import { getDiagramsDefaultServer } from '../../common/globals'
+import { getOptions, storeOptions } from '../../common/localStorage'
+import { writable, type Unsubscriber } from 'svelte/store'
 
 export enum DiagramBuilderFormat {
     SVG = 'svg',

@@ -1,9 +1,9 @@
 <script lang="ts">
   import yaml from 'js-yaml';
-  import type { Api, ApiReleaseNotes } from 'common/api/api';
-  import Footer from 'components/footer.svelte';
+  import type { Api, ApiReleaseNotes } from '../common/api/api';
+  import Footer from '../components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
-  import { apiFactory } from 'common/api/apiFactory';
+  import { apiFactory } from '../common/api/apiFactory';
   import Tabs from './tabs.svelte';
   import ApiTab from './apiTab.svelte';
   import RawTab from './rawTab.svelte';
@@ -13,21 +13,22 @@
   import TablesTab from './tablesTab.svelte';
   import { globalOptions } from '../common/globalOptions';
   import { onMount } from 'svelte';
-  import Errors from 'components/errors.svelte';
-  import { getOptions, storeOptions } from 'common/localStorage';
-  import LazyLoad from 'components/lazyLoad.svelte';
-  import { getApiSummaryFlatByHash, getApiSummaryFlatFromApi, type ApiIndex, type ApiSummaryFlat } from 'common/api/apiIndex';
-  import { getApiIndexPath, getBasePath } from 'common/globals';
+  import Errors from '../components/errors.svelte';
+  import { getOptions, storeOptions } from '../common/localStorage';
+  import LazyLoad from '../components/lazyLoad.svelte';
+  import { getApiIndexPath, getBasePath } from '../common/globals';
   import type { ApiValidation } from './validation';
   import Metadata from './metadata.svelte';
-  import { getApiStatusName } from 'common/api/apiStatus';
-  import InputApi from 'components/inputApi.svelte';
-  import { decompressFromArray } from 'common/compress';
+  import { getApiStatusName } from '../common/api/apiStatus';
+  import InputApi from '../components/inputApi.svelte';
+  import { decompressFromArray } from '../common/compress';
+  import { getApiIndexItemFromApi, type ApiIndex, type ApiIndexItem, getEmptyApiIndex } from '../common/api/apiIndex';
 
   const LOCAL_STORAGE_SELECTED_TAB_KEY = 'viewer.selectedTab';
   const basePath = getBasePath();
 
-  let apiSummary: ApiSummaryFlat = null;
+  let apiIndex: ApiIndex = getEmptyApiIndex();
+  let apiIndexItem: ApiIndexItem = null;
   let selectedTab: string = 'api';
   let apiHash: string = null;
   let apiDoc: any = null;
@@ -82,11 +83,11 @@
     }
   }
 
-  async function fetchApiSummary() {
+  async function fetchApiIndex() {
     const response = await fetch(getApiIndexPath());
     if (response.ok) {
-      const apiIndex = (await response.json()) as ApiIndex;
-      apiSummary = getApiSummaryFlatByHash(apiHash, apiIndex);
+      apiIndex = (await response.json()) as ApiIndex;
+      apiIndexItem = apiIndex.apis[apiHash];
     } else {
       errors = [...errors, 'Error while fetching api index: ' + response.status];
     }
@@ -95,14 +96,14 @@
   async function onInputApiChange(event: CustomEvent<{ apiObject: any }>) {
     try {
       api = null;
-      apiSummary = null;
+      apiIndexItem = null;
       errors = [];
       apiDoc = event.detail.apiObject;
       if (apiDoc) {
         api = apiFactory(apiDoc);
         api.setModelsTitle();
         releaseNotes = api.getReleaseNotes();
-        apiSummary = getApiSummaryFlatFromApi(api);
+        apiIndexItem = getApiIndexItemFromApi(api);
       }
     } catch (e) {
       errors = [...errors, 'Error: ' + e.message];
@@ -124,11 +125,11 @@
       apiHash = urlParams.get('api');
       fetchApi();
       fetchValidation();
-      fetchApiSummary();
+      fetchApiIndex();
     } else if (urlParams.has('tmp-api')) {
       apiHash = urlParams.get('tmp-api');
       await fetchApi('tmp-apis');
-      apiSummary = getApiSummaryFlatFromApi(api);
+      apiIndexItem = getApiIndexItemFromApi(api);
       fetchValidation('tmp-apis');
     } else {
       showApiInput = true;
@@ -154,19 +155,19 @@
     </section>
     <InputApi on:apiChange={onInputApiChange} />
   {/if}
-  {#if apiSummary}
+  {#if apiIndexItem}
     <section class="hero is-small">
       <div class="hero-body">
         <div class="columns">
           <div class="column">
-            <h1 class="title">{apiSummary.apiName}</h1>
-            <h3 class="subtitle">{apiSummary.packageName}</h3>
+            <h1 class="title">{apiIndexItem.apiName}</h1>
+            <h3 class="subtitle">{apiIndexItem.packageName}</h3>
           </div>
           <div class="column is-narrow">
             <div class="dropdown is-right {isVersionDropdownExpanded ? 'is-active' : ''}">
               <div class="dropdown-trigger">
                 <button class="button" on:click|stopPropagation={() => (isVersionDropdownExpanded = !isVersionDropdownExpanded)}>
-                  <span>{apiSummary.versionName}</span>
+                  <span>{apiIndexItem.versionName}</span>
                   <span class="icon is-small">
                     <i class="fas fa-angle-down" aria-hidden="true" />
                   </span>
@@ -174,9 +175,9 @@
               </div>
               <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content">
-                  {#each Object.entries(apiSummary.apiSummary) as [versionName, versionItem]}
-                    <a href="{basePath}/viewer.html?api={Object.values(versionItem)[0].hash}" class="dropdown-item">
-                      {#if versionName === apiSummary.versionName}
+                  {#each Object.entries(apiIndexItem.otherVersions) as [versionName, versionApiHash]}
+                    <a href="{basePath}/viewer.html?api={versionApiHash}" class="dropdown-item">
+                      {#if versionName === apiIndexItem.versionName}
                         <strong>{versionName}</strong>
                       {:else}
                         {versionName}
@@ -186,11 +187,11 @@
                 </div>
               </div>
             </div>
-            {#if Object.keys(apiSummary.apiSummary[apiSummary.versionName]).length !== 1}
+            {#if Object.keys(apiIndexItem.otherFiles).length !== 1}
               <div class="dropdown is-right {isFileNameDropdownExpanded ? 'is-active' : ''}">
                 <div class="dropdown-trigger">
                   <button class="button" on:click|stopPropagation={() => (isFileNameDropdownExpanded = !isFileNameDropdownExpanded)}>
-                    <span class="short-text">{apiSummary.fileName}</span>
+                    <span class="short-text">{apiIndexItem.fileName}</span>
                     <span class="icon is-small">
                       <i class="fas fa-angle-down" aria-hidden="true" />
                     </span>
@@ -202,11 +203,11 @@
                       <div class="api-status-section status-{status}">
                         <p class="menu-label dropdown-item">{getApiStatusName(status)}</p>
                         <ul class="menu-list">
-                          {#each Object.entries(apiSummary.apiSummary[apiSummary.versionName]) as [fileName, apiItem]}
-                            {#if apiItem.status === status}
+                          {#each Object.entries(apiIndexItem.otherFiles) as [fileName, fileNameApiHash]}
+                            {#if apiIndex.apis[fileNameApiHash].status === status}
                               <li>
-                                <a href="{basePath}/viewer.html?api={apiItem.hash}" class="dropdown-item status-{apiItem.status}">
-                                  {#if fileName === apiSummary.fileName}
+                                <a href="{basePath}/viewer.html?api={fileNameApiHash}" class="dropdown-item status-{apiIndex.apis[fileNameApiHash].status}">
+                                  {#if fileName === apiIndexItem.fileName}
                                     <strong>{fileName}</strong>
                                   {:else}
                                     {fileName}
@@ -228,7 +229,7 @@
             </a> -->
           </div>
         </div>
-        <Metadata metadata={apiSummary.metadata} updateTime={apiSummary.updateTime} />
+        <Metadata metadata={apiIndexItem.metadata} updateTime={apiIndexItem.updateTime} />
       </div>
     </section>
   {:else if !showApiInput}

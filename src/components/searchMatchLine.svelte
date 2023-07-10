@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { SearchMatch } from 'common/search';
+    import type { SearchMatch } from '../common/search';
 
     interface MatchToken {
         value: string;

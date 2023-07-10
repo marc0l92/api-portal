@@ -1,5 +1,5 @@
-import type { ApiParameterDoc } from 'common/api/api'
-import { ModelType, type ApiModelDoc } from 'common/api/apiModel'
+import type { ApiParameterDoc } from '../../common/api/api'
+import { ModelType, type ApiModelDoc } from '../../common/api/apiModel'
 import * as PlantumlEncoder from 'plantuml-encoder'
 import { DEFAULT_DIAGRAM_BUILDER_OPTIONS, DiagramBuilderFormat, type DiagramBuilderOptions } from './diagramBuilderOptions'
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { Api } from 'common/api/api';
-  import { apiFactory } from 'common/api/apiFactory';
-  import { globalOptions } from 'common/globalOptions';
-  import Errors from 'components/errors.svelte';
-  import Footer from 'components/footer.svelte';
-  import InputApi from 'components/inputApi.svelte';
-  import LazyLoad from 'components/lazyLoad.svelte';
-  import Navbar from 'components/navbar.svelte';
+  import type { Api } from '../common/api/api';
+  import { apiFactory } from '../common/api/apiFactory';
+  import { globalOptions } from '../common/globalOptions';
+  import Errors from '../components/errors.svelte';
+  import Footer from '../components/footer.svelte';
+  import InputApi from '../components/inputApi.svelte';
+  import LazyLoad from '../components/lazyLoad.svelte';
+  import Navbar from '../components/navbar.svelte';
   import { onMount } from 'svelte';
   import ApiDiff from './apiDiffTab.svelte';
   import DiagramsDiff from './diagramsDiffTab.svelte';

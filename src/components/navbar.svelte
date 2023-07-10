@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getAppName, getBasePath } from 'common/globals';
+  import { getAppName, getBasePath } from '../common/globals';
   import GlobalOptions from './globalOptions.svelte';
 
   export let activePage = 'restApiToText';

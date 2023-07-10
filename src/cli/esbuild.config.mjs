@@ -1,8 +1,8 @@
 import esbuild from 'esbuild'
 import process from 'process'
 import builtins from 'builtin-modules'
-import sveltePlugin from "esbuild-svelte"
-import sveltePreprocess from "svelte-preprocess"
+import sveltePlugin from 'esbuild-svelte'
+import sveltePreprocess from 'svelte-preprocess'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import fs from 'fs-extra'
 import yargs from 'yargs'

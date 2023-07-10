@@ -4,10 +4,10 @@
   import SelectServices from '../../components/selectServices.svelte';
   import DownloadBar from './downloadBar.svelte';
   import Errors from 'components/errors.svelte';
-  import { apiFactory } from 'common/api/apiFactory';
-  import type { Api, ApiService } from 'common/api/api';
+  import { apiFactory } from '../../common/api/apiFactory';
+  import type { Api, ApiService } from '../../common/api/api';
   import Footer from 'components/footer.svelte';
-  import { globalOptions } from 'common/globalOptions';
+  import { globalOptions } from '../../common/globalOptions';
 
   let api: Api = null;
   let services: ApiService[] = [];

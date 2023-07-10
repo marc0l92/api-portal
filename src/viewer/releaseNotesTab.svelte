@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ApiReleaseNotes } from 'common/api/api';
+    import type { ApiReleaseNotes } from '../common/api/api';
 
     export let releaseNotes: ApiReleaseNotes = null;
 </script>

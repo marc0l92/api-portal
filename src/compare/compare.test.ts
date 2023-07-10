@@ -1,7 +1,7 @@
-import { apiFactory } from "common/api/apiFactory"
-import type { ApiOpenApiDoc } from "common/api/apiOpenApi"
-import { compareApis } from "./compare"
-import { DiffType, type ApiDiff } from "./compareInterfaces"
+import { apiFactory } from '../common/api/apiFactory'
+import type { ApiOpenApiDoc } from '../common/api/apiOpenApi'
+import { compareApis } from './compare'
+import { DiffType, type ApiDiff } from './compareInterfaces'
 
 
 const kBaseApiOpenApiDoc: ApiOpenApiDoc = {

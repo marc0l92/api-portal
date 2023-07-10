@@ -1,5 +1,5 @@
-import type { ModelPropertiesMap, TablesMap } from "./interfaces"
-import * as XLSX from "xlsx"
+import type { ModelPropertiesMap, TablesMap } from './interfaces'
+import * as XLSX from 'xlsx'
 
 export const modelPropertiesToTables = (modelPropertiesMap: ModelPropertiesMap): TablesMap => {
     const tablesMap: TablesMap = {}

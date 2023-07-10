@@ -1,4 +1,4 @@
-import type { ServiceTags } from "./buildConfig"
+import type { ServiceTags } from './buildConfig'
 
 /**
  * @id api-portal-services-tags

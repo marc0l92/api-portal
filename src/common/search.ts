@@ -1,8 +1,8 @@
 import Fuse from 'fuse.js'
-import type { ApiIndexFlat, ApiSummary, ApiSummaryFlat } from './api/apiIndex'
-import type { ServiceTags } from 'cli/buildConfig'
+import type { ServiceTags } from '../cli/buildConfig'
+import type { ApiIndex, ApiIndexItem } from './api/apiIndex'
 
-const searchOptions: Fuse.IFuseOptions<ApiSummaryFlat> = {
+const searchOptions: Fuse.IFuseOptions<ApiIndexItem> = {
     includeMatches: true,
     ignoreLocation: false,
     threshold: 0.4,
@@ -14,13 +14,13 @@ const searchOptions: Fuse.IFuseOptions<ApiSummaryFlat> = {
         'fileName',
     ],
 }
-let fuse: Fuse<ApiSummaryFlat> = null
+let fuse: Fuse<ApiIndexItem> = null
 
-export type SearchResult = Fuse.FuseResult<ApiSummaryFlat>
+export type SearchResult = Fuse.FuseResult<ApiIndexItem>
 export type SearchMatch = Fuse.FuseResultMatch;
 
-export function initializeSearch(apiIndexFlat: ApiIndexFlat) {
-    fuse = new Fuse(apiIndexFlat, searchOptions)
+export function initializeSearch(apiIndex: ApiIndex) {
+    fuse = new Fuse(Object.values(apiIndex.apis), searchOptions)
 }
 
 export function searchInApiIndexFlat(searchText: string): SearchResult[] {
@@ -31,13 +31,14 @@ export function searchInApiIndexFlat(searchText: string): SearchResult[] {
     }
 }
 
-export function tagsMatchFilters(tags: ServiceTags, filters: ServiceTags): boolean {
+export function apiIndexItemMatchFilters(apiIndexItem: ApiIndexItem, filters: ServiceTags): boolean {
     for (const sectionName in filters) {
         for (const categoryName in filters[sectionName]) {
             for (const propertyName in filters[sectionName][categoryName]) {
                 if (filters[sectionName][categoryName][propertyName]) {
-                    const matchingTagsPosition = tags?.[sectionName]?.[categoryName]?.[propertyName] || false
-                    if (!matchingTagsPosition) {
+                    const tagPath = sectionName + '/' + categoryName + '/' + propertyName
+                    const tagPosition = apiIndexItem.tags.indexOf(tagPath)
+                    if (tagPosition === -1) {
                         return false
                     }
                 }
@@ -45,16 +46,4 @@ export function tagsMatchFilters(tags: ServiceTags, filters: ServiceTags): boole
         }
     }
     return true
-}
-
-export function apiSummaryMatchFilters(apiSummary: ApiSummary, filters: ServiceTags, version: string = null): boolean {
-    const versions = version ? [version] : Object.keys(apiSummary)
-    for (const versionName of versions) {
-        for (const fileName in apiSummary[versionName]) {
-            if (tagsMatchFilters(apiSummary[versionName][fileName].tags, filters)) {
-                return true
-            }
-        }
-    }
-    return false
 }

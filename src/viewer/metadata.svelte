@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { ApiMetadata } from 'common/api/api';
-    import { getApiStatusName } from 'common/api/apiStatus';
+    import type { ApiMetadata } from '../common/api/api';
+    import { getApiStatusName } from '../common/api/apiStatus';
 
     const DEFAULT_TAG_COLOR = 'is-info is-light';
 

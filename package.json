@@ -11,9 +11,9 @@
   ],
   "scripts": {
     "dev": "pnpm run dev:build watch",
-    "dev:build": "tsc -noEmit -skipLibCheck && node src/cli/esbuild.config.mjs",
+    "dev:build": "tsc -noEmit -skipLibCheck && node src/cli/esbuild.config.mjs --configFile=config/config.dev.yaml",
     "dev:generate": "pnpm run dev:build && node dist/api-portal-cli.js --configFile=config/config.dev.yaml --command=generate",
-    "dev:applyTags": "pnpm run dev:build && node dist/api-portal-cli.js --configFile=config/config.dev.yaml --command=applyTags",
+    "dev:applyTags": "pnpm run dev:build && node dist/api-portal-cli.js --configFile=config/config.dev.yaml --command=applyTags --servicesTagsFile=config/servicesTags.dev.json",
     "generate": "node dist/api-portal-cli.js --command=generate",
     "validate": "node dist/api-portal-cli.js --command=validate",
     "applyTags": "node dist/api-portal-cli.js --command=applyTags",

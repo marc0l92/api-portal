@@ -1,8 +1,8 @@
-import { compressToArray } from "common/compress"
-import type { BuildConfig } from "./buildConfig"
+import { compressToArray } from '../common/compress'
+import type { BuildConfig } from './buildConfig'
 import { exec } from 'child_process'
 import fs from 'fs-extra'
-import { API_TO_VALIDATE_INDENTATION, API_TO_VALIDATE_SUFFIX, OUTPUT_FOLDER, VALIDATION_SUFFIX, VALIDATION_TIMEOUT } from "./cliConstants"
+import { API_TO_VALIDATE_INDENTATION, API_TO_VALIDATE_SUFFIX, OUTPUT_FOLDER, VALIDATION_SUFFIX, VALIDATION_TIMEOUT } from './cliConstants'
 
 
 async function minifyAndCompressJsonFile(filename: string): Promise<void> {

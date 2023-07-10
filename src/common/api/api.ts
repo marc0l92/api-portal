@@ -1,5 +1,5 @@
-import type { ApiModelDoc, ApiModelDocMap } from "./apiModel"
-import { resolveReferences } from "./refParser"
+import type { ApiModelDoc, ApiModelDocMap } from './apiModel'
+import { resolveReferences } from './refParser'
 
 export enum ApiType {
     Swagger2 = 2,

@@ -1,4 +1,4 @@
-import { DiffDirection, type ApiModelDocMetadata, DiffType } from "./compareInterfaces"
+import { DiffDirection, type ApiModelDocMetadata, DiffType } from './compareInterfaces'
 type CompatibilityFunction = (leftValue: any, rightValue: any, direction: DiffDirection, isRequired: boolean) => boolean
 type CompatibilityMap = { [K in typeof ApiModelDocMetadata[number]]?: (leftValue: any, rightValue: any, direction: DiffDirection, isRequired: boolean) => boolean }
 

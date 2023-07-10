@@ -1,4 +1,4 @@
-import type { ServiceTags, BuildConfig, HomeLink } from "../cli/buildConfig"
+import type { ServiceTags, BuildConfig, HomeLink } from '../cli/buildConfig'
 
 declare const IS_TEST: boolean
 declare const APP_CONFIG: BuildConfig

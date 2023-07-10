@@ -1,5 +1,5 @@
-import { writable, type Unsubscriber } from "svelte/store"
-import { getOptions, storeOptions } from "common/localStorage";
+import { writable, type Unsubscriber } from 'svelte/store'
+import { getOptions, storeOptions } from '../common/localStorage'
 
 interface BrowserOptions {
     favorites: {

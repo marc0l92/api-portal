@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Footer from 'components/footer.svelte';
+  import Footer from '../components/footer.svelte';
   import Navbar from '../components/navbar.svelte';
   import { getAppName, getHomeLinks } from '../common/globals';
-  import { globalOptions } from 'common/globalOptions';
+  import { globalOptions } from '../common/globalOptions';
 </script>
 
 <Navbar activePage="home" />

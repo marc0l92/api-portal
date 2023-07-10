@@ -4,13 +4,19 @@ import yaml from 'js-yaml'
 import objectHash from 'object-hash'
 import fs from 'fs-extra'
 import type { BuildConfig } from './buildConfig'
-import type { ApiIndex, ApiIndexItem } from 'common/api/apiIndex'
-import { compressToArray } from 'common/compress'
-import type { Api } from 'common/api/api'
-import { apiFactory } from 'common/api/apiFactory'
-import { ReferenceNotFoundError } from 'common/api/refParser'
+import { compressToArray } from '../common/compress'
+import type { Api } from '../common/api/api'
+import { apiFactory } from '../common/api/apiFactory'
+import { ReferenceNotFoundError } from '../common/api/refParser'
 import { API_SUFFIX, API_INDEX_FILE_PATH, INPUT_FOLDER, MAX_PARALLEL_VALIDATIONS, MAX_VERSION_DIGITS, OUTPUT_FOLDER, VALIDATION_SUFFIX } from './cliConstants'
 import { validateApiDoc } from './validateApi'
+import { getEmptyApiIndex, type ApiIndex, type ApiIndexItem, CURRENT_API_INDEX_VERSION } from '../common/api/apiIndex'
+
+interface ApiRelationships {
+    [path: string]: {
+        [key: string]: string
+    }
+}
 
 function dateNow(): string {
     return new Date().toISOString()
@@ -26,29 +32,13 @@ function deleteFilesByHash(fileName: string): void {
 }
 
 function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex: ApiIndex, fileNames: string[]): void {
-    for (const packageName in apiIndex) {
-        for (const apiName in apiIndex[packageName]) {
-            for (const versionName in apiIndex[packageName][apiName]) {
-                for (const fileName in apiIndex[packageName][apiName][versionName]) {
-                    const hash = apiIndex[packageName][apiName][versionName][fileName].hash
-                    const position = fileNames.indexOf(`${OUTPUT_FOLDER}/${hash}${API_SUFFIX}`)
-                    if (position === -1) {
-                        console.warn('File not found on disk, deleting index entry:', `${OUTPUT_FOLDER}/${hash}${API_SUFFIX}`)
-                        delete apiIndex[packageName][apiName][versionName][fileName]
-                    } else {
-                        fileNames.splice(position, 1)
-                    }
-                }
-                if (Object.keys(apiIndex[packageName][apiName][versionName]).length === 0) {
-                    delete apiIndex[packageName][apiName][versionName]
-                }
-            }
-            if (Object.keys(apiIndex[packageName][apiName]).length === 0) {
-                delete apiIndex[packageName][apiName]
-            }
-        }
-        if (Object.keys(apiIndex[packageName]).length === 0) {
-            delete apiIndex[packageName]
+    for (const apiHash in apiIndex.apis) {
+        const position = fileNames.indexOf(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`)
+        if (position === -1) {
+            console.warn('File not found on disk, deleting index entry:', `${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`)
+            delete apiIndex.apis[apiHash]
+        } else {
+            fileNames.splice(position, 1)
         }
     }
     for (const fileName of fileNames) {
@@ -58,9 +48,12 @@ function deleteDiscrepanciesBetweenIndexAndFiles(apiIndex: ApiIndex, fileNames: 
 }
 
 async function loadAndValidateApiIndex(): Promise<ApiIndex> {
-    let apiIndex: ApiIndex = {}
+    let apiIndex: ApiIndex = getEmptyApiIndex()
     if (fs.existsSync(API_INDEX_FILE_PATH)) {
-        apiIndex = fs.readJsonSync(API_INDEX_FILE_PATH)
+        const apiIndexFromFile: ApiIndex = fs.readJsonSync(API_INDEX_FILE_PATH)
+        if (apiIndexFromFile.indexVersion === CURRENT_API_INDEX_VERSION) {
+            apiIndex = apiIndexFromFile
+        }
     }
     const fileNames = await glob.glob(`${OUTPUT_FOLDER}**/*${API_SUFFIX}`, { platform: 'linux' })
     deleteDiscrepanciesBetweenIndexAndFiles(apiIndex, fileNames)
@@ -69,28 +62,6 @@ async function loadAndValidateApiIndex(): Promise<ApiIndex> {
 
 async function writeApi(apiDoc: any, apiHash: string): Promise<void> {
     await fs.outputFile(`${OUTPUT_FOLDER}/${apiHash}${API_SUFFIX}`, compressToArray(JSON.stringify(apiDoc)))
-}
-
-function hasApiVersion(apiIndex: ApiIndex, packageName: string, apiName: string, apiVersion: string, fileName: string, apiHash: string): boolean {
-    return apiIndex
-        && apiIndex[packageName]
-        && apiIndex[packageName][apiName]
-        && apiIndex[packageName][apiName][apiVersion]
-        && apiIndex[packageName][apiName][apiVersion][fileName]
-        && apiIndex[packageName][apiName][apiVersion][fileName].hash === apiHash
-}
-
-function createApiVersion(apiIndex: ApiIndex, packageName: string, apiName: string, apiVersion: string, fileName: string, apiIndexItem: ApiIndexItem): void {
-    if (!apiIndex[packageName]) {
-        apiIndex[packageName] = {}
-    }
-    if (!apiIndex[packageName][apiName]) {
-        apiIndex[packageName][apiName] = {}
-    }
-    if (!apiIndex[packageName][apiName][apiVersion]) {
-        apiIndex[packageName][apiName][apiVersion] = {}
-    }
-    apiIndex[packageName][apiName][apiVersion][fileName] = apiIndexItem
 }
 
 function isSmallerVersion(v1: string, v2: string): number {
@@ -112,19 +83,66 @@ function isSmallerFileName(f1: string, f2: string): number {
     return f1.length - f2.length
 }
 
-function sortApiIndex(apiIndex: ApiIndex): ApiIndex {
-    const sortedApiIndex: ApiIndex = {}
-    for (const packageName of Object.keys(apiIndex).sort()) {
-        sortedApiIndex[packageName] = {}
-        for (const apiName of Object.keys(apiIndex[packageName]).sort()) {
-            sortedApiIndex[packageName][apiName] = {}
-            for (const versionName of Object.keys(apiIndex[packageName][apiName]).sort(isSmallerVersion)) {
-                sortedApiIndex[packageName][apiName][versionName] = {}
-                for (const fileName of Object.keys(apiIndex[packageName][apiName][versionName]).sort(isSmallerFileName)) {
-                    sortedApiIndex[packageName][apiName][versionName][fileName] = apiIndex[packageName][apiName][versionName][fileName]
-                }
+function isNewerApiIndexItem(currentItem: ApiIndexItem, newItem: ApiIndexItem) {
+    return isSmallerVersion(currentItem.versionName, newItem.versionName) || (
+        currentItem.versionName === newItem.versionName && isSmallerFileName(currentItem.fileName, newItem.fileName)
+    )
+}
+
+function generateRelationships(apiIndex: ApiIndex): ApiIndex {
+    const relationships: ApiRelationships = {}
+    for (const apiHash in apiIndex.apis) {
+        const apiIndexItem = apiIndex.apis[apiHash]
+        const apiPath = objectHash(apiIndexItem.packageName + apiIndexItem.apiName)
+        const apiVersionPath = objectHash(apiIndexItem.packageName + apiIndexItem.apiName + apiIndexItem.versionName)
+        if (!(apiPath in relationships)) {
+            relationships[apiPath] = {}
+        }
+        if (!(apiVersionPath in relationships)) {
+            relationships[apiVersionPath] = {}
+        }
+        relationships[apiPath][apiIndexItem.versionName] = apiHash
+        relationships[apiVersionPath][apiIndexItem.fileName] = apiHash
+
+        if (!(apiIndexItem.packageName in apiIndex.packages)) {
+            apiIndex.packages[apiIndexItem.packageName] = {}
+        }
+        if (!(apiIndexItem.apiName in apiIndex.packages[apiIndexItem.packageName])) {
+            apiIndex.packages[apiIndexItem.packageName][apiIndexItem.apiName] = apiHash
+        } else {
+            const currentApiHash = apiIndex.packages[apiIndexItem.packageName][apiIndexItem.apiName]
+            if (isNewerApiIndexItem(apiIndex.apis[currentApiHash], apiIndexItem)) {
+                apiIndex.packages[apiIndexItem.packageName][apiIndexItem.apiName] = apiHash
             }
         }
+    }
+
+    for (const apiHash in apiIndex.apis) {
+        const apiIndexItem = apiIndex.apis[apiHash]
+        const apiPath = objectHash(apiIndexItem.packageName + apiIndexItem.apiName)
+        const apiVersionPath = objectHash(apiIndexItem.packageName + apiIndexItem.apiName + apiIndexItem.versionName)
+        apiIndexItem.otherVersions = relationships[apiPath]
+        apiIndexItem.otherFiles = relationships[apiVersionPath]
+    }
+    return apiIndex
+}
+
+function sortRelationship(apiIndex: ApiIndex): ApiIndex {
+    const sortedApiIndex: ApiIndex = getEmptyApiIndex()
+    for (const packageName of Object.keys(apiIndex.packages).sort()) {
+        sortedApiIndex.packages[packageName] = {}
+        for (const apiName of Object.keys(apiIndex.packages[packageName]).sort()) {
+            sortedApiIndex.packages[packageName][apiName] = apiIndex.packages[packageName][apiName]
+        }
+    }
+    for (const apiHash in apiIndex.apis) {
+        sortedApiIndex.apis[apiHash] = apiIndex.apis[apiHash]
+        sortedApiIndex.apis[apiHash].otherVersions = Object.fromEntries(
+            Object.entries(apiIndex.apis[apiHash].otherVersions).sort(([k1, v1], [k2, v2]) => isSmallerVersion(k1, k2))
+        )
+        sortedApiIndex.apis[apiHash].otherFiles = Object.fromEntries(
+            Object.entries(apiIndex.apis[apiHash].otherFiles).sort(([k1, v1], [k2, v2]) => isSmallerFileName(k1, k2))
+        )
     }
     return sortedApiIndex
 }
@@ -145,7 +163,7 @@ async function parseApi(apiObject: any): Promise<Api> {
 }
 
 export async function generateApiFiles(appConfig: BuildConfig) {
-    const apiIndex: ApiIndex = {}
+    const apiIndex: ApiIndex = getEmptyApiIndex()
     const apiIndexHashes: { [hash: string]: boolean } = {}
     let validationPromises: Promise<any>[] = []
 
@@ -164,22 +182,27 @@ export async function generateApiFiles(appConfig: BuildConfig) {
             if (!(apiHash in apiIndexHashes)) {
                 apiIndexHashes[apiHash] = true
 
-                if (hasApiVersion(oldApiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, apiHash)) {
-                    createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName,
-                        oldApiIndex[packageName][api.getName()][api.getVersion()][relativeFileName])
+                if (apiHash in oldApiIndex.apis) {
+                    apiIndex.apis[apiHash] = oldApiIndex.apis[apiHash]
                 } else {
-                    createApiVersion(apiIndex, packageName, api.getName(), api.getVersion(), relativeFileName, {
+                    apiIndex.apis[apiHash] = {
+                        packageName,
+                        apiName: api.getName(),
+                        versionName: api.getVersion(),
+                        fileName: relativeFileName,
                         hash: apiHash,
                         status: api.getStatus(),
                         metadata: api.getMetadata(),
                         updateTime: dateNow(),
+                        otherVersions: {},
+                        otherFiles: {},
                         services: api.getServices().map(s => ({
                             method: s.getMethod(),
                             path: s.getPath(),
-                            tags: {}
+                            tags: [],
                         })),
-                        tags: {},
-                    })
+                        tags: [],
+                    }
 
                     await writeApi(apiDoc, apiHash)
                     validationPromises.push(validateApiDoc(apiDoc, apiHash, appConfig).catch((reason: string) => {
@@ -198,7 +221,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
         }
     }
 
-    await fs.outputJson(API_INDEX_FILE_PATH, sortApiIndex(apiIndex))
+    await fs.outputJson(API_INDEX_FILE_PATH, sortRelationship(generateRelationships(apiIndex)))
     await Promise.allSettled(validationPromises)
     loadAndValidateApiIndex() // Delete files that are not part of the new index
 }

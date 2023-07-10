@@ -2,15 +2,15 @@
   import Navbar from '../../components/navbar.svelte';
   import InputApi from '../../components/inputApi.svelte';
   import Errors from 'components/errors.svelte';
-  import type { Api, ApiService } from 'common/api/api';
-  import { apiFactory } from 'common/api/apiFactory';
-  import SelectServices from 'components/selectServices.svelte';
-  import Footer from 'components/footer.svelte';
+  import type { Api, ApiService } from '../../common/api/api';
+  import { apiFactory } from '../../common/api/apiFactory';
+  import SelectServices from '../../components/selectServices.svelte';
+  import Footer from '../../components/footer.svelte';
   import Diagrams from './diagrams.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from './diagramBuilderOptions';
   import DownloadBar from './downloadBar.svelte';
-  import { globalOptions } from 'common/globalOptions';
+  import { globalOptions } from '../../common/globalOptions';
 
   let api: Api = null;
   let services: ApiService[] = [];

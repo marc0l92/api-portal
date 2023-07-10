@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ApiService } from 'common/api';
+    import type { ApiService } from '../../common/api/api';
     import { diagramBuilderOptions, type DiagramBuilderOptions } from './diagramBuilderOptions';
     import { parseServiceDiagrams, type DiagramData } from './serviceDiagrams';
 

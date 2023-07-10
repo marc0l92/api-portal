@@ -1,5 +1,5 @@
-import { Api, ApiService, ApiType, type ApiParameterDoc, type ApiReleaseNotes, type ApiGenericDoc } from "./api"
-import type { ApiModelDocMap } from "./apiModel"
+import { Api, ApiService, ApiType, type ApiParameterDoc, type ApiReleaseNotes, type ApiGenericDoc } from './api'
+import type { ApiModelDocMap } from './apiModel'
 
 const PATH_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
 

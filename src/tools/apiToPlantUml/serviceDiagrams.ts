@@ -1,7 +1,7 @@
-import type { ApiParameterDoc, ApiService } from "common/api/api"
-import { mergeAllOfDefinitions, type ApiModelDoc } from "common/api/apiModel"
-import DiagramBuilder from "./diagramBuilder"
-import { DiagramBuilderFormat, type DiagramBuilderOptions } from "./diagramBuilderOptions"
+import type { ApiParameterDoc, ApiService } from '../../common/api/api'
+import { mergeAllOfDefinitions, type ApiModelDoc } from '../../common/api/apiModel'
+import DiagramBuilder from './diagramBuilder'
+import { DiagramBuilderFormat, type DiagramBuilderOptions } from './diagramBuilderOptions'
 
 export interface DiagramData {
     name: string

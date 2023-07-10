@@ -1,13 +1,13 @@
 <script lang="ts">
     import yaml from 'js-yaml';
-    import { getApiSummaryFlatByHash, modifyApiSummaryFlat, type ApiIndex, type ApiSummaryFlat, apiIndexToApiIndexFlat } from 'common/api/apiIndex';
-    import { getApiStatusName } from 'common/api/apiStatus';
-    import { decompressFromArray } from 'common/compress';
-    import { getApiIndexPath, getBasePath } from 'common/globals';
-    import { getOptions, storeOptions } from 'common/localStorage';
+    import { getApiStatusName } from '../common/api/apiStatus';
+    import { decompressFromArray } from '../common/compress';
+    import { getApiIndexPath, getBasePath } from '../common/globals';
+    import { getOptions, storeOptions } from '../common/localStorage';
     import { createEventDispatcher, onMount } from 'svelte';
     import { readInputFile } from '../common/filesUtils';
-    import { initializeSearch, searchInApiIndexFlat, type SearchResult } from 'common/search';
+    import { initializeSearch, searchInApiIndexFlat, type SearchResult } from '../common/search';
+    import type { ApiIndex, ApiIndexItem } from '../common/api/apiIndex';
 
     const LOCAL_STORAGE_SELECTED_TAB_KEY = 'inputApi.selectedTab';
     const LOCAL_STORAGE_BROWSE_KEY = 'inputApi.browse';
@@ -19,7 +19,7 @@
     export let storagePrefix = '';
     let selectedTab = 'link';
     let browserSearch = '';
-    let browserSelectedApi: ApiSummaryFlat = null;
+    let browserSelectedApi: ApiIndexItem = null;
     export let browserHash = '';
     let browserSearchResults: SearchResult[] = [];
     let isSearchDropdownExpanded = false;
@@ -41,9 +41,9 @@
             if (selectedTab === 'browser') {
                 if (!apiIndex) {
                     await fetchApiIndex();
-                    initializeSearch(apiIndexToApiIndexFlat(apiIndex));
+                    initializeSearch(apiIndex);
                     if (apiIndex && browserHash) {
-                        browserSelectedApi = getApiSummaryFlatByHash(browserHash, apiIndex);
+                        browserSelectedApi = apiIndex.apis[browserHash];
                         browserSearch = browserSelectedApi.packageName + ' ' + browserSelectedApi.apiName;
                     }
                 }
@@ -103,9 +103,9 @@
         onApiChange();
     }
 
-    function onBrowserSearchResultsSelect(apiSummary: ApiSummaryFlat) {
-        browserSelectedApi = apiSummary;
-        browserSearch = `${apiSummary.packageName} ${apiSummary.apiName}`;
+    function onBrowserSearchResultsSelect(apiIndexItem: ApiIndexItem) {
+        browserSelectedApi = apiIndexItem;
+        browserSearch = `${apiIndexItem.packageName} ${apiIndexItem.apiName}`;
         browserHash = browserSelectedApi.hash;
         isSearchDropdownExpanded = false;
         isFileNameDropdownExpanded = false;
@@ -217,8 +217,8 @@
                             </div>
                             <div class="dropdown-menu" id="dropdown-menu" role="menu">
                                 <div class="dropdown-content">
-                                    {#each Object.entries(browserSelectedApi.apiSummary) as [versionName, versionItem]}
-                                        <a href={''} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { versionName }))}>
+                                    {#each Object.entries(browserSelectedApi.otherVersions) as [versionName, versionApiHash]}
+                                        <a href={''} class="dropdown-item" on:click|preventDefault={() => onBrowserSearchResultsSelect(apiIndex.apis[versionApiHash])}>
                                             {#if versionName === browserSelectedApi.versionName}
                                                 <strong>{versionName}</strong>
                                             {:else}
@@ -231,7 +231,7 @@
                         </div>
                     </div>
                 </div>
-                {#if Object.keys(browserSelectedApi.apiSummary[browserSelectedApi.versionName]).length !== 1}
+                {#if Object.keys(browserSelectedApi.otherFiles).length !== 1}
                     <div class="column">
                         <div class="field">
                             <div class="dropdown is-right {isFileNameDropdownExpanded ? 'is-active' : ''}">
@@ -251,13 +251,13 @@
                                             <div class="api-status-section status-{status}">
                                                 <p class="menu-label dropdown-item">{getApiStatusName(status)}</p>
                                                 <ul class="menu-list">
-                                                    {#each Object.entries(browserSelectedApi.apiSummary[browserSelectedApi.versionName]) as [fileName, apiItem]}
-                                                        {#if apiItem.status === status}
+                                                    {#each Object.entries(browserSelectedApi.otherFiles) as [fileName, fileNameApiHash]}
+                                                        {#if apiIndex.apis[fileNameApiHash].status === status}
                                                             <li>
                                                                 <a
                                                                     href={''}
-                                                                    class="dropdown-item status-{apiItem.status}"
-                                                                    on:click|preventDefault={() => onBrowserSearchResultsSelect(modifyApiSummaryFlat(browserSelectedApi, { fileName }))}
+                                                                    class="dropdown-item status-{apiIndex.apis[fileNameApiHash].status}"
+                                                                    on:click|preventDefault={() => onBrowserSearchResultsSelect(apiIndex.apis[fileNameApiHash])}
                                                                 >
                                                                     {#if fileName === browserSelectedApi.fileName}
                                                                         <strong>{fileName}</strong>

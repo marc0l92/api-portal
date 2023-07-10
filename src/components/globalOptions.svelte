@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onDestroy, onMount } from 'svelte';
-    import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from 'tools/apiToPlantUml/diagramBuilderOptions';
-    import DiagramsOption from 'tools/apiToPlantUml/diagramsOption.svelte';
-    import { globalOptions, globalOptionsDestroy, globalOptionsMount } from 'common/globalOptions';
-    import { getReleaseId } from 'common/globals';
+    import { diagramBuilderOptionsDestroy, diagramBuilderOptionsMount } from '../tools/apiToPlantUml/diagramBuilderOptions';
+    import DiagramsOption from '../tools/apiToPlantUml/diagramsOption.svelte';
+    import { globalOptions, globalOptionsDestroy, globalOptionsMount } from '../common/globalOptions';
+    import { getReleaseId } from '../common/globals';
 
     let showMenu = false;
     let showDiagramsOptionsModal = false;

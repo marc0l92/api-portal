@@ -1,6 +1,6 @@
-import { ApiModelBackwardCompatibility, ApiModelPropertiesBackwardCompatibility } from "./backwardCompatibility"
-import { DiffType, DiffDirection } from "./compareInterfaces"
-import { ModelType } from "common/api/apiModel"
+import { ApiModelBackwardCompatibility, ApiModelPropertiesBackwardCompatibility } from './backwardCompatibility'
+import { DiffType, DiffDirection } from './compareInterfaces'
+import { ModelType } from '../common/api/apiModel'
 
 
 describe('Compare', () => {

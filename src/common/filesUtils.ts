@@ -1,4 +1,4 @@
-import type JSZip from "jszip"
+import type JSZip from 'jszip'
 
 export const readInputFile = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {

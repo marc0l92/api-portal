@@ -1,59 +1,52 @@
 <script lang="ts">
-    import { getBasePath } from 'common/globals';
-    import type { ApiIndexItem, ApiSummary } from '../common/api/apiIndex';
+    import { getBasePath } from '../common/globals';
     import { browserOptions } from './browserOptions';
-    import type { SearchMatch } from 'common/search';
+    import type { SearchMatch } from '../common/search';
     import SearchMatchLine from '../components/searchMatchLine.svelte';
+    import type { ApiIndex, ApiIndexItem } from '../common/api/apiIndex';
 
     const VERSION_LIMIT = 8;
     const basePath = getBasePath();
 
-    export let packageName: string = null;
-    export let apiName: string = null;
-    export let apiSummary: ApiSummary = null;
+    export let apiIndex: ApiIndex;
+    export let apiIndexItem: ApiIndexItem;
     export let searchMatches: readonly SearchMatch[] = [];
-    let lastApiHash = '';
     let isExpanded = false;
     let searchMatchApiName: SearchMatch = null;
 
     function onFavoriteToggle() {
-        console.log(JSON.stringify($browserOptions));
-        if (!$browserOptions.favorites[packageName]) {
-            $browserOptions.favorites[packageName] = {};
+        if (!$browserOptions.favorites[apiIndexItem.packageName]) {
+            $browserOptions.favorites[apiIndexItem.packageName] = {};
         }
-        $browserOptions.favorites[packageName][apiName] = !$browserOptions.favorites[packageName][apiName];
+        $browserOptions.favorites[apiIndexItem.packageName][apiIndexItem.apiName] = !$browserOptions.favorites[apiIndexItem.packageName][apiIndexItem.apiName];
     }
 
-    $: if (apiSummary) {
-        const lastApiVersion = Object.keys(apiSummary)[0];
-        lastApiHash = Object.values(apiSummary[lastApiVersion])[0].hash;
-    }
+    $: searchMatchApiName = searchMatches.find((m) => m.key === 'apiName') || null;
 
-    $: searchMatchApiName = searchMatches.find((m) => m.key === 'apiName');
-
-    function getWorstState(versionSummary: { [fileName: string]: ApiIndexItem }) {
-        const maxStatus = Object.values(versionSummary)
-            .map((x) => x.status)
+    function getWorstStateForVersion(apiHash: string): string {
+        const apiIndexItemOfVersion = apiIndex.apis[apiHash];
+        const maxStatus = Object.values(apiIndexItemOfVersion.otherFiles)
+            .map((otherFileApiHash) => apiIndex.apis[otherFileApiHash].status)
             .reduce((prev, curr) => Math.max(prev, curr));
         return `status-${maxStatus}`;
     }
 </script>
 
-{#if apiSummary}
+{#if apiIndexItem}
     <div class="card">
         <header class="card-header">
-            <a class="card-header-body" href="{basePath}/viewer.html?api={lastApiHash}">
+            <a class="card-header-body" href="{basePath}/viewer.html?api={apiIndexItem.hash}">
                 <p class="card-header-title">
                     {#if searchMatchApiName}
                         <SearchMatchLine searchMatch={searchMatchApiName} />
                     {:else}
-                        {apiName}
+                        {apiIndexItem.apiName}
                     {/if}
                 </p>
             </a>
             <button class="card-header-icon" on:click={onFavoriteToggle}>
                 <span class="icon">
-                    <i class="{$browserOptions.favorites[packageName] && $browserOptions.favorites[packageName][apiName] ? 'fas' : 'far'} fa-star" />
+                    <i class="{$browserOptions.favorites[apiIndexItem.packageName] && $browserOptions.favorites[apiIndexItem.packageName][apiIndexItem.apiName] ? 'fas' : 'far'} fa-star" />
                 </span>
             </button>
         </header>
@@ -61,12 +54,12 @@
             <div class="content">
                 <div class="columns is-multiline">
                     <div class="column">
-                        {#each Object.entries(apiSummary).slice(0, isExpanded ? undefined : 5) as [versionName, versionSummary]}
-                            <a class="tag ml-1 mb-1 {getWorstState(versionSummary)}" href="{basePath}/viewer.html?api={Object.values(versionSummary)[0].hash}">
+                        {#each Object.entries(apiIndexItem.otherVersions).slice(0, isExpanded ? undefined : 5) as [versionName, apiHash]}
+                            <a class="tag ml-1 mb-1 {getWorstStateForVersion(apiHash)}" href="{basePath}/viewer.html?api={apiHash}">
                                 {versionName}
                             </a>
                         {/each}
-                        {#if Object.keys(apiSummary).length > VERSION_LIMIT}
+                        {#if Object.keys(apiIndexItem.otherVersions).length > VERSION_LIMIT}
                             <button class="button is-white is-small is-tag-size" on:click={() => (isExpanded = !isExpanded)}>
                                 <i class="fas fa-angle-{isExpanded ? 'left' : 'right'}" />
                             </button>

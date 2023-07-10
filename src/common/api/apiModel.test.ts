@@ -1,4 +1,4 @@
-import { mergeAllOfDefinitions, ModelType, type ApiModelDoc } from "./apiModel"
+import { mergeAllOfDefinitions, ModelType, type ApiModelDoc } from './apiModel'
 
 describe('ApiModel', () => {
     describe('mergeAllOfDefinitions', () => {

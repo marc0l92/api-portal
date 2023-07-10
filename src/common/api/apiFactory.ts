@@ -1,6 +1,6 @@
-import { ApiType, type Api, type ApiGenericDoc } from "./api"
-import { ApiOpenApi } from "./apiOpenApi"
-import { ApiSwagger } from "./apiSwagger"
+import { ApiType, type Api, type ApiGenericDoc } from './api'
+import { ApiOpenApi } from './apiOpenApi'
+import { ApiSwagger } from './apiSwagger'
 
 export const getApiDocumentationVersion = (api: ApiGenericDoc): ApiType => {
     if (api.swagger === '2.0') {

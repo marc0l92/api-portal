@@ -1,7 +1,7 @@
-import type { Api, ApiParameterDoc, ApiParameterDocMap, ApiService } from "common/api/api"
-import type { ApiModelDoc } from "common/api/apiModel"
-import { DiffType, type ApiDiff, type ServiceDiff, type DiffSection, type ResponseDiff, type ApiModelDocDiff, DiffDirection, ApiModelDocMetadata } from "./compareInterfaces"
-import { ApiModelBackwardCompatibility, ApiModelPropertiesBackwardCompatibility } from "./backwardCompatibility"
+import type { Api, ApiParameterDoc, ApiParameterDocMap, ApiService } from '../common/api/api'
+import type { ApiModelDoc } from '../common/api/apiModel'
+import { DiffType, type ApiDiff, type ServiceDiff, type DiffSection, type ResponseDiff, type ApiModelDocDiff, DiffDirection, ApiModelDocMetadata } from './compareInterfaces'
+import { ApiModelBackwardCompatibility, ApiModelPropertiesBackwardCompatibility } from './backwardCompatibility'
 
 export function compareApis(leftApi: Api, rightApi: Api) {
     const apiDiff: ApiDiff = { isBackwardCompatible: true, metadata: [], services: {} }

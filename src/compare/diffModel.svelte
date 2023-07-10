@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ApiModelDoc } from 'common/api/apiModel';
+    import type { ApiModelDoc } from '../common/api/apiModel';
     import { ApiModelDocMetadata, type ApiModelDocDiff, DiffTypeColor, DiffType } from './compareInterfaces';
 
     export let diffModel: ApiModelDocDiff;

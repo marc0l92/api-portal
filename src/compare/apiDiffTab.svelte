@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Api } from 'common/api/api';
+    import type { Api } from '../common/api/api';
     import { compareApis } from './compare';
     import { DiffTypeColor, type ApiDiff } from './compareInterfaces';
     import DiffItemsTable from './diffItemsTable.svelte';
