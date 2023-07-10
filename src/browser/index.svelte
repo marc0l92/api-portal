@@ -7,7 +7,7 @@
   import SearchBar from './searchBar.svelte';
   import { globalOptions } from '../common/globalOptions';
   import type { ServiceTags } from '../cli/buildConfig';
-  import { apiIndexItemMatchFilters, initializeSearch, searchInApiIndexFlat, type SearchResult } from '../common/search';
+  import { filterApiIndexPackages, filterSearchResults, initializeApiSearch, getApiSearchResults, type SearchResult } from '../common/search';
   import { ApiIndex } from '../common/api/apiIndex';
   import ApiIndexItemCard from './apiIndexItemCard.svelte';
 
@@ -22,7 +22,7 @@
   }
 
   $: if (searchText.length > 1) {
-    searchResults = searchInApiIndexFlat(searchText);
+    searchResults = filterSearchResults(getApiSearchResults(searchText), filters);
   }
 
   function cleanFavorite() {
@@ -43,7 +43,7 @@
     browserOptionsMount();
     try {
       apiIndex = await ApiIndex.fetch();
-      initializeSearch(apiIndex);
+      initializeApiSearch(apiIndex);
       cleanFavorite();
     } catch (e) {
       errors = [...errors, e];
@@ -82,15 +82,13 @@
         </div>
       {/if}
       <!-- All items -->
-      {#each Object.entries(apiIndex.getPackages()) as [packageName, packageItem]}
+      {#each Object.entries(filterApiIndexPackages(apiIndex, filters)) as [packageName, packageItem]}
         <h4 class="subtitle is-4">{packageName}</h4>
         <div class="columns is-multiline">
           {#each Object.entries(packageItem) as [apiName, apiHash]}
-            {#if apiIndexItemMatchFilters(apiIndex.getApi(apiHash), filters)}
-              <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.getApi(apiHash)} />
-              </div>
-            {/if}
+            <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
+              <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.getApi(apiHash)} />
+            </div>
           {/each}
         </div>
       {/each}

@@ -3,17 +3,19 @@ import type { Api, ApiMetadata } from './api'
 import { MAX_VERSION_DIGITS } from 'cli/cliConstants'
 import objectHash from 'object-hash'
 
+export interface ApiIndexPackages {
+    [packageName: string]: {
+        [apiName: string]: ApiHash
+    }
+}
+
 export class ApiIndex {
     public static CURRENT_API_INDEX_VERSION: number = 1
     private indexVersion: number = ApiIndex.CURRENT_API_INDEX_VERSION
     private apis: {
         [apiHash: ApiHash]: ApiIndexItem
     } = {}
-    private packages: {
-        [packageName: string]: {
-            [apiName: string]: ApiHash
-        }
-    } = {}
+    private packages: ApiIndexPackages = {}
 
     public static async fetch(): Promise<ApiIndex> {
         const response = await fetch(getApiIndexPath())

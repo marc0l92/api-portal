@@ -6,7 +6,7 @@
     import { getOptions, storeOptions } from '../common/localStorage';
     import { createEventDispatcher, onMount } from 'svelte';
     import { readInputFile } from '../common/filesUtils';
-    import { initializeSearch, searchInApiIndexFlat, type SearchResult } from '../common/search';
+    import { initializeApiSearch, getApiSearchResults, type SearchResult } from '../common/search';
     import type { ApiIndex, ApiIndexItem } from '../common/api/apiIndex';
 
     const LOCAL_STORAGE_SELECTED_TAB_KEY = 'inputApi.selectedTab';
@@ -41,7 +41,7 @@
             if (selectedTab === 'browser') {
                 if (!apiIndex) {
                     await fetchApiIndex();
-                    initializeSearch(apiIndex);
+                    initializeApiSearch(apiIndex);
                     if (apiIndex && browserHash) {
                         browserSelectedApi = apiIndex.getApi(browserHash);
                         browserSearch = browserSelectedApi.packageName + ' ' + browserSelectedApi.apiName;
@@ -115,7 +115,7 @@
 
     function onBrowserSearchChange() {
         isSearchDropdownExpanded = true;
-        browserSearchResults = searchInApiIndexFlat(browserSearch);
+        browserSearchResults = getApiSearchResults(browserSearch);
         browserSelectedApi = null;
     }
 
