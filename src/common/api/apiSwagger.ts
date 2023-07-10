@@ -62,7 +62,7 @@ export class ApiSwagger extends Api {
         const services: ApiServiceSwagger[] = []
         for (const path in this.getApi().paths) {
             const globalParam = this.getApi().paths[path].parameters || []
-            globalParam.forEach((p, i) => (p["x-path"] = `/paths["${path}"]/parameters[${i}]`))
+            globalParam.forEach((p, i) => (p['x-path'] = `/paths["${path}"]/parameters[${i}]`))
             for (const method in this.getApi().paths[path]) {
                 if (method !== 'parameters') {
                     const apiService = new ApiServiceSwagger(this.getBasePaths(), path, method, this.getApi().paths[path][method] as ApiSwaggerServiceDoc)
@@ -82,8 +82,8 @@ export class ApiSwagger extends Api {
     }
 
     getReleaseNotes(): ApiReleaseNotes {
-        if (this.getApi() && this.getApi().info && this.getApi().info["x-release-note"]) {
-            return this.getApi().info["x-release-note"]
+        if (this.getApi() && this.getApi().info && this.getApi().info['x-release-note']) {
+            return this.getApi().info['x-release-note']
         }
         return null
     }
@@ -111,7 +111,7 @@ export class ApiServiceSwagger extends ApiService {
 
     private initParameters() {
         if (this.getServiceDoc().parameters) {
-            this.getServiceDoc().parameters.forEach((p, i) => (p["x-path"] = `${this.getServiceBasePath()}/parameters[${i}]`))
+            this.getServiceDoc().parameters.forEach((p, i) => (p['x-path'] = `${this.getServiceBasePath()}/parameters[${i}]`))
             this.requestParameters = this.getServiceDoc().parameters.filter((parameter) => {
                 return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
             })
@@ -130,7 +130,7 @@ export class ApiServiceSwagger extends ApiService {
     private initResponse() {
         if (this.getServiceDoc().responses) {
             for (const statusCode in this.getServiceDoc().responses) {
-                this.getServiceDoc().responses[statusCode]["x-path"] = `${this.getServiceBasePath()}/responses[${statusCode}]`
+                this.getServiceDoc().responses[statusCode]['x-path'] = `${this.getServiceBasePath()}/responses[${statusCode}]`
             }
             this.responses = this.getServiceDoc().responses
         }

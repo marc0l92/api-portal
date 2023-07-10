@@ -1,7 +1,7 @@
 export const INPUT_FOLDER = 'inputApi/'
 export const OUTPUT_FOLDER = 'public/apis'
 export const API_INDEX_FILE_PATH = `${OUTPUT_FOLDER}/_apiIndex.json`
-export const DEFAULT_SERVICES_TAGS_FILE_NAME = `servicesTags.json`
+export const DEFAULT_SERVICES_TAGS_FILE_NAME = 'servicesTags.json'
 export const BACKUP_SUFFIX = '.backup'
 export const API_SUFFIX = '.api.json.gzip'
 export const API_TO_VALIDATE_SUFFIX = '.apiToValidate.json'

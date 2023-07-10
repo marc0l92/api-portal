@@ -4,7 +4,7 @@ declare const IS_TEST: boolean
 declare const APP_CONFIG: BuildConfig
 declare const RELEASE_ID: string
 
-const API_INDEX_PATH = '/apis/_apiIndex.json';
+const API_INDEX_PATH = '/apis/_apiIndex.json'
 
 const isTest = (): boolean => {
     return IS_TEST

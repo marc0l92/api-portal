@@ -43,7 +43,7 @@ function buildRequestDiagrams(service: ApiService, options: DiagramBuilderOption
 }
 
 function buildResponseDiagrams(service: ApiService, options: DiagramBuilderOptions): DiagramData[] {
-    let diagrams: DiagramData[] = []
+    const diagrams: DiagramData[] = []
     const responses = service.getResponses()
     for (const statusCode in responses) {
         if (responses[statusCode].schema) {

@@ -13,7 +13,7 @@ export async function validateApiDoc(apiDoc: any, apiHash: string, appConfig: Bu
     const fileName = apiHash + API_TO_VALIDATE_SUFFIX
     fs.outputFileSync(fileName, JSON.stringify(apiDoc, null, API_TO_VALIDATE_INDENTATION))
     await validateApiFile(fileName, apiHash, appConfig)
-    fs.remove(fileName).catch(() => { })
+    fs.remove(fileName).catch((e) => { console.error('validateApiDoc', e) })
 }
 
 export async function validateApiFile(fileName: string, apiHash: string, appConfig: BuildConfig): Promise<any> {

@@ -28,7 +28,7 @@ export interface ApiParameterDoc {
     schema?: ApiModelDoc
     description?: string
     example?: any
-    ["x-path"]?: string
+    ['x-path']?: string
     headers?: {
         [headerName: string]: {
             type: string
@@ -56,7 +56,7 @@ export abstract class Api {
     setModelsTitle(): void {
         const models = this.getModels()
         for (const defName in models) {
-            if (!models[defName].hasOwnProperty('title')) {
+            if (!('title' in models[defName])) {
                 models[defName].title = defName
             }
         }

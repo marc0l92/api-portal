@@ -33,9 +33,9 @@ export function objToBlob(data: any) {
 export function downloadFile(fileName: string, content: Blob) {
     const url = window.URL || window.webkitURL
     const link = url.createObjectURL(content)
-    const a = document.createElement("a")
-    a.setAttribute("download", fileName)
-    a.setAttribute("href", link)
+    const a = document.createElement('a')
+    a.setAttribute('download', fileName)
+    a.setAttribute('href', link)
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)

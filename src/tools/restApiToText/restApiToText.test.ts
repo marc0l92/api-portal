@@ -25,7 +25,7 @@ describe('RestApiToText.test', () => {
             const kOptions: RestApiToTextOptions = { version: false, capability: false }
 
             expect(await apiToTokens(kMethod, kUri, kOptions)).toEqual({
-                errors: ["Uri not completed, continue typing..."],
+                errors: ['Uri not completed, continue typing...'],
                 tokens: [],
             } as RestApiToTextResults)
         })

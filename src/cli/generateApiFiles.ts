@@ -66,15 +66,15 @@ async function writeApi(apiDoc: any, apiHash: string): Promise<void> {
 
 function isSmallerVersion(v1: string, v2: string): number {
     function versionToNumber(v: string | null): number {
-        let total = 0;
-        let i = 0;
+        let total = 0
+        let i = 0
         if (typeof v === 'string') {
             for (const split of v.split('.').reverse()) {
-                total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS);
-                i++;
+                total += parseInt(split) * Math.pow(10, i * MAX_VERSION_DIGITS)
+                i++
             }
         }
-        return total;
+        return total
     }
     return versionToNumber(v2) - versionToNumber(v1)
 }

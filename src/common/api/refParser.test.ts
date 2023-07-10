@@ -100,21 +100,21 @@ describe('RefParser', () => {
 
         test('Concatenate references in api example', () => {
             const kInput = {
-                "swagger": "2.0",
-                "paths": { "/": { "post": {} } },
-                "definitions": {
-                    "Def1": { "properties": { "field1": { "$ref": "#/definitions/Def2" } } },
-                    "Def2": { "properties": { "field2": { "$ref": "#/definitions/Def3" } } },
-                    "Def3": { "properties": { "field3": { "$ref": "#/definitions/Def1" } } }
+                swagger: '2.0',
+                paths: { '/': { post: {} } },
+                definitions: {
+                    Def1: { properties: { field1: { '$ref': '#/definitions/Def2' } } },
+                    Def2: { properties: { field2: { '$ref': '#/definitions/Def3' } } },
+                    Def3: { properties: { field3: { '$ref': '#/definitions/Def1' } } }
                 }
             }
             const kExpected = {
-                "swagger": "2.0",
-                "paths": { "/": { "post": {} } },
-                "definitions": {
-                    "Def1": { "properties": { "field1": { "properties": { "field2": { "properties": { "field3": {} } } } } } },
-                    "Def2": { "properties": { "field2": { "properties": { "field3": {} } } } },
-                    "Def3": { "properties": { "field3": {} } }
+                swagger: '2.0',
+                paths: { '/': { post: {} } },
+                definitions: {
+                    Def1: { properties: { field1: { properties: { field2: { properties: { field3: {} } } } } } },
+                    Def2: { properties: { field2: { properties: { field3: {} } } } },
+                    Def3: { properties: { field3: {} } }
                 }
             }
             expect(resolveReferences(kInput)).toEqual(kExpected)
@@ -122,19 +122,19 @@ describe('RefParser', () => {
 
         test('Two references pointing to the same object in api example', () => {
             const kInput = {
-                "swagger": "2.0",
-                "paths": { "/": { "post": {} } },
-                "definitions": {
-                    "Def1": { "properties": { "field1": { "$ref": "#/definitions/Def1" } } },
-                    "Def2": { "properties": { "field2": { "$ref": "#/definitions/Def1" } } }
+                swagger: '2.0',
+                paths: { '/': { post: {} } },
+                definitions: {
+                    Def1: { properties: { field1: { '$ref': '#/definitions/Def1' } } },
+                    Def2: { properties: { field2: { '$ref': '#/definitions/Def1' } } }
                 }
             }
             const kExpected = {
-                "swagger": "2.0",
-                "paths": { "/": { "post": {} } },
-                "definitions": {
-                    "Def1": { "properties": { "field1": {} } },
-                    "Def2": { "properties": { "field2": { "properties": { "field1": {} } } } }
+                swagger: '2.0',
+                paths: { '/': { post: {} } },
+                definitions: {
+                    Def1: { properties: { field1: {} } },
+                    Def2: { properties: { field2: { properties: { field1: {} } } } }
                 }
             }
             expect(resolveReferences(kInput)).toEqual(kExpected)

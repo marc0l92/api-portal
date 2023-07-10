@@ -80,7 +80,7 @@ export class ApiOpenApi extends Api {
         const services: ApiServiceOpenApi[] = []
         for (const path in this.getApi().paths) {
             const globalParam = this.getApi().paths[path].parameters || []
-            globalParam.forEach((p, i) => (p["x-path"] = `/paths["${path}"]/parameters[${i}]`))
+            globalParam.forEach((p, i) => (p['x-path'] = `/paths["${path}"]/parameters[${i}]`))
             for (const method in this.getApi().paths[path]) {
                 if (PATH_METHODS.indexOf(method) >= 0) {
                     const apiService = new ApiServiceOpenApi(this.getBasePaths(), path, method, this.getApi().paths[path][method] as ApiOpenApiServiceDoc)
@@ -100,8 +100,8 @@ export class ApiOpenApi extends Api {
     }
 
     getReleaseNotes(): ApiReleaseNotes {
-        if (this.getApi() && this.getApi().info && this.getApi().info["x-release-note"]) {
-            return this.getApi().info["x-release-note"]
+        if (this.getApi() && this.getApi().info && this.getApi().info['x-release-note']) {
+            return this.getApi().info['x-release-note']
         }
         return null
     }
@@ -137,7 +137,7 @@ export class ApiServiceOpenApi extends ApiService {
     private initRequest() {
         if (this.getServiceDoc().requestBody
             && this.getContentType(this.getServiceDoc().requestBody)) {
-            this.getContentType(this.getServiceDoc().requestBody)["x-path"] = `${this.getServiceBasePath()}/requestBody/content["application/json"]`
+            this.getContentType(this.getServiceDoc().requestBody)['x-path'] = `${this.getServiceBasePath()}/requestBody/content["application/json"]`
             this.request = this.getContentType(this.getServiceDoc().requestBody)
         }
     }
@@ -147,7 +147,7 @@ export class ApiServiceOpenApi extends ApiService {
             for (const statusCode in this.getServiceDoc().responses) {
                 const response = this.getServiceDoc().responses[statusCode]
                 if (this.getContentType(response)) {
-                    this.getContentType(response)["x-path"] = `${this.getServiceBasePath()}/responses[${statusCode}]/content["application/json"]`
+                    this.getContentType(response)['x-path'] = `${this.getServiceBasePath()}/responses[${statusCode}]/content["application/json"]`
                     this.responses[statusCode] = this.getContentType(response)
                 }
             }

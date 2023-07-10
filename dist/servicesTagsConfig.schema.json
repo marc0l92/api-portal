@@ -22,9 +22,6 @@
                 "fileName": {
                     "type": "string"
                 },
-                "fullPath": {
-                    "type": "string"
-                },
                 "metadata": {
                     "additionalProperties": {
                         "type": "string"
@@ -35,6 +32,9 @@
                     "type": "string"
                 },
                 "packageName": {
+                    "type": "string"
+                },
+                "path": {
                     "type": "string"
                 },
                 "tags": {

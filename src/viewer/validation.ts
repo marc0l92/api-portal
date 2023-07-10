@@ -34,15 +34,15 @@ export const severityNames: Severity = {
     '2': { title: 'Infos', css: 'is-info' },
     '3': { title: 'Hints', css: 'is-light' },
     '4': { title: '', css: 'is-success' },
-};
+}
 
 export function getValidationSummary(validationData: ApiValidation[]): ValidationSummary {
     const summary: ValidationSummary = { 0: {}, 1: {}, 2: {}, 3: {} }
     for (const validationItem of validationData) {
         if (validationItem.code in summary[validationItem.severity]) {
-            summary[validationItem.severity][validationItem.code].count++;
+            summary[validationItem.severity][validationItem.code].count++
         } else {
-            summary[validationItem.severity][validationItem.code] = { count: 1 };
+            summary[validationItem.severity][validationItem.code] = { count: 1 }
         }
     }
     return summary

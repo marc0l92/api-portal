@@ -59,7 +59,7 @@ interface MethodsVerbs {
 const UriNotCompleted = 'Uri not completed, continue typing...'
 
 function checkAllowedCharacters(word: string, warnings: string[]) {
-    if (!word.match(/^[a-z0-9\-]*$/)) {
+    if (!word.match(/^[a-z0-9-]*$/)) {
         warnings.push(`The word "${word}" contains some characters not allowed. Allowed characters are: lowercase letters, numbers, hyphen`)
     }
 }
@@ -175,7 +175,7 @@ async function parseByType(type: ApiTokenType, text: string): Promise<ApiUriToke
 
 export const apiToTokens = async (method: ApiMethods, uri: string, options: RestApiToTextOptions): Promise<RestApiToTextResults> => {
     const results: RestApiToTextResults = { errors: [], tokens: [] }
-    let uriTokens: string[] = uri.split('/').filter((part) => part !== '')
+    const uriTokens: string[] = uri.split('/').filter((part) => part !== '')
     const minParts = (options.version ? 1 : 0) + (options.capability ? 1 : 0) + 1
 
     if (uriTokens.length >= minParts) {
@@ -280,9 +280,9 @@ export const refreshApiTokens = async (method: ApiMethods, tokens: ApiUriToken[]
 }
 
 export const rotateTokenType = (tokens: ApiUriToken[], toUpdateIndex: number): ApiUriToken[] => {
-    const itemToChange = tokens[toUpdateIndex];
-    itemToChange.alternativeTypes.push(itemToChange.type);
-    itemToChange.type = itemToChange.alternativeTypes.shift();
+    const itemToChange = tokens[toUpdateIndex]
+    itemToChange.alternativeTypes.push(itemToChange.type)
+    itemToChange.type = itemToChange.alternativeTypes.shift()
     return tokens
 }
 

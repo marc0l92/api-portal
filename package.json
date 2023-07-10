@@ -19,7 +19,8 @@
     "applyTags": "node dist/api-portal-cli.js --command=applyTags",
     "test": "jest --silent=false",
     "build": "tsc -noEmit -skipLibCheck && node src/cli/esbuild.config.mjs production",
-    "configSchema": "typescript-json-schema --required src/cli/buildConfig.ts BuildConfig > dist/buildConfig.schema.json && typescript-json-schema --required src/cli/servicesTagsConfig.ts ServicesTagsConfig > dist/servicesTagsConfig.schema.json"
+    "configSchema": "typescript-json-schema --required src/cli/buildConfig.ts BuildConfig > dist/buildConfig.schema.json && typescript-json-schema --required src/cli/servicesTagsConfig.ts ServicesTagsConfig > dist/servicesTagsConfig.schema.json",
+    "lint": "eslint ./src"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.1",
@@ -51,9 +52,12 @@
     "@types/plantuml-encoder": "^1.4.0",
     "@types/swagger-ui": "^3.52.0",
     "@types/yargs": "^17.0.24",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "@typescript-eslint/parser": "^5.61.0",
     "builtin-modules": "^3.3.0",
     "esbuild": "^0.17.14",
     "esbuild-svelte": "^0.7.3",
+    "eslint": "^8.44.0",
     "fs-extra": "^11.1.1",
     "glob": "^9.3.2",
     "jest": "^29.5.0",

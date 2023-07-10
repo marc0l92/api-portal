@@ -9,7 +9,7 @@ interface BrowserOptions {
     }
 }
 
-const LOCAL_STORAGE_KEY = 'browserOptions';
+const LOCAL_STORAGE_KEY = 'browserOptions'
 const DEFAULT_OPTIONS: BrowserOptions = {
     favorites: {},
 }
@@ -19,12 +19,12 @@ export const browserOptions = writable(Object.assign({}, DEFAULT_OPTIONS))
 let unsubscribe: Unsubscriber = null
 export const browserOptionsMount = () => {
     if (!unsubscribe) {
-        browserOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS));
+        browserOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS))
         unsubscribe = browserOptions.subscribe((newValue: BrowserOptions) => {
-            storeOptions(LOCAL_STORAGE_KEY, newValue);
-        });
+            storeOptions(LOCAL_STORAGE_KEY, newValue)
+        })
     }
 }
 export const browserOptionsDestroy = () => {
-    if (unsubscribe) unsubscribe();
+    if (unsubscribe) unsubscribe()
 }

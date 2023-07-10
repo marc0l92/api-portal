@@ -95,7 +95,7 @@ export default class DiagramBuilder {
     }
 
     private buildProperty(name: string, property: ApiModelDoc, mandatory: boolean = false): ApiModelDocMap {
-        let usedDefinitions: ApiModelDocMap = {}
+        const usedDefinitions: ApiModelDocMap = {}
         if (!property.type) {
             property.type = ModelType.Object
         }
@@ -137,7 +137,7 @@ export default class DiagramBuilder {
         if ('additionalProperties' in objDef && typeof objDef.additionalProperties === 'object') {
             usedDefinitions = Object.assign(usedDefinitions, this.buildProperty('{*}', objDef.additionalProperties))
         }
-        this.diagramText += `}\n`
+        this.diagramText += '}\n'
         return usedDefinitions
     }
 
@@ -177,7 +177,7 @@ export default class DiagramBuilder {
                 }
                 return this.color(`<i>${def.type}</i>`, COLORS.nativeTypes)
             }
-            return this.color(`<i>object</i>`, COLORS.nativeTypes)
+            return this.color('<i>object</i>', COLORS.nativeTypes)
         }
         console.warn('No name defined for the definition:', def)
         return 'NoName'

@@ -47,7 +47,7 @@ describe('Compare', () => {
             })
             test('Adding metadata', () => {
                 const kApiRight = copy(kBaseApiOpenApiDoc)
-                kApiRight.host = "www.domain.com"
+                kApiRight.host = 'www.domain.com'
                 const kDifferences = copy(kEmptyDiff)
                 kDifferences.metadata.push({
                     diffType: DiffType.ADDED,
@@ -86,7 +86,7 @@ describe('Compare', () => {
             })
             test('Adding metadata', () => {
                 const kApiRight = copy(kBaseApiOpenApiDoc)
-                kApiRight.info.email = "email@domain.com"
+                kApiRight.info.email = 'email@domain.com'
                 const kDifferences = copy(kEmptyDiff)
                 kDifferences.metadata.push({
                     diffType: DiffType.ADDED,

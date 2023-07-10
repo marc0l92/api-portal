@@ -18,7 +18,7 @@ export interface DiagramBuilderOptions {
 }
 
 
-const LOCAL_STORAGE_KEY = 'diagramsBuilderOptions';
+const LOCAL_STORAGE_KEY = 'diagramsBuilderOptions'
 export const DEFAULT_DIAGRAM_BUILDER_OPTIONS: DiagramBuilderOptions = {
     serverUrl: getDiagramsDefaultServer(),
     diagramHeader: '',
@@ -32,12 +32,12 @@ export const diagramBuilderOptions = writable(Object.assign({}, DEFAULT_DIAGRAM_
 let unsubscribe: Unsubscriber = null
 export const diagramBuilderOptionsMount = () => {
     if (!unsubscribe) {
-        diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS));
+        diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS))
         unsubscribe = diagramBuilderOptions.subscribe((newValue: DiagramBuilderOptions) => {
-            storeOptions(LOCAL_STORAGE_KEY, newValue);
-        });
+            storeOptions(LOCAL_STORAGE_KEY, newValue)
+        })
     }
 }
 export const diagramBuilderOptionsDestroy = () => {
-    if (unsubscribe) unsubscribe();
+    if (unsubscribe) unsubscribe()
 }

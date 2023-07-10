@@ -5,7 +5,7 @@ interface GlobalOptions {
     fluidLayout?: boolean
 }
 
-const LOCAL_STORAGE_KEY = 'globalOptions';
+const LOCAL_STORAGE_KEY = 'globalOptions'
 const DEFAULT_OPTIONS: GlobalOptions = {
     fluidLayout: false,
 }
@@ -15,12 +15,12 @@ export const globalOptions = writable(Object.assign({}, DEFAULT_OPTIONS))
 let unsubscribe: Unsubscriber = null
 export const globalOptionsMount = () => {
     if (!unsubscribe) {
-        globalOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS));
+        globalOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS))
         unsubscribe = globalOptions.subscribe((newValue: GlobalOptions) => {
-            storeOptions(LOCAL_STORAGE_KEY, newValue);
-        });
+            storeOptions(LOCAL_STORAGE_KEY, newValue)
+        })
     }
 }
 export const globalOptionsDestroy = () => {
-    if (unsubscribe) unsubscribe();
+    if (unsubscribe) unsubscribe()
 }

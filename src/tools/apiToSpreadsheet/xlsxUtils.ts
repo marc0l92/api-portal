@@ -21,10 +21,10 @@ export const tablesMapToXLSX = (tablesMap: TablesMap): Buffer => {
         const workbook = XLSX.utils.book_new()
         for (const sheetName in tablesMap) {
             console.log(tablesMap[sheetName])
-            const worksheet = XLSX.utils.aoa_to_sheet(tablesMap[sheetName]);
-            XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+            const worksheet = XLSX.utils.aoa_to_sheet(tablesMap[sheetName])
+            XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
         }
-        return XLSX.write(workbook, { bookType: 'ods', type: 'buffer' }) as Buffer;
+        return XLSX.write(workbook, { bookType: 'ods', type: 'buffer' }) as Buffer
     }
     return null
     // XLSX.writeFile(workbook, sanitizeFilename(fileName) + ".ods");
