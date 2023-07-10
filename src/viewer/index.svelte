@@ -186,7 +186,7 @@
                 </div>
               </div>
             </div>
-            {#if Object.keys(apiIndexItem.otherFiles).length !== 1}
+            {#if Object.keys(apiIndexItem.otherFiles).length > 1}
               <div class="dropdown is-right {isFileNameDropdownExpanded ? 'is-active' : ''}">
                 <div class="dropdown-trigger">
                   <button class="button" on:click|stopPropagation={() => (isFileNameDropdownExpanded = !isFileNameDropdownExpanded)}>
