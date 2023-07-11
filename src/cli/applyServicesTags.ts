@@ -1,8 +1,9 @@
 import type { ServiceTags, BuildConfig } from './buildConfig'
 import fs from 'fs-extra'
 import { API_INDEX_FILE_PATH, BACKUP_SUFFIX, SERVICES_TAGS_SCHEMA } from './cliConstants'
-import type { ServiceCriteria, ServicesTagsConfig, ServicesTagsRule } from './servicesTagsConfig'
+import type { ServicesTagsConfig, ServicesTagsRule } from './servicesTagsConfig'
 import { apiIndexFromFile } from './cliCommon'
+import type { ApiIndexItem, ApiIndexService } from '../common/api/apiIndex'
 
 function loadServicesTags(defaultFilters: ServiceTags, servicesTagsFileName: string): ServicesTagsConfig {
     let servicesTags: ServicesTagsConfig = null
@@ -51,16 +52,16 @@ function loadServicesTags(defaultFilters: ServiceTags, servicesTagsFileName: str
     return servicesTags
 }
 
-function getMatchingServicesTags(servicesTagsRules: ServicesTagsRule[], serviceCriteria: ServiceCriteria): ServicesTagsRule[] {
+function getMatchingServicesTags(servicesTagsRules: ServicesTagsRule[], apiIndexItem: ApiIndexItem, service: ApiIndexService): ServicesTagsRule[] {
     return servicesTagsRules.filter(servicesTagsRule => (
-        (!servicesTagsRule.packageName || serviceCriteria.packageName.match(servicesTagsRule.packageName) !== null)
-        && (!servicesTagsRule.apiName || serviceCriteria.apiName.match(servicesTagsRule.apiName) !== null)
-        && (!servicesTagsRule.versionName || serviceCriteria.versionName.match(servicesTagsRule.versionName) !== null)
-        && (!servicesTagsRule.fileName || serviceCriteria.fileName.match(servicesTagsRule.fileName) !== null)
-        && (!servicesTagsRule.path || serviceCriteria.path.match(servicesTagsRule.path) !== null)
-        && (!servicesTagsRule.method || serviceCriteria.method.match(servicesTagsRule.method) !== null)
+        (!servicesTagsRule.packageName || apiIndexItem.packageName.match(servicesTagsRule.packageName) !== null)
+        && (!servicesTagsRule.apiName || apiIndexItem.apiName.match(servicesTagsRule.apiName) !== null)
+        && (!servicesTagsRule.versionName || apiIndexItem.versionName.match(servicesTagsRule.versionName) !== null)
+        && (!servicesTagsRule.fileName || apiIndexItem.fileName.match(servicesTagsRule.fileName) !== null)
+        && (!servicesTagsRule.path || service.path.match(servicesTagsRule.path) !== null)
+        && (!servicesTagsRule.method || service.method.match(servicesTagsRule.method) !== null)
         && (!servicesTagsRule.metadata || Object.entries(servicesTagsRule.metadata)
-            .map(([ruleKey, ruleValue]) => (ruleKey in serviceCriteria.metadata && serviceCriteria.metadata[ruleKey].match(ruleValue) !== null))
+            .map(([ruleKey, ruleValue]) => (ruleKey in apiIndexItem.metadata && apiIndexItem.metadata[ruleKey].match(ruleValue) !== null))
             .every(x => x)
         )
     ))
@@ -90,7 +91,7 @@ export async function applyServicesTags(appConfig: BuildConfig, servicesTagsFile
 
     for (const apiIndexItem of apiIndex.getApis()) {
         for (const service of apiIndexItem.services) {
-            const matchingRules = getMatchingServicesTags(servicesTagsRules, apiIndexItem)
+            const matchingRules = getMatchingServicesTags(servicesTagsRules, apiIndexItem, service)
             service.tags = stringifyServiceTags([...matchingRules.map(r => r.tags)])
         }
         apiIndexItem.tags = [...(new Set([...apiIndexItem.services.map(s => s.tags)].flat()))]
