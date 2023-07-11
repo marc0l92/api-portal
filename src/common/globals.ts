@@ -34,7 +34,7 @@ export const getHomeLinks = (): HomeLink[] => {
     return APP_CONFIG?.home?.links || []
 }
 
-export const getBrowserFiltersCopy = (): ServiceTags => {
+export const getServicesTagsCopy = (): ServiceTags => {
     return JSON.parse(JSON.stringify(APP_CONFIG?.browser?.filters || {}))
 }
 

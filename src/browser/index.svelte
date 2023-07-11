@@ -6,7 +6,6 @@
   import { browserOptions, browserOptionsDestroy, browserOptionsMount } from './browserOptions';
   import SearchBar from './searchBar.svelte';
   import { globalOptions } from '../common/globalOptions';
-  import type { ServiceTags } from '../cli/buildConfig';
   import { filterApiIndexPackages, filterSearchResults, initializeApiSearch, getApiSearchResults, type SearchResult } from '../common/search';
   import { ApiIndex } from '../common/api/apiIndex';
   import ApiIndexItemCard from './apiIndexItemCard.svelte';
@@ -16,13 +15,12 @@
   let errors: string[] = [];
   let favoriteCount = 0;
   let searchText = '';
-  let filters: ServiceTags = {};
   $: {
     favoriteCount = Object.values($browserOptions.favorites).filter((pi) => Object.values(pi).filter((fi) => fi).length).length;
   }
 
   $: if (searchText.length > 1) {
-    searchResults = filterSearchResults(getApiSearchResults(searchText), filters);
+    searchResults = filterSearchResults(getApiSearchResults(searchText), $browserOptions.filters);
   }
 
   function cleanFavorite() {
@@ -62,7 +60,7 @@
     </div>
   </section>
 
-  <SearchBar bind:searchText bind:filters />
+  <SearchBar bind:searchText bind:filters={$browserOptions.filters} />
   <Errors {errors} />
   {#if apiIndex}
     {#if !searchText || searchText.length < 2}
@@ -82,7 +80,7 @@
         </div>
       {/if}
       <!-- All items -->
-      {#each Object.entries(filterApiIndexPackages(apiIndex, filters)) as [packageName, packageItem]}
+      {#each Object.entries(filterApiIndexPackages(apiIndex, $browserOptions.filters)) as [packageName, packageItem]}
         <h4 class="subtitle is-4">{packageName}</h4>
         <div class="columns is-multiline">
           {#each Object.entries(packageItem) as [apiName, apiHash]}

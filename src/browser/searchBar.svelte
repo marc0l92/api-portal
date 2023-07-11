@@ -1,15 +1,27 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import type { ServiceTags } from '../cli/buildConfig';
-    import { getBrowserFiltersCopy } from '../common/globals';
+    import { getServicesTagsCopy } from '../common/globals';
 
     export let searchText: string = '';
     export let filters: ServiceTags;
     let showFilters: boolean = false;
-    let hasFilters = false;
+    let hasFilters: boolean = false;
+    let activeFiltersCount: number = 0;
+
+    $: if (filters) {
+        activeFiltersCount = 0;
+        for (const sectionName in filters) {
+            for (const categoryName in filters[sectionName]) {
+                for (const propertyName in filters[sectionName][categoryName]) {
+                    activeFiltersCount += filters[sectionName][categoryName][propertyName] ? 1 : 0;
+                }
+            }
+        }
+    }
 
     function resetFilters() {
-        filters = getBrowserFiltersCopy();
+        filters = getServicesTagsCopy();
     }
     function toggleFilter(sectionName: string, categoryName: string, propertyName: string) {
         filters[sectionName][categoryName][propertyName] = !filters[sectionName][categoryName][propertyName];
@@ -20,7 +32,7 @@
     }
 
     onMount(() => {
-        filters = getBrowserFiltersCopy();
+        filters = getServicesTagsCopy();
         hasFilters = Object.keys(filters).length > 0;
     });
 </script>
@@ -37,6 +49,9 @@
                         <i class="fas fa-filter" />
                     </span>
                     <span>Filters</span>
+                    {#if activeFiltersCount > 0}
+                        <span class="tag is-small is-warning">{activeFiltersCount}</span>
+                    {/if}
                 </button>
             </div>
         {/if}
@@ -109,5 +124,10 @@
     }
     .label {
         text-transform: capitalize;
+    }
+    .tag.is-small {
+        margin-left: 0.5em;
+        padding: 0 0.5em;
+        border-radius: 100em;
     }
 </style>

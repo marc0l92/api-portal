@@ -32,7 +32,7 @@ export const diagramBuilderOptions = writable(Object.assign({}, DEFAULT_DIAGRAM_
 let unsubscribe: Unsubscriber = null
 export const diagramBuilderOptionsMount = () => {
     if (!unsubscribe) {
-        diagramBuilderOptions.set(getOptions(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS))
+        diagramBuilderOptions.set(Object.assign({}, DEFAULT_DIAGRAM_BUILDER_OPTIONS, getOptions(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS)))
         unsubscribe = diagramBuilderOptions.subscribe((newValue: DiagramBuilderOptions) => {
             storeOptions(LOCAL_STORAGE_KEY, newValue)
         })
