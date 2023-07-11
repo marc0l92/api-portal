@@ -9,6 +9,7 @@ import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import yaml from 'js-yaml'
 import { execSync } from 'child_process'
+import { generateCustomServicesTagsSchema } from './generateCustomServicesTagsSchema.mjs'
 
 /**
  * @typedef {import('./buildConfig').BuildConfig} BuildConfig
@@ -105,6 +106,8 @@ const cliOptions = {
 fs.copyFileSync('./node_modules/swagger-ui/dist/swagger-ui.css', './public/css/swagger-ui.css')
 fs.copyFileSync('./node_modules/swagger-ui/dist/swagger-ui.css.map', './public/css/swagger-ui.css.map')
 fs.copyFileSync('./node_modules/swagger-ui-flat-model-plugin/dist/swagger-ui-flat-model-plugin.css', './public/css/swagger-ui-flat-model-plugin.css')
+
+generateCustomServicesTagsSchema(appConfig)
 
 if (prod || !watch) {
     esbuild.build(webOptions).catch(() => process.exit(1))

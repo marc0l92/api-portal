@@ -9,3 +9,4 @@ public/tmp-apis/*
 inputApi/*
 !inputApi/.gitkeep
 dist/*.js
+dist/customServicesTagsConfig.schema.json
