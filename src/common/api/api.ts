@@ -49,9 +49,9 @@ export interface ApiReleaseNotes {
 }
 
 export abstract class Api {
-    protected apiDoc: ApiGenericDoc = null
+    protected _apiDoc: ApiGenericDoc = null
     constructor(apiDoc: ApiGenericDoc) {
-        this.apiDoc = JSON.parse(JSON.stringify(apiDoc))
+        this._apiDoc = JSON.parse(JSON.stringify(apiDoc))
     }
     setModelsTitle(): void {
         const models = this.getModels()
@@ -62,17 +62,17 @@ export abstract class Api {
         }
     }
     async resolveReferences(): Promise<void> {
-        this.apiDoc = await resolveReferences(this.apiDoc)
+        this._apiDoc = await resolveReferences(this._apiDoc)
     }
     getStatus(): number {
-        if (this.apiDoc['x-metadata'] && this.apiDoc['x-metadata'].status) {
-            return this.apiDoc['x-metadata'].status
+        if (this._apiDoc['x-metadata'] && this._apiDoc['x-metadata'].status) {
+            return this._apiDoc['x-metadata'].status
         }
         return 0
     }
     getMetadata(): ApiMetadata {
-        const apiMetadata: any = this.apiDoc['x-metadata']
-        const apiTags: string[] = this.apiDoc?.info?.['x-tags'] || []
+        const apiMetadata: any = this._apiDoc['x-metadata']
+        const apiTags: string[] = this._apiDoc?.info?.['x-tags'] || []
         const metadata: ApiMetadata = {}
 
         for (const name in apiMetadata) {
@@ -88,7 +88,7 @@ export abstract class Api {
         return metadata
     }
     toJson(): any {
-        return this.apiDoc
+        return this._apiDoc
     }
     abstract getReleaseNotes(): ApiReleaseNotes
     abstract getName(): string
@@ -100,7 +100,7 @@ export abstract class Api {
 }
 
 export abstract class ApiService {
-    protected serviceDoc: any = null
+    protected _serviceDoc: any = null
     protected requestParameters: ApiParameterDoc[] = []
     protected request: ApiParameterDoc = null
     protected responses: ApiParameterDocMap = {}
@@ -135,7 +135,7 @@ export abstract class ApiService {
         return this.responses
     }
     toJson(): any {
-        return this.serviceDoc
+        return this._serviceDoc
     }
 
     abstract getServiceBasePath(): string

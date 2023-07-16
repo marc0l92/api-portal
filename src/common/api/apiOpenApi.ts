@@ -50,27 +50,27 @@ export interface ApiOpenApiParameterDoc {
 }
 
 export class ApiOpenApi extends Api {
-    private getApi(): ApiOpenApiDoc {
-        return this.apiDoc as ApiOpenApiDoc
+    private get apiDoc(): ApiOpenApiDoc {
+        return this._apiDoc as ApiOpenApiDoc
     }
 
     getName(): string {
-        if (this.getApi().info && this.getApi().info.title) {
-            return this.getApi().info.title
+        if (this.apiDoc.info && this.apiDoc.info.title) {
+            return this.apiDoc.info.title
         }
         return 'api'
     }
 
     getVersion(): string {
-        if (this.getApi().info && this.getApi().info.version) {
-            return this.getApi().info.version
+        if (this.apiDoc.info && this.apiDoc.info.version) {
+            return this.apiDoc.info.version
         }
         return '0'
     }
 
     getBasePaths(): string[] {
         try {
-            return this.getApi()?.servers.map(s => new URL(s.url).pathname) || ['']
+            return this.apiDoc?.servers.map(s => new URL(s.url).pathname) || ['']
         } catch (_) {
             return ['']
         }
@@ -78,12 +78,12 @@ export class ApiOpenApi extends Api {
 
     getServices(): ApiService[] {
         const services: ApiServiceOpenApi[] = []
-        for (const path in this.getApi().paths) {
-            const globalParam = this.getApi().paths[path].parameters || []
+        for (const path in this.apiDoc.paths) {
+            const globalParam = this.apiDoc.paths[path].parameters || []
             globalParam.forEach((p, i) => (p['x-path'] = `/paths["${path}"]/parameters[${i}]`))
-            for (const method in this.getApi().paths[path]) {
+            for (const method in this.apiDoc.paths[path]) {
                 if (PATH_METHODS.indexOf(method) >= 0) {
-                    const apiService = new ApiServiceOpenApi(this.getBasePaths(), path, method, this.getApi().paths[path][method] as ApiOpenApiServiceDoc)
+                    const apiService = new ApiServiceOpenApi(this.getBasePaths(), path, method, this.apiDoc.paths[path][method] as ApiOpenApiServiceDoc)
                     apiService.addGlobalParameters(globalParam)
                     services.push(apiService)
                 }
@@ -93,15 +93,15 @@ export class ApiOpenApi extends Api {
     }
 
     getModels(): ApiModelDocMap {
-        if (this.getApi().components && this.getApi().components.schemas) {
-            return this.getApi().components.schemas
+        if (this.apiDoc.components && this.apiDoc.components.schemas) {
+            return this.apiDoc.components.schemas
         }
         return {}
     }
 
     getReleaseNotes(): ApiReleaseNotes {
-        if (this.getApi() && this.getApi().info && this.getApi().info['x-release-note']) {
-            return this.getApi().info['x-release-note']
+        if (this.apiDoc && this.apiDoc.info && this.apiDoc.info['x-release-note']) {
+            return this.apiDoc.info['x-release-note']
         }
         return null
     }
@@ -112,8 +112,8 @@ export class ApiOpenApi extends Api {
 }
 
 export class ApiServiceOpenApi extends ApiService {
-    private getServiceDoc(): ApiOpenApiServiceDoc {
-        return this.serviceDoc as ApiOpenApiServiceDoc
+    private get serviceDoc(): ApiOpenApiServiceDoc {
+        return this._serviceDoc as ApiOpenApiServiceDoc
     }
 
     constructor(basePaths: string[], path: string, method: string, serviceDoc: ApiOpenApiServiceDoc) {
@@ -121,31 +121,31 @@ export class ApiServiceOpenApi extends ApiService {
         this.basePaths = basePaths
         this.path = path
         this.method = method
-        this.serviceDoc = serviceDoc
+        this._serviceDoc = JSON.parse(JSON.stringify(serviceDoc))
         this.initParameters()
         this.initRequest()
         this.initResponse()
     }
 
     private initParameters() {
-        if (this.getServiceDoc().parameters) {
-            this.getServiceDoc().parameters.forEach((p, i) => (p['x-path'] = `${this.getServiceBasePath()}/parameters[${i}]`))
-            this.requestParameters = this.getServiceDoc().parameters
+        if (this.serviceDoc.parameters) {
+            this.serviceDoc.parameters.forEach((p, i) => (p['x-path'] = `${this.getServiceBasePath()}/parameters[${i}]`))
+            this.requestParameters = this.serviceDoc.parameters
         }
     }
 
     private initRequest() {
-        if (this.getServiceDoc().requestBody
-            && this.getContentType(this.getServiceDoc().requestBody)) {
-            this.getContentType(this.getServiceDoc().requestBody)['x-path'] = `${this.getServiceBasePath()}/requestBody/content["application/json"]`
-            this.request = this.getContentType(this.getServiceDoc().requestBody)
+        if (this.serviceDoc.requestBody
+            && this.getContentType(this.serviceDoc.requestBody)) {
+            this.getContentType(this.serviceDoc.requestBody)['x-path'] = `${this.getServiceBasePath()}/requestBody/content["application/json"]`
+            this.request = this.getContentType(this.serviceDoc.requestBody)
         }
     }
 
     private initResponse() {
-        if (this.getServiceDoc().responses) {
-            for (const statusCode in this.getServiceDoc().responses) {
-                const response = this.getServiceDoc().responses[statusCode]
+        if (this.serviceDoc.responses) {
+            for (const statusCode in this.serviceDoc.responses) {
+                const response = this.serviceDoc.responses[statusCode]
                 if (this.getContentType(response)) {
                     this.getContentType(response)['x-path'] = `${this.getServiceBasePath()}/responses[${statusCode}]/content["application/json"]`
                     this.responses[statusCode] = this.getContentType(response)

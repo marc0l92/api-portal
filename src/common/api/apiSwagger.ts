@@ -36,36 +36,36 @@ interface ApiSwaggerServiceDoc {
 
 
 export class ApiSwagger extends Api {
-    private getApi(): ApiSwaggerDoc {
+    private get apiDoc(): ApiSwaggerDoc {
         return this.apiDoc as ApiSwaggerDoc
     }
 
     getName(): string {
-        if (this.getApi().info && this.getApi().info.title) {
-            return this.getApi().info.title
+        if (this.apiDoc.info && this.apiDoc.info.title) {
+            return this.apiDoc.info.title
         }
         return 'api'
     }
 
     getVersion(): string {
-        if (this.getApi().info && this.getApi().info.version) {
-            return this.getApi().info.version
+        if (this.apiDoc.info && this.apiDoc.info.version) {
+            return this.apiDoc.info.version
         }
         return '0'
     }
 
     getBasePaths(): string[] {
-        return [this.getApi()?.basePath || '']
+        return [this.apiDoc?.basePath || '']
     }
 
     getServices(): ApiService[] {
         const services: ApiServiceSwagger[] = []
-        for (const path in this.getApi().paths) {
-            const globalParam = this.getApi().paths[path].parameters || []
+        for (const path in this.apiDoc.paths) {
+            const globalParam = this.apiDoc.paths[path].parameters || []
             globalParam.forEach((p, i) => (p['x-path'] = `/paths["${path}"]/parameters[${i}]`))
-            for (const method in this.getApi().paths[path]) {
+            for (const method in this.apiDoc.paths[path]) {
                 if (method !== 'parameters') {
-                    const apiService = new ApiServiceSwagger(this.getBasePaths(), path, method, this.getApi().paths[path][method] as ApiSwaggerServiceDoc)
+                    const apiService = new ApiServiceSwagger(this.getBasePaths(), path, method, this.apiDoc.paths[path][method] as ApiSwaggerServiceDoc)
                     apiService.addGlobalParameters(globalParam)
                     services.push(apiService)
                 }
@@ -75,15 +75,15 @@ export class ApiSwagger extends Api {
     }
 
     getModels(): ApiModelDocMap {
-        if (this.getApi().definitions) {
-            return this.getApi().definitions
+        if (this.apiDoc.definitions) {
+            return this.apiDoc.definitions
         }
         return {}
     }
 
     getReleaseNotes(): ApiReleaseNotes {
-        if (this.getApi() && this.getApi().info && this.getApi().info['x-release-note']) {
-            return this.getApi().info['x-release-note']
+        if (this.apiDoc && this.apiDoc.info && this.apiDoc.info['x-release-note']) {
+            return this.apiDoc.info['x-release-note']
         }
         return null
     }
@@ -94,8 +94,8 @@ export class ApiSwagger extends Api {
 }
 
 export class ApiServiceSwagger extends ApiService {
-    private getServiceDoc(): ApiSwaggerServiceDoc {
-        return this.serviceDoc as ApiSwaggerServiceDoc
+    private get serviceDoc(): ApiSwaggerServiceDoc {
+        return this._serviceDoc as ApiSwaggerServiceDoc
     }
 
     constructor(basePaths: string[], path: string, method: string, serviceDoc: ApiSwaggerServiceDoc) {
@@ -103,24 +103,24 @@ export class ApiServiceSwagger extends ApiService {
         this.basePaths = basePaths
         this.path = path
         this.method = method
-        this.serviceDoc = serviceDoc
+        this._serviceDoc = JSON.parse(JSON.stringify(serviceDoc))
         this.initParameters()
         this.initRequest()
         this.initResponse()
     }
 
     private initParameters() {
-        if (this.getServiceDoc().parameters) {
-            this.getServiceDoc().parameters.forEach((p, i) => (p['x-path'] = `${this.getServiceBasePath()}/parameters[${i}]`))
-            this.requestParameters = this.getServiceDoc().parameters.filter((parameter) => {
+        if (this.serviceDoc.parameters) {
+            this.serviceDoc.parameters.forEach((p, i) => (p['x-path'] = `${this.getServiceBasePath()}/parameters[${i}]`))
+            this.requestParameters = this.serviceDoc.parameters.filter((parameter) => {
                 return parameter.in === 'path' || parameter.in === 'query' || parameter.in === 'header'
             })
         }
     }
 
     private initRequest() {
-        if (this.getServiceDoc().parameters) {
-            const requestParam = this.getServiceDoc().parameters.find(p => p.in === 'body')
+        if (this.serviceDoc.parameters) {
+            const requestParam = this.serviceDoc.parameters.find(p => p.in === 'body')
             if (requestParam) {
                 this.request = requestParam
             }
@@ -128,11 +128,11 @@ export class ApiServiceSwagger extends ApiService {
     }
 
     private initResponse() {
-        if (this.getServiceDoc().responses) {
-            for (const statusCode in this.getServiceDoc().responses) {
-                this.getServiceDoc().responses[statusCode]['x-path'] = `${this.getServiceBasePath()}/responses[${statusCode}]`
+        if (this.serviceDoc.responses) {
+            for (const statusCode in this.serviceDoc.responses) {
+                this.serviceDoc.responses[statusCode]['x-path'] = `${this.getServiceBasePath()}/responses[${statusCode}]`
             }
-            this.responses = this.getServiceDoc().responses
+            this.responses = this.serviceDoc.responses
         }
     }
 
