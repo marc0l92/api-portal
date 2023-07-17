@@ -30,14 +30,14 @@ const kServiceBaseDoc: ApiOpenApiServiceDoc = {
     }
 }
 
-const kServiceBase = new ApiServiceOpenApi([''], '/', 'post', kServiceBaseDoc)
 
 
 describe('SwaggerParsing', () => {
     describe('generateServiceWorkbook', () => {
         test('Basic test with request only', async () => {
             kServiceBaseDoc.requestBody.content['application/json'].schema = kBasicModel
-            expect(generateServiceWorkbook(kServiceBase)).toEqual({
+            const serviceBase = new ApiServiceOpenApi([''], '/', 'post', kServiceBaseDoc)
+            expect(generateServiceWorkbook(serviceBase)).toEqual({
                 Request: [
                     {
                         Authorized: '',
@@ -64,7 +64,8 @@ describe('SwaggerParsing', () => {
 
         test('Model with additionalProperties', async () => {
             kServiceBaseDoc.requestBody.content['application/json'].schema = kModelWithAdditionalProperties
-            expect(generateServiceWorkbook(kServiceBase)).toEqual({
+            const serviceBase = new ApiServiceOpenApi([''], '/', 'post', kServiceBaseDoc)
+            expect(generateServiceWorkbook(serviceBase)).toEqual({
                 Request: [
                     {
                         Authorized: '',

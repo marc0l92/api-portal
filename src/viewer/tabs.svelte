@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getValidationBadgeCss, type ApiValidation } from './validation';
+    import { getValidationBadgeCss, type ApiValidation } from './tabs/validation';
 
     export let selectedTab = 'api';
     export let hasReleaseNotes = true;

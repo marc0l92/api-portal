@@ -5,12 +5,12 @@
   import Navbar from '../components/navbar.svelte';
   import { apiFactory } from '../common/api/apiFactory';
   import Tabs from './tabs.svelte';
-  import ApiTab from './apiTab.svelte';
-  import RawTab from './rawTab.svelte';
-  import ReleaseNotesTab from './releaseNotesTab.svelte';
-  import DiagramsTab from './diagramsTab.svelte';
-  import ValidationTab from './validationTab.svelte';
-  import TablesTab from './tablesTab.svelte';
+  import ApiTab from './tabs/apiTab.svelte';
+  import RawTab from './tabs/rawTab.svelte';
+  import ReleaseNotesTab from './tabs/releaseNotesTab.svelte';
+  import DiagramsTab from './tabs/diagramsTab.svelte';
+  import ValidationTab from './tabs/validationTab.svelte';
+  import TablesTab from './tabs/tablesTab.svelte';
   import { globalOptions } from '../common/globalOptions';
   import { onMount } from 'svelte';
   import Errors from '../components/errors.svelte';

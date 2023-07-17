@@ -37,7 +37,7 @@ interface ApiSwaggerServiceDoc {
 
 export class ApiSwagger extends Api {
     private get apiDoc(): ApiSwaggerDoc {
-        return this.apiDoc as ApiSwaggerDoc
+        return this._apiDoc as ApiSwaggerDoc
     }
 
     getName(): string {
