@@ -5,8 +5,10 @@ import fs from 'fs-extra'
 import { API_TO_VALIDATE_INDENTATION, API_TO_VALIDATE_SUFFIX, OUTPUT_FOLDER, VALIDATION_SUFFIX, VALIDATION_TIMEOUT } from './cliConstants'
 
 
-async function minifyAndCompressJsonFile(filename: string): Promise<void> {
-    await fs.outputFile(filename, compressToArray(JSON.stringify(fs.readJSONSync(filename))))
+function minifyAndCompressJsonFile(filename: string): void {
+    if (fs.existsSync(filename)) {
+        fs.outputFileSync(filename, compressToArray(JSON.stringify(fs.readJSONSync(filename))))
+    }
 }
 
 export async function validateApiDoc(apiDoc: any, apiHash: string, appConfig: BuildConfig) {
@@ -29,7 +31,7 @@ export async function validateApiFile(fileName: string, apiHash: string, appConf
                 } if (error && error.killed && error.signal === 'SIGTERM') {
                     return reject('Execution timeout reached while validating: ' + apiHash)
                 } else {
-                    await minifyAndCompressJsonFile(outputFile)
+                    minifyAndCompressJsonFile(outputFile)
                     return resolve(null)
                 }
             })
