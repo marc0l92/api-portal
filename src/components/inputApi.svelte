@@ -44,7 +44,9 @@
                     initializeApiSearch(apiIndex);
                     if (apiIndex && browserHash) {
                         browserSelectedApi = apiIndex.getApi(browserHash);
-                        browserSearch = browserSelectedApi.packageName + ' ' + browserSelectedApi.apiName;
+                        if (browserSelectedApi) {
+                            browserSearch = browserSelectedApi.packageName + ' ' + browserSelectedApi.apiName;
+                        }
                     }
                 }
                 if (browserSelectedApi) {
