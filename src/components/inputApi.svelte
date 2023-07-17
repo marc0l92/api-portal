@@ -7,7 +7,7 @@
     import { createEventDispatcher, onMount } from 'svelte';
     import { readInputFile } from '../common/filesUtils';
     import { initializeApiSearch, getApiSearchResults, type SearchResult } from '../common/search';
-    import type { ApiIndex, ApiIndexItem } from '../common/api/apiIndex';
+    import { ApiIndex, type ApiIndexItem } from '../common/api/apiIndex';
 
     const LOCAL_STORAGE_SELECTED_TAB_KEY = 'inputApi.selectedTab';
     const LOCAL_STORAGE_BROWSE_KEY = 'inputApi.browse';
@@ -76,7 +76,7 @@
     async function fetchApiIndex() {
         const response = await fetch(getApiIndexPath());
         if (response.ok) {
-            apiIndex = (await response.json()) as ApiIndex;
+            apiIndex = ApiIndex.fromJSON(await response.json());
         } else {
             inputError = 'Error while fetching api index: ' + response.status;
         }
