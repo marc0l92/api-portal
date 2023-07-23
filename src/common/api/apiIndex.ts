@@ -49,9 +49,13 @@ export class ApiIndex {
             return {}
         }
     }
-    public getApiByName(packageName: string, apiName: string) {
+    public getApiByName(packageName: string, apiName: string, versionName: string = null) {
         if (packageName in this.packages && apiName in this.packages[packageName]) {
-            return this.apis[this.packages[packageName][apiName]]
+            const apiIndexItem = this.apis[this.packages[packageName][apiName]]
+            if (versionName) {
+                return this.apis[apiIndexItem.otherVersions[versionName]]
+            }
+            return apiIndexItem
         } else {
             return null
         }

@@ -17,7 +17,7 @@
   import { getOptions, storeOptions } from '../common/localStorage';
   import LazyLoad from '../components/lazyLoad.svelte';
   import { getBasePath } from '../common/globals';
-  import type { ApiValidation } from './validation';
+  import type { ApiValidation } from './tabs/validation';
   import Metadata from './metadata.svelte';
   import { getApiStatusName } from '../common/api/apiStatus';
   import InputApi from '../components/inputApi.svelte';
@@ -125,11 +125,27 @@
       fetchApi();
       fetchValidation();
       fetchApiIndex();
-    } else if (urlParams.has('tmp-api')) {
-      apiHash = urlParams.get('tmp-api');
+    } else if (urlParams.has('tmpApi')) {
+      apiHash = urlParams.get('tmpApi');
       await fetchApi('tmp-apis');
       apiIndexItem = ApiIndexItem.fromApi(api);
       fetchValidation('tmp-apis');
+    } else if (urlParams.has('packageName') && urlParams.has('apiName')) {
+      try {
+        apiIndex = await ApiIndex.fetch();
+        const packageName = urlParams.get('packageName');
+        const apiName = urlParams.get('apiName');
+        const versionName = urlParams.has('versionName') ? urlParams.get('versionName') : null;
+        apiIndexItem = apiIndex.getApiByName(packageName, apiName, versionName);
+        if (!apiIndexItem) {
+          throw new Error(`Api not found: packageName=${packageName} apiName=${apiName}`);
+        }
+        apiHash = apiIndexItem.hash;
+        fetchApi();
+        fetchValidation();
+      } catch (e) {
+        errors = [...errors, e];
+      }
     } else {
       showApiInput = true;
       if (selectedTab === 'validation') {
@@ -175,7 +191,7 @@
               <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content">
                   {#each Object.entries(apiIndexItem.otherVersions) as [versionName, versionApiHash]}
-                    <a href="{basePath}/viewer.html?api={versionApiHash}" class="dropdown-item">
+                    <a href="{basePath}/viewer.html?packageName={apiIndexItem.packageName}&apiName={apiIndexItem.apiName}&versionName={versionName}" class="dropdown-item">
                       {#if versionName === apiIndexItem.versionName}
                         <strong>{versionName}</strong>
                       {:else}

@@ -35,7 +35,7 @@
 {#if apiIndexItem}
     <div class="card">
         <header class="card-header">
-            <a class="card-header-body" href="{basePath}/viewer.html?api={apiIndexItem.hash}">
+            <a class="card-header-body" href="{basePath}/viewer.html?packageName={apiIndexItem.packageName}&apiName={apiIndexItem.apiName}">
                 <p class="card-header-title">
                     {#if searchMatchApiName}
                         <SearchMatchLine searchMatch={searchMatchApiName} />
@@ -55,7 +55,10 @@
                 <div class="columns is-multiline">
                     <div class="column">
                         {#each Object.entries(apiIndexItem.otherVersions).slice(0, isExpanded ? undefined : 5) as [versionName, apiHash]}
-                            <a class="tag ml-1 mb-1 {getWorstStateForVersion(apiHash)}" href="{basePath}/viewer.html?api={apiHash}">
+                            <a
+                                class="tag ml-1 mb-1 {getWorstStateForVersion(apiHash)}"
+                                href="{basePath}/viewer.html?packageName={apiIndexItem.packageName}&apiName={apiIndexItem.apiName}&versionName={versionName}"
+                            >
                                 {versionName}
                             </a>
                         {/each}
