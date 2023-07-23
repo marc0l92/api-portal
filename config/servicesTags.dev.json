@@ -1,5 +1,5 @@
 {
-    "$schema": "https://raw.githubusercontent.com/marc0l92/api-portal/master/dist/servicesTagsConfig.schema.json",
+    "$schema": "../dist/customServicesTagsConfig.schema.json",
     "rules": [
         {
             "packageName": "truckertools",

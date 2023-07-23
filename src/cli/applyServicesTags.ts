@@ -22,14 +22,17 @@ function loadServicesTags(defaultFilters: ServiceTags, servicesTagsFileName: str
                             if (categoryName in defaultFilters[sectionName]) {
                                 for (const propertyName in service.tags[sectionName][categoryName]) {
                                     if (!(propertyName in defaultFilters[sectionName][categoryName])) {
+                                        console.warn(`Warning: tag not supported: /${sectionName}/${categoryName}/${propertyName}`)
                                         delete service.tags[sectionName][categoryName][propertyName]
                                     }
                                 }
                             } else {
+                                console.warn(`Warning: tag not supported: /${sectionName}/${categoryName}`)
                                 delete service.tags[sectionName][categoryName]
                             }
                         }
                     } else {
+                        console.warn(`Warning: tag not supported: /${sectionName}`)
                         delete service.tags[sectionName]
                     }
                 }
