@@ -15,6 +15,8 @@
             "type": "object"
         },
         "ServicesTagsRule": {
+            "additionalProperties": false,
+            "id": "services-tags-rule",
             "properties": {
                 "apiName": {
                     "type": "string"

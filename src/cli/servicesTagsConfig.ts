@@ -25,6 +25,10 @@ export interface ServiceCriteria {
     method?: string
 }
 
+/**
+ * @id services-tags-rule
+ * @additionalProperties false
+ */
 export interface ServicesTagsRule extends ServiceCriteria {
     tags: ServiceTags
 }
