@@ -56,33 +56,35 @@
             </div>
         {/if}
     </div>
-    <div class="filters-wrapper {showFilters ? 'open' : ''}">
-        <div class="filters">
-            {#each Object.entries(filters) as [sectionName, section]}
-                <div class="block">
-                    <p class="menu-label">{sectionName}</p>
-                    {#each Object.entries(section) as [categoryName, category]}
-                        <div class="field is-horizontal">
-                            <div class="field-label is-normal">
-                                <span class="label">{categoryName}</span>
-                            </div>
-                            <div class="field-body">
-                                <div class="buttons has-addons">
-                                    {#each Object.entries(category) as [propertyName, isActive]}
-                                        <button class="button {isActive ? 'is-active is-info' : ''}" on:click={() => toggleFilter(sectionName, categoryName, propertyName)}>
-                                            {propertyName}
-                                        </button>
-                                    {/each}
+    {#if hasFilters}
+        <div class="filters-wrapper {showFilters ? 'open' : ''}">
+            <div class="filters">
+                {#each Object.entries(filters) as [sectionName, section]}
+                    <div class="block">
+                        <p class="menu-label">{sectionName}</p>
+                        {#each Object.entries(section) as [categoryName, category]}
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <span class="label">{categoryName}</span>
+                                </div>
+                                <div class="field-body">
+                                    <div class="buttons has-addons">
+                                        {#each Object.entries(category) as [propertyName, isActive]}
+                                            <button class="button {isActive ? 'is-active is-info' : ''}" on:click={() => toggleFilter(sectionName, categoryName, propertyName)}>
+                                                {propertyName}
+                                            </button>
+                                        {/each}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {/each}
-                    <hr />
-                </div>
-            {/each}
-            <button class="button is-ghost is-small" on:click={resetFilters}>Reset filters</button>
+                        {/each}
+                        <hr />
+                    </div>
+                {/each}
+                <button class="button is-ghost is-small" on:click={resetFilters}>Reset filters</button>
+            </div>
         </div>
-    </div>
+    {/if}
 </div>
 
 <style>
