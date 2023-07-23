@@ -123,10 +123,10 @@ export class ApiIndex {
         for (const apiHash of Object.keys(this.apis).sort()) {
             sortedApiIndex.apis[apiHash] = this.apis[apiHash]
             sortedApiIndex.apis[apiHash].otherVersions = Object.fromEntries(
-                Object.entries(this.apis[apiHash].otherVersions).sort(([k1], [k2]) => isSmallerVersion(k1, k2))
+                Object.entries(this.apis[apiHash].otherVersions).sort(([k1], [k2]) => compareVersion(k1, k2))
             )
             sortedApiIndex.apis[apiHash].otherFiles = Object.fromEntries(
-                Object.entries(this.apis[apiHash].otherFiles).sort(([k1], [k2]) => isSmallerFileName(k1, k2))
+                Object.entries(this.apis[apiHash].otherFiles).sort(([k1], [k2]) => compareFileName(k1, k2))
             )
         }
         this.apis = sortedApiIndex.apis
@@ -188,7 +188,7 @@ interface ApiRelationships {
     }
 }
 
-function isSmallerVersion(v1: string, v2: string): number {
+function compareVersion(v1: string, v2: string): number {
     function versionToNumber(v: string | null): number {
         let total = 0
         let i = 0
@@ -203,12 +203,12 @@ function isSmallerVersion(v1: string, v2: string): number {
     return versionToNumber(v2) - versionToNumber(v1)
 }
 
-function isSmallerFileName(f1: string, f2: string): number {
+function compareFileName(f1: string, f2: string): number {
     return f1.length - f2.length
 }
 
 function isNewerApiIndexItem(currentItem: ApiIndexItem, newItem: ApiIndexItem) {
-    return isSmallerVersion(currentItem.versionName, newItem.versionName) || (
-        currentItem.versionName === newItem.versionName && isSmallerFileName(currentItem.fileName, newItem.fileName)
+    return compareVersion(currentItem.versionName, newItem.versionName) > 0 || (
+        currentItem.versionName === newItem.versionName && compareFileName(currentItem.fileName, newItem.fileName) > 0
     )
 }
