@@ -120,7 +120,7 @@ export class ApiIndex {
         }
         this.packages = sortedApiIndex.packages
 
-        for (const apiHash in this.apis) {
+        for (const apiHash of Object.keys(this.apis).sort()) {
             sortedApiIndex.apis[apiHash] = this.apis[apiHash]
             sortedApiIndex.apis[apiHash].otherVersions = Object.fromEntries(
                 Object.entries(this.apis[apiHash].otherVersions).sort(([k1], [k2]) => isSmallerVersion(k1, k2))
