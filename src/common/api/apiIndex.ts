@@ -90,7 +90,10 @@ export class ApiIndex {
             if (!(apiVersionPath in relationships)) {
                 relationships[apiVersionPath] = {}
             }
-            relationships[apiPath][apiIndexItem.versionName] = apiIndexItem.hash
+            if (!(apiIndexItem.versionName in relationships[apiPath])
+                || compareFileName(this.getApi(relationships[apiPath][apiIndexItem.versionName]).fileName, apiIndexItem.fileName) > 0) {
+                relationships[apiPath][apiIndexItem.versionName] = apiIndexItem.hash
+            }
             relationships[apiVersionPath][apiIndexItem.fileName] = apiIndexItem.hash
 
             if (!(apiIndexItem.packageName in this.packages)) {
