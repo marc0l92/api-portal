@@ -6,6 +6,7 @@
     import type { ApiIndex, ApiIndexItem } from '../common/api/apiIndex';
 
     const VERSION_LIMIT = 8;
+    const SEARCH_MATCHES_LIMIT = 3;
     const basePath = getBasePath();
 
     export let apiIndex: ApiIndex;
@@ -70,7 +71,7 @@
                     </div>
                 </div>
                 {#if searchMatches.length > 0}
-                    {#each searchMatches as searchMatch}
+                    {#each searchMatches.slice(0, SEARCH_MATCHES_LIMIT + 1) as searchMatch}
                         {#if searchMatch.key !== 'apiName'}
                             <p class="searchMatchLine">
                                 <span class="key">{searchMatch.key}:</span>
@@ -90,6 +91,7 @@
     }
     .card-header-title {
         word-break: break-all;
+        display: inline-block;
     }
     .card-header-icon {
         color: var(--color-accent);
@@ -113,6 +115,7 @@
     }
     .searchMatchLine {
         font-size: small;
+        word-break: break-all;
     }
     .searchMatchLine .key {
         font-weight: bold;

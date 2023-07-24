@@ -12,6 +12,10 @@ const searchOptions: Fuse.IFuseOptions<ApiIndexItem> = {
         'apiName',
         'versionName',
         'fileName',
+        {
+            name: 'uri',
+            getFn: (apiIndexItem: ApiIndexItem) => (apiIndexItem.services.map(s => s.path)),
+        },
     ],
 }
 let fuse: Fuse<ApiIndexItem> = null
