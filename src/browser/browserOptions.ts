@@ -23,7 +23,7 @@ export const browserOptions = writable(Object.assign({}, DEFAULT_OPTIONS))
 let unsubscribe: Unsubscriber = null
 export const browserOptionsMount = () => {
     if (!unsubscribe) {
-        browserOptions.set(Object.assign({}, DEFAULT_OPTIONS, getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS)))
+        browserOptions.set(Object.assign({}, DEFAULT_OPTIONS, validate(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS))))
         unsubscribe = browserOptions.subscribe((newValue: BrowserOptions) => {
             storeOptions(LOCAL_STORAGE_KEY, newValue)
         })
@@ -31,4 +31,16 @@ export const browserOptionsMount = () => {
 }
 export const browserOptionsDestroy = () => {
     if (unsubscribe) unsubscribe()
+}
+
+
+function validate(options: BrowserOptions): BrowserOptions {
+    const defaultOptions = getServicesTagsCopy()
+
+    const hasValidFilters = JSON.stringify(defaultOptions) === JSON.stringify(options.filters).replace(/true/g, 'false')
+    if (!hasValidFilters) {
+        options.filters = defaultOptions
+    }
+
+    return options
 }
