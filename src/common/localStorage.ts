@@ -1,7 +1,7 @@
 export const storeOptions = (key: string, options: any) => {
-    try{
+    try {
         localStorage.setItem(key, JSON.stringify(options))
-    }catch(error){
+    } catch (error) {
         console.warn('Failure while storing local options:', key, error)
     }
 }
@@ -17,4 +17,8 @@ export const getOptions = (key: string, defaultValue: any = null) => {
         storeOptions(key, defaultValue)
     }
     return defaultValue
+}
+
+export const cleanAllOptions = () => {
+    localStorage.clear()
 }

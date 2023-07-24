@@ -4,9 +4,16 @@
     import DiagramsOption from '../tools/apiToPlantUml/diagramsOption.svelte';
     import { globalOptions, globalOptionsDestroy, globalOptionsMount } from '../common/globalOptions';
     import { getReleaseId } from '../common/globals';
+    import { cleanAllOptions } from 'common/localStorage';
 
     let showMenu = false;
     let showDiagramsOptionsModal = false;
+
+    function resetLocalSettings() {
+        if (confirm('Do you really want to delete all the local settings?')) {
+            cleanAllOptions();
+        }
+    }
 
     onMount(async () => {
         diagramBuilderOptionsMount();
@@ -36,6 +43,9 @@
             </a>
             <a href="https://github.com/marc0l92/api-portal/issues/new/choose" class="dropdown-item" target="_blank" rel="noreferrer">
                 <span>Report issue</span><i class="fa-solid fa-bug" />
+            </a>
+            <a href={''} class="dropdown-item" on:click|preventDefault={resetLocalSettings}>
+                <span>Reset local settings</span><i class="fa-solid fa-eraser" />
             </a>
             <hr class="dropdown-divider" />
             <div class="dropdown-item">
