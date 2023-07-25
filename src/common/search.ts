@@ -57,14 +57,15 @@ export function filterApiIndexPackages(apiIndex: ApiIndex, filters: ServiceTags)
 export function isApiIndexItemMatchingFilters(apiIndexItem: ApiIndexItem, filters: ServiceTags): boolean {
     for (const sectionName in filters) {
         for (const categoryName in filters[sectionName]) {
+            const propertyLevelFilters = []
             for (const propertyName in filters[sectionName][categoryName]) {
                 if (filters[sectionName][categoryName][propertyName]) {
                     const tagPath = sectionName + '/' + categoryName + '/' + propertyName
-                    const tagPosition = apiIndexItem.tags.indexOf(tagPath)
-                    if (tagPosition === -1) {
-                        return false
-                    }
+                    propertyLevelFilters.push(tagPath)
                 }
+            }
+            if (propertyLevelFilters.length > 0 && propertyLevelFilters.every(tagPath => apiIndexItem.tags.indexOf(tagPath) === -1)) {
+                return false
             }
         }
     }
