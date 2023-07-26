@@ -4,12 +4,12 @@ import type { ServiceTags } from '../cli/buildConfig'
 import { getServicesTagsCopy } from '../common/globals'
 
 interface BrowserOptions {
-    favorites: {
+    favorites?: {
         [packageName: string]: {
             [apiName: string]: boolean
         }
     }
-    filters: ServiceTags
+    filters?: ServiceTags
 }
 
 const LOCAL_STORAGE_KEY = 'browserOptions'
@@ -36,9 +36,12 @@ export const browserOptionsDestroy = () => {
 
 function validate(options: BrowserOptions): BrowserOptions {
     const defaultOptions = getServicesTagsCopy()
-
-    const hasValidFilters = JSON.stringify(defaultOptions) === JSON.stringify(options.filters).replace(/true/g, 'false')
-    if (!hasValidFilters) {
+    if (options.filters) {
+        const hasValidFilters = JSON.stringify(defaultOptions) === JSON.stringify(options.filters).replace(/true/g, 'false')
+        if (!hasValidFilters) {
+            options.filters = defaultOptions
+        }
+    } else {
         options.filters = defaultOptions
     }
 
