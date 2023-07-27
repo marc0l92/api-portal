@@ -7,11 +7,13 @@
   import SearchBar from './searchBar.svelte';
   import { globalOptions } from '../common/globalOptions';
   import { filterApiIndexPackages, filterSearchResults, initializeApiSearch, getApiSearchResults, type SearchResult } from '../common/search';
-  import { ApiIndex } from '../common/api/apiIndex';
+  import { ApiIndex, type ApiIndexPackages } from '../common/api/apiIndex';
   import ApiIndexItemCard from './apiIndexItemCard.svelte';
+  import NoResultsFound from './noResultsFound.svelte';
 
   let apiIndex: ApiIndex = null;
   let searchResults: SearchResult[] = [];
+  let filteredApiPackages: ApiIndexPackages = {};
   let errors: string[] = [];
   let favoriteCount = 0;
   let searchText = '';
@@ -21,6 +23,10 @@
 
   $: if (searchText.length > 1) {
     searchResults = filterSearchResults(getApiSearchResults(searchText), $browserOptions.filters);
+  }
+
+  $: if (apiIndex) {
+    filteredApiPackages = filterApiIndexPackages(apiIndex, $browserOptions.filters);
   }
 
   function cleanFavorite() {
@@ -80,25 +86,33 @@
         </div>
       {/if}
       <!-- All items -->
-      {#each Object.entries(filterApiIndexPackages(apiIndex, $browserOptions.filters)) as [packageName, packageItem]}
-        <h4 class="subtitle is-4">{packageName}</h4>
+      {#if Object.keys(filteredApiPackages).length > 0}
+        {#each Object.entries(filteredApiPackages) as [packageName, packageItem]}
+          <h4 class="subtitle is-4">{packageName}</h4>
+          <div class="columns is-multiline">
+            {#each Object.entries(packageItem) as [apiName, apiHash]}
+              <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
+                <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.getApi(apiHash)} />
+              </div>
+            {/each}
+          </div>
+        {/each}
+      {:else}
+        <NoResultsFound />
+      {/if}
+    {:else}
+      <!-- Search results items -->
+      {#if searchResults.length > 0}
         <div class="columns is-multiline">
-          {#each Object.entries(packageItem) as [apiName, apiHash]}
+          {#each searchResults as searchResult}
             <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-              <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.getApi(apiHash)} />
+              <ApiIndexItemCard {apiIndex} apiIndexItem={searchResult.item} searchMatches={searchResult.matches} />
             </div>
           {/each}
         </div>
-      {/each}
-    {:else}
-      <!-- Search results items -->
-      <div class="columns is-multiline">
-        {#each searchResults as searchResult}
-          <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-            <ApiIndexItemCard {apiIndex} apiIndexItem={searchResult.item} searchMatches={searchResult.matches} />
-          </div>
-        {/each}
-      </div>
+      {:else}
+        <NoResultsFound />
+      {/if}
     {/if}
   {:else}
     <div class="box">Fetching api index...</div>
