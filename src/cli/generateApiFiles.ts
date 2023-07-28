@@ -115,7 +115,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
                         console.warn('!', reason)
                     }))
 
-                    if (validationPromises.length > MAX_PARALLEL_VALIDATIONS) {
+                    if (validationPromises.length > (appConfig?.validation?.parallelValidation || MAX_PARALLEL_VALIDATIONS)) {
                         fs.outputJson(API_INDEX_FILE_PATH, apiIndex)
                         await Promise.allSettled(validationPromises)
                         validationPromises = []

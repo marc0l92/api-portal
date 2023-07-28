@@ -52,6 +52,10 @@ export interface BuildConfig {
          * Path to the file containing the list of Spectral rules
          */
         spectralRulesFile?: string
+        /**
+         * Number of parallel validation processes to start at the same time while processing new apis
+         */
+        parallelValidation?: number
     }
     /**
      * Browser settings

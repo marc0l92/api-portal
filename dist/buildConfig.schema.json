@@ -108,6 +108,10 @@
                     "description": "If the spectral validation needs to be enabled",
                     "type": "boolean"
                 },
+                "parallelValidation": {
+                    "description": "Number of parallel validation processes to start at the same time while processing new apis",
+                    "type": "number"
+                },
                 "spectralRulesFile": {
                     "description": "Path to the file containing the list of Spectral rules",
                     "type": "string"
