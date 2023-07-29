@@ -20,6 +20,42 @@
                     }
                 }
             }
+        },
+        {
+            "metadata": {
+                "status": "0"
+            },
+            "tags": {
+                "other": {
+                    "status": {
+                        "status0": true
+                    }
+                }
+            }
+        },
+        {
+            "metadata": {
+                "status": "1"
+            },
+            "tags": {
+                "other": {
+                    "status": {
+                        "status1": true
+                    }
+                }
+            }
+        },
+        {
+            "metadata": {
+                "status": "2"
+            },
+            "tags": {
+                "other": {
+                    "status": {
+                        "status2": true
+                    }
+                }
+            }
         }
     ]
 }

@@ -88,7 +88,7 @@
         try {
             const response = await fetch(getBasePath() + `/apis/${apiHash}.api.json.gzip`);
             if (response.ok) {
-                return yaml.load(decompressFromArray((await response.arrayBuffer()) as Uint8Array));
+                return yaml.load(decompressFromArray(await response.arrayBuffer()));
             } else {
                 inputError = 'Error: ' + response.status;
             }

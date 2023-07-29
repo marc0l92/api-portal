@@ -46,7 +46,7 @@
     try {
       const response = await fetch(`./${apiDir}/${apiHash}.api.json.gzip`);
       if (response.ok) {
-        apiDoc = yaml.load(decompressFromArray((await response.arrayBuffer()) as Uint8Array));
+        apiDoc = yaml.load(decompressFromArray(await response.arrayBuffer()));
         api = apiFactory(apiDoc);
         api.setModelsTitle();
         releaseNotes = api.getReleaseNotes();
@@ -72,7 +72,7 @@
     try {
       const response = await fetch(`./${apiDir}/${apiHash}.validation.json.gzip`);
       if (response.ok) {
-        validationData = yaml.load(decompressFromArray((await response.arrayBuffer()) as Uint8Array)) as ApiValidation[];
+        validationData = yaml.load(decompressFromArray(await response.arrayBuffer())) as ApiValidation[];
       } else if (selectedTab === 'validation') {
         selectedTab = 'api';
       }

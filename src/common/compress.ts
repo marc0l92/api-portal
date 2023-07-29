@@ -8,7 +8,7 @@ export function compressToStr(payload: string): string {
     return strFromU8(compressToArray(payload))
 }
 
-export function decompressFromArray(payload: Uint8Array): string {
+export function decompressFromArray(payload: Uint8Array | ArrayBuffer): string {
     return strFromU8(decompressSync(new Uint8Array(payload)))
 }
 

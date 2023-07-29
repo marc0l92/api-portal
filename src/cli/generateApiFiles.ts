@@ -130,6 +130,7 @@ export async function generateApiFiles(appConfig: BuildConfig) {
     apiIndex.generateRelationships()
     apiIndex.sortRelationship()
     await fs.outputJson(API_INDEX_FILE_PATH, apiIndex)
+    await fs.outputFile(API_INDEX_FILE_PATH + '.gzip', compressToArray(JSON.stringify(apiIndex)))
     await Promise.allSettled(validationPromises)
     loadAndValidateApiIndex() // Delete files that are not part of the new index
 }
