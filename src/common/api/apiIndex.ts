@@ -2,6 +2,7 @@ import { getApiIndexPath } from 'common/globals'
 import type { Api, ApiMetadata } from './api'
 import { MAX_VERSION_DIGITS } from 'cli/cliConstants'
 import objectHash from 'object-hash'
+import { decompressFromArray } from 'common/compress'
 
 export interface ApiIndexPackages {
     [packageName: string]: {
@@ -20,7 +21,7 @@ export class ApiIndex {
     public static async fetch(): Promise<ApiIndex> {
         const response = await fetch(getApiIndexPath())
         if (response.ok) {
-            return ApiIndex.fromJSON(await response.json())
+            return ApiIndex.fromJSON(JSON.parse(decompressFromArray(await response.arrayBuffer())))
         }
         throw new Error('Error while fetching ApiIndex: ' + response.status)
     }

@@ -19,7 +19,7 @@ export const getBasePath = (): string => {
 }
 
 export const getApiIndexPath = (): string => {
-    return getBasePath() + API_INDEX_PATH
+    return getBasePath() + API_INDEX_PATH + '.gzip'
 }
 
 export const getDiagramsDefaultServer = (): string => {
