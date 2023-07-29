@@ -43,7 +43,7 @@ export function filterApiIndexPackages(apiIndex: ApiIndex, filters: ServiceTags)
     const filteredPackages = JSON.parse(JSON.stringify(apiIndex.getPackages()))
     for (const packageName in apiIndex.getPackages()) {
         for (const apiName in apiIndex.getPackage(packageName)) {
-            if (!isApiIndexItemMatchingFilters(apiIndex.getApiByName(packageName, apiName), filters)) {
+            if (!isApiIndexItemMatchingFiltersDeep(apiIndex, apiIndex.getApiByName(packageName, apiName), filters)) {
                 delete filteredPackages[packageName][apiName]
             }
         }
@@ -52,6 +52,39 @@ export function filterApiIndexPackages(apiIndex: ApiIndex, filters: ServiceTags)
         }
     }
     return filteredPackages
+}
+
+function isApiIndexItemMatchingFiltersDeep(apiIndex: ApiIndex, apiIndexItem: ApiIndexItem, filters: ServiceTags): boolean {
+    const checkedApiHashMap: { [apiHash: string]: boolean } = {}
+    if (isApiIndexItemMatchingFilters(apiIndexItem, filters)) {
+        return true
+    }
+    checkedApiHashMap[apiIndexItem.hash] = true
+    for (const otherFileHash of Object.values(apiIndexItem.otherFiles)) {
+        if (!(otherFileHash in checkedApiHashMap)) {
+            if (isApiIndexItemMatchingFilters(apiIndex.getApi(otherFileHash), filters)) {
+                return true
+            }
+            checkedApiHashMap[otherFileHash] = true
+        }
+    }
+    for (const versionHash of Object.values(apiIndexItem.otherVersions)) {
+        if (!(versionHash in checkedApiHashMap)) {
+            if (isApiIndexItemMatchingFilters(apiIndex.getApi(versionHash), filters)) {
+                return true
+            }
+            checkedApiHashMap[versionHash] = true
+            for (const otherFileHash of Object.values(apiIndexItem.otherFiles)) {
+                if (otherFileHash !== apiIndexItem.hash) {
+                    if (isApiIndexItemMatchingFilters(apiIndex.getApi(otherFileHash), filters)) {
+                        return true
+                    }
+                    checkedApiHashMap[otherFileHash] = true
+                }
+            }
+        }
+    }
+    return false
 }
 
 export function isApiIndexItemMatchingFilters(apiIndexItem: ApiIndexItem, filters: ServiceTags): boolean {

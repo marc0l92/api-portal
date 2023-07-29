@@ -38,9 +38,9 @@ browser:
         Client3: false
     other:
       status:
-        status0: false
-        status1: false
-        status2: false
+        Validated: false
+        NotValidated: false
+        Draft: false
       tags:
         tag0: false
         tag1: false

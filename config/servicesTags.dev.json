@@ -28,7 +28,7 @@
             "tags": {
                 "other": {
                     "status": {
-                        "status0": true
+                        "Validated": true
                     }
                 }
             }
@@ -40,7 +40,7 @@
             "tags": {
                 "other": {
                     "status": {
-                        "status1": true
+                        "NotValidated": true
                     }
                 }
             }
@@ -52,7 +52,7 @@
             "tags": {
                 "other": {
                     "status": {
-                        "status2": true
+                        "Draft": true
                     }
                 }
             }

@@ -1,5 +1,7 @@
 openapi: 3.0.0
 
+x-metadata:
+  status: 0
 info:
   version: 3.0.0
   title: SmartCapacity - Sync Loads API

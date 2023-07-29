@@ -4,6 +4,7 @@ import { API_INDEX_FILE_PATH, BACKUP_SUFFIX, SERVICES_TAGS_SCHEMA } from './cliC
 import type { ServicesTagsConfig, ServicesTagsRule } from './servicesTagsConfig'
 import { apiIndexFromFile } from './cliCommon'
 import type { ApiIndexItem, ApiIndexService } from '../common/api/apiIndex'
+import { compressToArray } from 'common/compress'
 
 function loadServicesTags(defaultFilters: ServiceTags, servicesTagsFileName: string): ServicesTagsConfig {
     let servicesTags: ServicesTagsConfig = null
@@ -100,5 +101,6 @@ export async function applyServicesTags(appConfig: BuildConfig, servicesTagsFile
         apiIndexItem.tags = [...(new Set([...apiIndexItem.services.map(s => s.tags)].flat()))]
     }
 
-    await fs.outputJson(API_INDEX_FILE_PATH, apiIndex)
+    await fs.outputJson(API_INDEX_FILE_PATH, apiIndex) // Used for debugging
+    await fs.outputFile(API_INDEX_FILE_PATH + '.gzip', compressToArray(JSON.stringify(apiIndex)))
 }
