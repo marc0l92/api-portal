@@ -4,14 +4,17 @@
     import type { SearchMatch } from '../common/search';
     import SearchMatchLine from '../components/searchMatchLine.svelte';
     import type { ApiIndex, ApiIndexItem } from '../common/api/apiIndex';
+    import type { ServiceTags } from '../cli/buildConfig';
+    import { buildCardData, type ApiIndexItemCardData } from './filterApiIndexItemCard';
 
-    const VERSION_LIMIT = 8;
+    const VERSION_LIMIT = 6;
     const SEARCH_MATCHES_LIMIT = 3;
-    const basePath = getBasePath();
 
     export let apiIndex: ApiIndex;
     export let apiIndexItem: ApiIndexItem;
     export let searchMatches: readonly SearchMatch[] = [];
+    export let filters: ServiceTags = null;
+    let cardData: ApiIndexItemCardData = null;
     let isExpanded = false;
     let searchMatchApiName: SearchMatch = null;
 
@@ -23,20 +26,15 @@
     }
 
     $: searchMatchApiName = searchMatches.find((m) => m.key === 'apiName') || null;
-
-    function getWorstStateForVersion(apiHash: string): string {
-        const apiIndexItemOfVersion = apiIndex.getApi(apiHash);
-        const maxStatus = Object.values(apiIndexItemOfVersion.otherFiles)
-            .map((otherFileApiHash) => apiIndex.getApi(otherFileApiHash).status)
-            .reduce((prev, curr) => Math.max(prev, curr));
-        return `status-${maxStatus}`;
+    $: if (apiIndexItem) {
+        cardData = buildCardData(apiIndex, apiIndexItem, filters);
     }
 </script>
 
-{#if apiIndexItem}
+{#if apiIndexItem && cardData}
     <div class="card">
         <header class="card-header">
-            <a class="card-header-body" href="{basePath}/viewer.html?packageName={apiIndexItem.packageName}&apiName={apiIndexItem.apiName}">
+            <a class="card-header-body" href={cardData.headerHref}>
                 <p class="card-header-title">
                     {#if searchMatchApiName}
                         <SearchMatchLine searchMatch={searchMatchApiName} />
@@ -55,15 +53,12 @@
             <div class="content">
                 <div class="columns is-multiline">
                     <div class="column">
-                        {#each Object.entries(apiIndexItem.otherVersions).slice(0, isExpanded ? undefined : 5) as [versionName, apiHash]}
-                            <a
-                                class="tag ml-1 mb-1 {getWorstStateForVersion(apiHash)}"
-                                href="{basePath}/viewer.html?packageName={apiIndexItem.packageName}&apiName={apiIndexItem.apiName}&versionName={versionName}"
-                            >
-                                {versionName}
+                        {#each cardData.versions.slice(0, isExpanded ? undefined : VERSION_LIMIT) as cardDataVersion}
+                            <a class="tag ml-1 mb-1 {cardDataVersion.cssClass}" href={cardDataVersion.href}>
+                                {cardDataVersion.name}
                             </a>
                         {/each}
-                        {#if Object.keys(apiIndexItem.otherVersions).length > VERSION_LIMIT}
+                        {#if cardData.versions.length > VERSION_LIMIT}
                             <button class="button is-white is-small is-tag-size" on:click={() => (isExpanded = !isExpanded)}>
                                 <i class="fas fa-angle-{isExpanded ? 'left' : 'right'}" />
                             </button>

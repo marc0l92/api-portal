@@ -92,7 +92,7 @@
           <div class="columns is-multiline">
             {#each Object.entries(packageItem) as [apiName, apiHash]}
               <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-                <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.getApi(apiHash)} />
+                <ApiIndexItemCard {apiIndex} apiIndexItem={apiIndex.getApi(apiHash)} bind:filters={$browserOptions.filters} />
               </div>
             {/each}
           </div>
@@ -106,7 +106,7 @@
         <div class="columns is-multiline">
           {#each searchResults as searchResult}
             <div class="column is-full-mobile is-full-tablet is-half-desktop is-one-third-widescreen">
-              <ApiIndexItemCard {apiIndex} apiIndexItem={searchResult.item} searchMatches={searchResult.matches} />
+              <ApiIndexItemCard {apiIndex} apiIndexItem={searchResult.item} searchMatches={searchResult.matches} bind:filters={$browserOptions.filters} />
             </div>
           {/each}
         </div>
