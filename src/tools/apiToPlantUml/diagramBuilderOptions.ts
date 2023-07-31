@@ -1,6 +1,5 @@
 import { getDiagramsDefaultServer } from '../../common/globals'
-import { getOptions, storeOptions } from '../../common/localStorage'
-import { writable, type Unsubscriber } from 'svelte/store'
+import { generateGlobalStore } from '../../common/localStorage'
 
 export enum DiagramBuilderFormat {
     SVG = 'svg',
@@ -27,17 +26,4 @@ export const DEFAULT_DIAGRAM_BUILDER_OPTIONS: DiagramBuilderOptions = {
     parameters: true,
 }
 
-export const diagramBuilderOptions = writable(Object.assign({}, DEFAULT_DIAGRAM_BUILDER_OPTIONS))
-
-let unsubscribe: Unsubscriber = null
-export const diagramBuilderOptionsMount = () => {
-    if (!unsubscribe) {
-        diagramBuilderOptions.set(Object.assign({}, DEFAULT_DIAGRAM_BUILDER_OPTIONS, getOptions(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS)))
-        unsubscribe = diagramBuilderOptions.subscribe((newValue: DiagramBuilderOptions) => {
-            storeOptions(LOCAL_STORAGE_KEY, newValue)
-        })
-    }
-}
-export const diagramBuilderOptionsDestroy = () => {
-    if (unsubscribe) unsubscribe()
-}
+export const [diagramBuilderOptions, diagramBuilderOptionsMount, diagramBuilderOptionsDestroy] = generateGlobalStore(LOCAL_STORAGE_KEY, DEFAULT_DIAGRAM_BUILDER_OPTIONS)

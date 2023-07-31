@@ -1,3 +1,5 @@
+import { writable, type Unsubscriber } from 'svelte/store'
+
 export const storeOptions = (key: string, options: any) => {
     try {
         localStorage.setItem(key, JSON.stringify(options))
@@ -21,4 +23,22 @@ export const getOptions = (key: string, defaultValue: any = null) => {
 
 export const cleanAllOptions = () => {
     localStorage.clear()
+}
+
+export const generateGlobalStore = (localStorageKey: string, defaultOptions: any, validate: (x: any) => any = (x) => x) => {
+    const writableObject = writable(Object.assign({}, defaultOptions))
+
+    let unsubscribe: Unsubscriber = null
+    const mountFunction = () => {
+        if (!unsubscribe) {
+            writableObject.set(Object.assign({}, defaultOptions, validate(getOptions(localStorageKey, defaultOptions))))
+            unsubscribe = writableObject.subscribe((newValue: any) => {
+                storeOptions(localStorageKey, newValue)
+            })
+        }
+    }
+    const destroyFunction = () => {
+        if (unsubscribe) unsubscribe()
+    }
+    return [writableObject, mountFunction, destroyFunction]
 }

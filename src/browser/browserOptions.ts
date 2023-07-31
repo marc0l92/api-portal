@@ -1,5 +1,4 @@
-import { writable, type Unsubscriber } from 'svelte/store'
-import { getOptions, storeOptions } from '../common/localStorage'
+import { generateGlobalStore } from '../common/localStorage'
 import type { ServiceTags } from '../cli/buildConfig'
 import { getServicesTagsCopy } from '../common/globals'
 
@@ -18,20 +17,7 @@ const DEFAULT_OPTIONS: BrowserOptions = {
     filters: getServicesTagsCopy(),
 }
 
-export const browserOptions = writable(Object.assign({}, DEFAULT_OPTIONS))
-
-let unsubscribe: Unsubscriber = null
-export const browserOptionsMount = () => {
-    if (!unsubscribe) {
-        browserOptions.set(Object.assign({}, DEFAULT_OPTIONS, validate(getOptions(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS))))
-        unsubscribe = browserOptions.subscribe((newValue: BrowserOptions) => {
-            storeOptions(LOCAL_STORAGE_KEY, newValue)
-        })
-    }
-}
-export const browserOptionsDestroy = () => {
-    if (unsubscribe) unsubscribe()
-}
+export const [browserOptions, browserOptionsMount, browserOptionsDestroy] = generateGlobalStore(LOCAL_STORAGE_KEY, DEFAULT_OPTIONS, validate)
 
 
 function validate(options: BrowserOptions): BrowserOptions {
