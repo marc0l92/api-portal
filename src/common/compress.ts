@@ -1,7 +1,7 @@
 import { gzipSync, decompressSync, strToU8, strFromU8 } from 'fflate'
 
 export function compressToArray(payload: string): Uint8Array {
-    return gzipSync(strToU8(payload), { level: 6, mem: 8 })
+    return gzipSync(strToU8(payload), { level: 6, mem: 8, mtime: 0 })
 }
 
 export function compressToStr(payload: string): string {
