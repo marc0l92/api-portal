@@ -40,7 +40,7 @@
 <div class="block">
     <div class="field has-addons search-bar {showFilters ? 'open' : ''}">
         <div class="control is-expanded">
-            <input class="input" type="text" placeholder="Search: package, api title, version, file name" bind:value={searchText} use:focus />
+            <input class="input" type="text" placeholder="Search for: package, api title, version, file name, URI" bind:value={searchText} use:focus />
         </div>
         {#if hasFilters}
             <div class="control">
