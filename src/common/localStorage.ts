@@ -1,4 +1,4 @@
-import { writable, type Unsubscriber } from 'svelte/store'
+import { writable, type Unsubscriber, type Writable } from 'svelte/store'
 
 export const storeOptions = (key: string, options: any) => {
     try {
@@ -25,7 +25,7 @@ export const cleanAllOptions = () => {
     localStorage.clear()
 }
 
-export const generateGlobalStore = (localStorageKey: string, defaultOptions: any, validate: (x: any) => any = (x) => x) => {
+export const generateGlobalStore = <T>(localStorageKey: string, defaultOptions: T, validate: (x: T) => T = (x) => x): [Writable<T>, () => void, () => void] => {
     const writableObject = writable(Object.assign({}, defaultOptions))
 
     let unsubscribe: Unsubscriber = null
