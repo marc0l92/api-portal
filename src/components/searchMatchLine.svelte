@@ -37,6 +37,6 @@
 
 <style>
     .search-match-highlight {
-        background-color: yellow;
+        background-color: #ffff99;
     }
 </style>

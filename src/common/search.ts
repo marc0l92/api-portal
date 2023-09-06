@@ -8,13 +8,14 @@ const searchOptions: Fuse.IFuseOptions<ApiIndexItem> = {
     threshold: 0.4,
     minMatchCharLength: 2,
     keys: [
-        'packageName',
-        'apiName',
-        'versionName',
-        'fileName',
+        { name: 'packageName', weight: 0.8 },
+        { name: 'apiName', weight: 1 },
+        { name: 'versionName', weight: 0.5 },
+        { name: 'fileName', weight: 0.4 },
         {
             name: 'uri',
             getFn: (apiIndexItem: ApiIndexItem) => (apiIndexItem.services.map(s => s.path)),
+            weight: 0.01,
         },
     ],
 }
