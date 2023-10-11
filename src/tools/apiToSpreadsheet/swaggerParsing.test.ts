@@ -30,8 +30,6 @@ const kServiceBaseDoc: ApiOpenApiServiceDoc = {
     }
 }
 
-
-
 describe('SwaggerParsing', () => {
     describe('generateServiceWorkbook', () => {
         test('Basic test with request only', async () => {
